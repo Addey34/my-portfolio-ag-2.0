@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adrian Guichard — Full Stack & Creative Developer</title>
+    <meta
+      name="description"
+      content="Portfolio d'Adrian Guichard : WebGL, temps réel, full-stack. Galaxy, Ludora, MagNotes."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#scroll-root" data-i18n="nav.content"
+      >Aller au contenu</a
+    >
+    <!-- Champ topographique en fond du héros/contact — les chapitres le recouvrent. -->
+    <div id="story-background" class="story-background" aria-hidden="true">
+      <canvas id="signal-field"></canvas>
+      <!-- Orbe fantomatique : peint le décor de l'univers courant à son passage. -->
+      <canvas id="phantom-orb"></canvas>
+      <div id="story-stage" class="story-stage"></div>
+      <div class="story-vignette"></div>
+    </div>
+
+    <!-- Compteur FPS (dev uniquement, masqué en prod). -->
+    <div id="fps" class="fps" aria-hidden="true"></div>
+
+    <!-- Wordmark fixe haut-gauche — ancre identitaire, retour en haut. -->
+    <a class="wordmark" href="#top" data-magnetic aria-label="Retour en haut">AG</a>
+
+    <!-- HUD fixe : réglages visuels + bascule de langue + raccourci palette. -->
+    <div class="hud">
+      <button
+        id="controls-open"
+        class="hud__btn hud__btn--icon"
+        type="button"
+        data-magnetic
+        data-i18n-aria="controls.aria"
+        aria-label="Réglages visuels"
+      >
+        ⚙
+      </button>
+      <button
+        id="lang-toggle"
+        class="hud__btn"
+        type="button"
+        data-magnetic
+      ></button>
+      <button
+        id="palette-open"
+        class="hud__btn hud__btn--cmd"
+        type="button"
+        data-magnetic
+        data-i18n-aria="palette.aria"
+        aria-label="Ouvrir la palette de commandes"
+      >
+        <!-- Loupe visible en tactile (⌘K impossible à taper), kbd en desktop. -->
+        <svg
+          class="hud__cmd-icon"
+          viewBox="0 0 24 24"
+          width="17"
+          height="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <line x1="21" y1="21" x2="16.5" y2="16.5" />
+        </svg>
+        <kbd class="hud__kbd">⌘K</kbd>
+      </button>
+    </div>
+
+    <main id="scroll-root">
+      <!-- HERO -->
+      <section id="top" class="section section--hero" data-scene="hero">
+        <div class="hero__inner">
+          <!-- Badges identité : animés par heroAnim.ts -->
+          <div class="hero__tags">
+            <span class="hero__tag" data-i18n="hero.tag.1">Full Stack</span>
+            <span class="hero__tag" data-i18n="hero.tag.2">WebGL &amp; 3D</span>
+            <span class="hero__tag" data-i18n="hero.tag.3">Temps réel</span>
+          </div>
+
+          <!-- Titre : chaque .hero__word est découpé lettre par lettre par heroAnim.ts -->
+          <h1 class="hero__title" aria-label="Adrian Guichard">
+            <span class="hero__word">Adrian</span><br />
+            <span class="hero__word hero__word--gradient">Guichard</span>
+          </h1>
+
+          <p class="hero__lead" data-i18n="hero.lead">
+            Je transforme des systèmes complexes — 3D, temps réel et données —
+            en produits web fluides, lisibles et utilisables.
+          </p>
+
+          <!-- CTAs — smoothscroll via heroAnim.ts + effet magnétique -->
+          <div class="hero__ctas">
+            <a
+              href="#projects"
+              class="hero__cta hero__cta--primary"
+              data-magnetic
+            >
+              <span data-i18n="hero.cta.projects">Découvrir les projets</span>
+              <span class="hero__cta-icon" aria-hidden="true">↓</span>
+            </a>
+            <a
+              href="#contact"
+              class="hero__cta hero__cta--ghost"
+              data-magnetic
+              data-i18n="hero.cta.contact"
+              >Travaillons ensemble</a
+            >
+          </div>
+
+        </div>
+      </section>
+
+      <!-- INTRO -->
+      <section id="intro" class="section section--intro">
+        <p class="intro__kicker" data-reveal data-i18n="intro.kicker">
+          Trois systèmes, une approche
+        </p>
+        <h2 class="intro__title" data-i18n="intro.title">
+          Chaque projet répond à une contrainte différente. La constante :
+          comprendre le système complet avant d'écrire la première ligne.
+        </h2>
+      </section>
+
+      <!-- STACK : la board identitaire se recompose en systeme technique. -->
+      <section id="stack" class="section section--stack" data-scene="stack">
+        <div class="stack__copy">
+          <p class="intro__kicker" data-reveal data-i18n="stack.kicker">
+            Le système derrière l'image
+          </p>
+          <h2 class="stack__title" data-reveal data-i18n="stack.title">
+            Une architecture pensée comme un moteur, pas comme une liste.
+          </h2>
+          <p class="stack__lead" data-reveal data-i18n="stack.lead">
+            Interface, temps réel, données et déploiement restent reliés du
+            prototype jusqu'à la production.
+          </p>
+        </div>
+
+        <!-- Constellation technique — nœuds réels (accessibles) que StackGraph
+             anime et rend réactifs à la souris. Sans JS/desktop : liste de pilules. -->
+        <div class="stack-viz" data-reveal>
+          <ul
+            class="stack-graph"
+            data-stack-graph
+            data-i18n-aria="stack.techs"
+            aria-label="Technologies utilisées"
+          >
+            <li class="stack-node" data-layer="interface" data-weight="primary">
+              JavaScript
+            </li>
+            <li class="stack-node" data-layer="interface" data-weight="primary">
+              TypeScript
+            </li>
+            <li class="stack-node" data-layer="interface" data-weight="primary">
+              React
+            </li>
+            <li class="stack-node" data-layer="interface" data-weight="primary">
+              Three.js
+            </li>
+            <li class="stack-node" data-layer="interface">Canvas</li>
+            <li class="stack-node" data-layer="realtime">GSAP</li>
+            <li class="stack-node" data-layer="realtime">WebSocket</li>
+            <li class="stack-node" data-layer="realtime">Nakama</li>
+            <li class="stack-node" data-layer="data" data-weight="primary">
+              Node
+            </li>
+            <li class="stack-node" data-layer="data">MongoDB</li>
+            <li class="stack-node" data-layer="data">REST</li>
+            <li class="stack-node" data-layer="deploy">Docker</li>
+            <li class="stack-node" data-layer="deploy">Vite</li>
+            <li class="stack-node" data-layer="deploy">PWA</li>
+            <li class="stack-node" data-layer="deploy">CI</li>
+          </ul>
+
+          <ul class="stack-legend">
+            <li data-layer="interface">
+              <span data-i18n="arch.interface">Interface</span>
+            </li>
+            <li data-layer="realtime">
+              <span data-i18n="arch.realtime">Temps réel</span>
+            </li>
+            <li data-layer="data"><span data-i18n="arch.data">Données</span></li>
+            <li data-layer="deploy">
+              <span data-i18n="arch.deploy">Déploiement</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- PROJETS : chapitres immersifs injectés depuis src/content/projects.ts (source unique). -->
+      <section id="projects" class="chapters"></section>
+
+      <!-- CONTACT -->
+      <section id="contact" class="section section--contact">
+        <h2 class="contact__title" data-reveal data-i18n="contact.title">
+          Un système complexe à rendre simple ?
+        </h2>
+        <p class="contact__lead" data-reveal data-i18n="contact.lead">
+          Application ambitieuse, moteur interactif ou produit à remettre à plat
+          : parlons de ce que nous pouvons construire.
+        </p>
+        <a
+          class="contact__cta"
+          href="mailto:adrian34470@gmail.com"
+          data-reveal
+          data-magnetic
+          data-i18n="contact.cta"
+          >Parlons de votre projet</a
+        >
+        <div class="contact__links" data-reveal>
+          <a
+            href="https://github.com/Addey34"
+            rel="noopener"
+            target="_blank"
+            data-magnetic
+            >GitHub</a
+          >
+          <a
+            href="https://www.linkedin.com/in/adrianguichard/"
+            rel="noopener"
+            target="_blank"
+            data-magnetic
+            >LinkedIn</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
