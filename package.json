@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Portfolio d'Adrian Guichard — scrollytelling Canvas, Vite + TypeScript strict.",
+  "description": "Portfolio d'Adrian Guichard - scrollytelling Canvas, Vite + TypeScript strict.",
   "author": "Addey34",
   "license": "PolyForm-Noncommercial-1.0.0",
   "scripts": {
