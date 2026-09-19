@@ -34,6 +34,12 @@ jobs:
           corepack prepare pnpm@11.24.0 --activate
       - name: Install
         run: pnpm install --frozen-lockfile
+      - name: Format preview (temporary)
+        run: |
+          pnpm exec prettier src/integrations/githubProfile.ts --write
+          echo "-----FORMATTED-GITHUB-PROFILE-----"
+          cat src/integrations/githubProfile.ts
+          echo "-----END-FORMATTED-GITHUB-PROFILE-----"
       - name: Verify
         run: pnpm run verify
       - name: Audit production dependencies
