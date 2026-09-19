@@ -157,6 +157,20 @@ et tout le contenu localisé `{ fr, en }` de `projects.ts` suivent automatiqueme
 - Persistance du thème clair-sombre.
 - Préchargement (`link rel=modulepreload`) du premier chapitre.
 
+## Intégration GitHub
+
+Le portfolio utilise l’API REST publique de GitHub pour afficher des informations
+à jour sur le profil `Addey34` et son activité publique récente.
+
+- API : `https://api.github.com`
+- Données : profil public + dépôts publics appartenant au compte
+- Authentification : aucune, uniquement des données publiques
+- Cache navigateur : 30 minutes pour limiter les requêtes
+- Support : `adrian34470@gmail.com`
+
+L’intégration est conçue avec un fallback silencieux : une indisponibilité ou un
+rate-limit GitHub n’empêche jamais le portfolio de fonctionner.
+
 ## Licence
 
 Code sous **PolyForm Noncommercial License 1.0.0** (comme Galaxy / Ludora / MagNotes).
