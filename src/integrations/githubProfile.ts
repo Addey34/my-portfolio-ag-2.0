@@ -54,10 +54,7 @@ function cacheSnapshot(snapshot: GitHubSnapshot): void {
   }
 }
 
-async function githubFetch<T>(
-  path: string,
-  signal?: AbortSignal
-): Promise<T> {
+async function githubFetch<T>(path: string, signal?: AbortSignal): Promise<T> {
   const response = await fetch(`${GITHUB_API}${path}`, {
     signal,
     headers: {
@@ -117,7 +114,8 @@ function renderSnapshot(root: HTMLElement, snapshot: GitHubSnapshot): void {
   if (summary) {
     const repoLabel = snapshot.publicRepos > 1 ? 'repos' : 'repo';
     const followerLabel = snapshot.followers > 1 ? 'followers' : 'follower';
-    summary.textContent = `${snapshot.publicRepos} public ${repoLabel} · ${snapshot.followers} ${followerLabel}`;
+    summary.textContent =
+      `${snapshot.publicRepos} public ${repoLabel} · ${snapshot.followers} ${followerLabel}`;
   }
 
   if (latest && snapshot.latestRepo) {
