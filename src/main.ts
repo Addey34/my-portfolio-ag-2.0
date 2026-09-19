@@ -16,6 +16,7 @@ import { CommandPalette } from '@/ui/CommandPalette';
 import { ControlPanel } from '@/ui/ControlPanel';
 import { MagneticCursor } from '@/ui/MagneticCursor';
 import { SectionRail } from '@/ui/SectionRail';
+import { initGitHubProfile } from '@/integrations/githubProfile';
 
 /**
  * Racine de composition. Ordre : contenu → i18n → smooth-scroll → décors →
@@ -33,6 +34,9 @@ function boot(): void {
   initI18n();
   const langBtn = document.getElementById('lang-toggle');
   if (langBtn) initLocaleToggle(langBtn);
+
+  // 2b. Intégration GitHub REST publique : activité et profil à jour dans le contact.
+  const disposeGitHubProfile = initGitHubProfile();
 
   // 3. Scroll lissé (installe Lenis sur le ticker GSAP, sauf reduced-motion).
   const scroll = new SmoothScroll();
@@ -111,6 +115,7 @@ function boot(): void {
     chapters.destroy();
     cursor?.destroy();
     rail.destroy();
+    disposeGitHubProfile();
   });
 }
 
