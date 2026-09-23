@@ -3,38 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Adrian Guichard — Full Stack & Creative Developer</title>
+    <title>Adrian Guichard — Product Builder Full-Stack</title>
     <meta
       name="description"
-      content="Portfolio d'Adrian Guichard : WebGL, temps réel, full-stack. Galaxy, Ludora, MagNotes."
+      content="Adrian Guichard transforme des idées complexes en produits web clairs, robustes et déployés : full-stack TypeScript, temps réel, WebGL et infrastructure."
     />
+    <meta name="theme-color" content="#03050a" />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Adrian Guichard — Product Builder Full-Stack"
+    />
+    <meta
+      property="og:description"
+      content="Produits web complets, systèmes temps réel, WebGL et infrastructure."
+    />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      id="font-stylesheet"
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
+      media="not all"
     />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Adrian Guichard",
+        "jobTitle": "Full Stack Product Developer",
+        "sameAs": [
+          "https://github.com/Addey34",
+          "https://www.linkedin.com/in/adrianguichard/"
+        ],
+        "knowsAbout": [
+          "TypeScript",
+          "WebGL",
+          "full-stack development",
+          "real-time systems",
+          "product engineering"
+        ]
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#scroll-root" data-i18n="nav.content"
       >Aller au contenu</a
     >
-    <!-- Champ topographique en fond du héros/contact — les chapitres le recouvrent. -->
+    <!-- Fond topographique du hero/contact ; les chapitres passent au-dessus. -->
     <div id="story-background" class="story-background" aria-hidden="true">
       <canvas id="signal-field"></canvas>
-      <!-- Orbe fantomatique : peint le décor de l'univers courant à son passage. -->
-      <canvas id="phantom-orb"></canvas>
       <div id="story-stage" class="story-stage"></div>
       <div class="story-vignette"></div>
     </div>
 
-    <!-- Compteur FPS (dev uniquement, masqué en prod). -->
+    <!-- Compteur FPS dev uniquement, masque en prod. -->
     <div id="fps" class="fps" aria-hidden="true"></div>
 
-    <!-- Wordmark fixe haut-gauche — ancre identitaire, retour en haut. -->
-    <a class="wordmark" href="#top" data-magnetic aria-label="Retour en haut">AG</a>
+    <!-- Wordmark fixe haut-gauche, retour en haut. -->
+    <a class="wordmark" href="#top" data-magnetic aria-label="Retour en haut"
+      >AG</a
+    >
 
-    <!-- HUD fixe : réglages visuels + bascule de langue + raccourci palette. -->
+    <!-- HUD fixe : reglages visuels, langue et palette. -->
     <div class="hud">
       <button
         id="controls-open"
@@ -44,7 +78,7 @@
         data-i18n-aria="controls.aria"
         aria-label="Réglages visuels"
       >
-        ⚙
+        &#9881;
       </button>
       <button
         id="lang-toggle"
@@ -60,7 +94,7 @@
         data-i18n-aria="palette.aria"
         aria-label="Ouvrir la palette de commandes"
       >
-        <!-- Loupe visible en tactile (⌘K impossible à taper), kbd en desktop. -->
+        <!-- Loupe visible on touch, keyboard hint on desktop. -->
         <svg
           class="hud__cmd-icon"
           viewBox="0 0 24 24"
@@ -75,7 +109,7 @@
           <circle cx="11" cy="11" r="7" />
           <line x1="21" y1="21" x2="16.5" y2="16.5" />
         </svg>
-        <kbd class="hud__kbd">⌘K</kbd>
+        <kbd class="hud__kbd">Ctrl K</kbd>
       </button>
     </div>
 
@@ -83,54 +117,61 @@
       <!-- HERO -->
       <section id="top" class="section section--hero" data-scene="hero">
         <div class="hero__inner">
-          <!-- Badges identité : animés par heroAnim.ts -->
+          <!-- Badges identite animes par heroAnim.ts -->
           <div class="hero__tags">
-            <span class="hero__tag" data-i18n="hero.tag.1">Full Stack</span>
-            <span class="hero__tag" data-i18n="hero.tag.2">WebGL &amp; 3D</span>
-            <span class="hero__tag" data-i18n="hero.tag.3">Temps réel</span>
+            <span class="hero__tag" data-i18n="hero.tag.1"
+              >Product builder</span
+            >
+            <span class="hero__tag" data-i18n="hero.tag.2"
+              >Full-stack TypeScript</span
+            >
+            <span class="hero__tag" data-i18n="hero.tag.3"
+              >WebGL &amp; temps réel</span
+            >
           </div>
 
-          <!-- Titre : chaque .hero__word est découpé lettre par lettre par heroAnim.ts -->
+          <!-- Titre decoupe lettre par lettre par heroAnim.ts -->
           <h1 class="hero__title" aria-label="Adrian Guichard">
             <span class="hero__word">Adrian</span><br />
             <span class="hero__word hero__word--gradient">Guichard</span>
           </h1>
 
           <p class="hero__lead" data-i18n="hero.lead">
-            Je transforme des systèmes complexes — 3D, temps réel et données —
-            en produits web fluides, lisibles et utilisables.
+            Je transforme des idées complexes en produits web clairs, robustes
+            et déployés — de l’interface aux données, au temps réel et à
+            l’infrastructure.
           </p>
 
-          <!-- CTAs — smoothscroll via heroAnim.ts + effet magnétique -->
+          <!-- CTAs smoothscroll via heroAnim.ts + effet magnetique -->
           <div class="hero__ctas">
             <a
               href="#projects"
               class="hero__cta hero__cta--primary"
               data-magnetic
             >
-              <span data-i18n="hero.cta.projects">Découvrir les projets</span>
-              <span class="hero__cta-icon" aria-hidden="true">↓</span>
+              <span data-i18n="hero.cta.projects">Explorer les produits</span>
+              <span class="hero__cta-icon" aria-hidden="true">&darr;</span>
             </a>
             <a
               href="#contact"
               class="hero__cta hero__cta--ghost"
               data-magnetic
               data-i18n="hero.cta.contact"
-              >Travaillons ensemble</a
+              >Parler d’un projet</a
             >
           </div>
-
         </div>
       </section>
 
       <!-- INTRO -->
       <section id="intro" class="section section--intro">
         <p class="intro__kicker" data-reveal data-i18n="intro.kicker">
-          Trois systèmes, une approche
+          Des produits réels, pas seulement des écrans
         </p>
         <h2 class="intro__title" data-i18n="intro.title">
-          Chaque projet répond à une contrainte différente. La constante :
-          comprendre le système complet avant d'écrire la première ligne.
+          Je pars d’un problème, je construis le système complet et je le mène
+          jusqu’à une version utilisable. Mes projets montrent autant mes choix
+          de produit que mon code.
         </h2>
       </section>
 
@@ -138,28 +179,29 @@
       <section id="stack" class="section section--stack" data-scene="stack">
         <div class="stack__copy">
           <p class="intro__kicker" data-reveal data-i18n="stack.kicker">
-            Le système derrière l'image
+            La méthode derrière le produit
           </p>
           <h2 class="stack__title" data-reveal data-i18n="stack.title">
-            Une architecture pensée comme un moteur, pas comme une liste.
+            Une architecture qui sert l’usage avant la technologie.
           </h2>
           <p class="stack__lead" data-reveal data-i18n="stack.lead">
-            Interface, temps réel, données et déploiement restent reliés du
-            prototype jusqu'à la production.
+            Je relie interface, logique métier, données, temps réel et
+            déploiement pour livrer des produits cohérents, testables et
+            capables d’évoluer.
           </p>
         </div>
 
-        <!-- Constellation technique — nœuds réels (accessibles) que StackGraph
-             anime et rend réactifs à la souris. Sans JS/desktop : liste de pilules. -->
+        <!-- La topologie AG est dessinee dans le fond Canvas. Cette liste reste
+             accessible aux lecteurs d'ecran et documente ses 24 noeuds principaux et plus de 35 technologies. -->
         <div class="stack-viz" data-reveal>
           <ul
-            class="stack-graph"
+            class="stack-graph stack-graph--offloaded"
             data-stack-graph
             data-i18n-aria="stack.techs"
             aria-label="Technologies utilisées"
           >
-            <li class="stack-node" data-layer="interface" data-weight="primary">
-              JavaScript
+            <li class="stack-node" data-layer="interface">
+              JavaScript / ESBuild
             </li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
               TypeScript
@@ -168,21 +210,46 @@
               React
             </li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
+              Next.js
+            </li>
+            <li class="stack-node" data-layer="interface" data-weight="primary">
+              Vite
+            </li>
+            <li class="stack-node" data-layer="interface">
+              Tailwind / Radix UI
+            </li>
+            <li class="stack-node" data-layer="interface">HTML / CSS</li>
+            <li class="stack-node" data-layer="interface">WebGL</li>
+            <li class="stack-node" data-layer="interface">Canvas 2D</li>
+            <li class="stack-node" data-layer="realtime" data-weight="primary">
               Three.js
             </li>
-            <li class="stack-node" data-layer="interface">Canvas</li>
-            <li class="stack-node" data-layer="realtime">GSAP</li>
-            <li class="stack-node" data-layer="realtime">WebSocket</li>
-            <li class="stack-node" data-layer="realtime">Nakama</li>
-            <li class="stack-node" data-layer="data" data-weight="primary">
-              Node
+            <li class="stack-node" data-layer="realtime">GSAP / Lenis</li>
+            <li class="stack-node" data-layer="realtime" data-weight="primary">
+              Nakama
             </li>
-            <li class="stack-node" data-layer="data">MongoDB</li>
-            <li class="stack-node" data-layer="data">REST</li>
-            <li class="stack-node" data-layer="deploy">Docker</li>
-            <li class="stack-node" data-layer="deploy">Vite</li>
-            <li class="stack-node" data-layer="deploy">PWA</li>
-            <li class="stack-node" data-layer="deploy">CI</li>
+            <li class="stack-node" data-layer="data" data-weight="primary">
+              Node.js
+            </li>
+            <li class="stack-node" data-layer="data" data-weight="primary">
+              Express
+            </li>
+            <li class="stack-node" data-layer="data">MongoDB / Mongoose</li>
+            <li class="stack-node" data-layer="data">FastAPI / Uvicorn</li>
+            <li class="stack-node" data-layer="data">Python / Pydantic</li>
+            <li class="stack-node" data-layer="data">Upstash Redis</li>
+            <li class="stack-node" data-layer="deploy" data-weight="primary">
+              PyTorch / CUDA
+            </li>
+            <li class="stack-node" data-layer="deploy">
+              Diffusers / Transformers
+            </li>
+            <li class="stack-node" data-layer="deploy">Playwright / Cheerio</li>
+            <li class="stack-node" data-layer="deploy">
+              Docker / Oracle Cloud
+            </li>
+            <li class="stack-node" data-layer="deploy">Discord.js / voice</li>
+            <li class="stack-node" data-layer="realtime">FFmpeg / yt-dlp</li>
           </ul>
 
           <ul class="stack-legend">
@@ -192,34 +259,171 @@
             <li data-layer="realtime">
               <span data-i18n="arch.realtime">Temps réel</span>
             </li>
-            <li data-layer="data"><span data-i18n="arch.data">Données</span></li>
+            <li data-layer="data">
+              <span data-i18n="arch.data">Données</span>
+            </li>
             <li data-layer="deploy">
               <span data-i18n="arch.deploy">Déploiement</span>
             </li>
           </ul>
+          <p class="stack-hover-note" data-i18n="arch.hover">
+            Points secondaires : survoler pour explorer
+          </p>
         </div>
       </section>
 
-      <!-- PROJETS : chapitres immersifs injectés depuis src/content/projects.ts (source unique). -->
+      <!-- SOLUTIONS -->
+      <section id="freelance" class="section section--offers">
+        <div class="section-copy">
+          <p class="intro__kicker" data-reveal data-i18n="freelance.kicker">
+            Intervenir là où le produit bloque
+          </p>
+          <h2 class="stack__title" data-reveal data-i18n="freelance.title">
+            La bonne brique, au bon moment.
+          </h2>
+          <p class="stack__lead" data-reveal data-i18n="freelance.lead">
+            Pour une mission, j’interviens de la première version au déploiement
+            : cadrage, UX, frontend, backend et infrastructure. Mon rôle est de
+            réduire la complexité, pas d’ajouter une couche technique.
+          </p>
+        </div>
+
+        <div class="offer-grid">
+          <article class="offer-card" tabindex="0" data-story-focus data-reveal>
+            <span>01</span>
+            <h3 data-i18n="freelance.card.product.title">Produit sur mesure</h3>
+            <p data-i18n="freelance.card.product.text">
+              SaaS, dashboard, outil métier, espace client ou MVP complet, du
+              parcours utilisateur jusqu'à la logique applicative.
+            </p>
+            <p class="story-note" data-i18n="freelance.card.product.note">
+              Du cadrage au déploiement.
+            </p>
+          </article>
+          <article class="offer-card" tabindex="0" data-story-focus data-reveal>
+            <span>02</span>
+            <h3 data-i18n="freelance.card.system.title">
+              Architecture complète
+            </h3>
+            <p data-i18n="freelance.card.system.text">
+              Frontend TypeScript, API, base de données, authentification,
+              automatisation, déploiement VPS et maintenance évolutive.
+            </p>
+            <p class="story-note" data-i18n="freelance.card.system.note">
+              Front, API, données et infrastructure.
+            </p>
+          </article>
+          <article class="offer-card" tabindex="0" data-story-focus data-reveal>
+            <span>03</span>
+            <h3 data-i18n="freelance.card.automation.title">
+              Automatisation et données
+            </h3>
+            <p data-i18n="freelance.card.automation.text">
+              Scraping, comparaison de prix, orchestration d'API, extraction,
+              nettoyage et interfaces de pilotage.
+            </p>
+            <p class="story-note" data-i18n="freelance.card.automation.note">
+              Collecter, nettoyer, décider.
+            </p>
+          </article>
+          <article class="offer-card" tabindex="0" data-story-focus data-reveal>
+            <span>04</span>
+            <h3 data-i18n="freelance.card.delivery.title">
+              Livraison augmentée
+            </h3>
+            <p data-i18n="freelance.card.delivery.text">
+              IA comme accélérateur de conception, revue et production, avec
+              validation humaine sur l'architecture, la sécurité et la qualité.
+            </p>
+            <p class="story-note" data-i18n="freelance.card.delivery.note">
+              Accélérer sans sacrifier la qualité.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- PROJETS : chapitres immersifs injectes depuis src/content/projects.ts. -->
       <section id="projects" class="chapters"></section>
 
       <!-- CONTACT -->
       <section id="contact" class="section section--contact">
+        <p class="contact__kicker" data-reveal data-i18n="contact.kicker">
+          Construisons quelque chose d’utile
+        </p>
         <h2 class="contact__title" data-reveal data-i18n="contact.title">
-          Un système complexe à rendre simple ?
+          Un produit à lancer, une expérience à simplifier ?
         </h2>
         <p class="contact__lead" data-reveal data-i18n="contact.lead">
-          Application ambitieuse, moteur interactif ou produit à remettre à plat
-          : parlons de ce que nous pouvons construire.
+          Parle-moi du problème, du contexte et de ce qui doit changer. Je te
+          répondrai avec une première lecture concrète, même si le projet n’est
+          pas encore cadré.
         </p>
-        <a
-          class="contact__cta"
-          href="mailto:adrian34470@gmail.com"
+        <ul
+          class="contact__signals"
+          aria-label="Repères de collaboration"
           data-reveal
-          data-magnetic
-          data-i18n="contact.cta"
-          >Parlons de votre projet</a
         >
+          <li>
+            <strong>01</strong>
+            <span data-i18n="contact.signal.1">Sélection actuelle</span>
+          </li>
+          <li>
+            <strong>02</strong>
+            <span data-i18n="contact.signal.2">Du produit au déploiement</span>
+          </li>
+          <li>
+            <strong>03</strong>
+            <span data-i18n="contact.signal.3">Échange direct par email</span>
+          </li>
+        </ul>
+        <details class="contact__disclosure" data-reveal>
+          <summary class="contact__form-toggle">
+            <span class="contact__form-open" data-i18n="contact.form.open"
+              >Déplier le formulaire</span
+            >
+            <span class="contact__form-close" data-i18n="contact.form.close"
+              >Replier le formulaire</span
+            >
+            <span class="contact__form-toggle-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="contact__form-shell">
+            <form id="contact-form" class="contact__form">
+              <p class="contact__form-label" data-i18n="contact.form.label">
+                Contact / brief
+              </p>
+              <div class="contact__form-grid">
+                <label>
+                  <span data-i18n="contact.form.name">Nom</span>
+                  <input name="name" type="text" autocomplete="name" required />
+                </label>
+                <label>
+                  <span data-i18n="contact.form.email">Email</span>
+                  <input
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                  />
+                </label>
+              </div>
+              <label>
+                <span data-i18n="contact.form.message">Projet ou contexte</span>
+                <textarea name="message" rows="4" required></textarea>
+              </label>
+              <button
+                class="contact__cta"
+                type="submit"
+                data-magnetic
+                data-i18n="contact.form.submit"
+              >
+                Préparer le message
+              </button>
+              <p class="contact__form-note" data-i18n="contact.form.note">
+                Le message s’ouvrira dans ton client email.
+              </p>
+            </form>
+          </div>
+        </details>
         <div class="contact__links" data-reveal>
           <a
             href="https://github.com/Addey34"

@@ -65,22 +65,10 @@ export class ChapterManager {
       { rootMargin: this.reduced ? '0px' : '120% 0px', threshold: 0 }
     );
 
-    if (this.reduced) {
-      this.storyProgress = 0.68;
-      this.storyScene.update(this.storyProgress, 0);
-      this.storyTrigger = null;
-    } else {
-      this.storyTrigger = ScrollTrigger.create({
-        trigger: '#top',
-        endTrigger: '#stack',
-        start: 'top top',
-        end: 'bottom top',
-        onUpdate: (self) => {
-          this.storyProgress = self.progress;
-          this.storyOpacity = 1 - clamp01((self.progress - 0.82) / 0.18);
-        },
-      });
-    }
+    this.storyProgress = 0.5;
+    this.storyOpacity = 1;
+    this.storyTrigger = null;
+    if (this.reduced) this.storyScene.update(this.storyProgress, 0);
 
     const byId = new Map<string, Project>(PROJECTS.map((p) => [p.id, p]));
     root.querySelectorAll<HTMLElement>('.chapter').forEach((section) => {
@@ -139,7 +127,7 @@ export class ChapterManager {
     }
     const visualState = this.getVisualState?.();
     if (visualState) this.storyScene.setVisualState(visualState);
-    if (this.animated && !this.reduced && this.storyOpacity > 0) {
+    if (this.animated && !this.reduced) {
       this.storyScene.update(this.storyProgress, time);
     }
 
@@ -220,8 +208,8 @@ export class ChapterManager {
   }
 
   private layerEnvelope(progress: number): number {
-    const enter = clamp01(progress / 0.18);
-    const leave = 1 - clamp01((progress - 0.82) / 0.18);
+    const enter = clamp01((progress - 0.12) / 0.18);
+    const leave = 1 - clamp01((progress - 0.72) / 0.18);
     return Math.min(enter, leave);
   }
 }

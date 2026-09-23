@@ -2,21 +2,68 @@ import { PROJECTS, type Project } from '@/content/projects';
 import { registerDynamic, t, tl } from '@/i18n';
 
 /**
- * Construit le DOM des chapitres projet depuis la source unique PROJECTS.
+ * Construit le seuil narratif et le DOM des chapitres depuis PROJECTS.
  *
- * Chaque chapitre : une section plein écran avec
- *  - `.chapter__stage` : le décor immersif de l'app (monté à l'approche par
- *    chapters/ChapterManager.ts — décoratif, aria-hidden) ;
- *  - `.chapter__panel` : le texte, sur panneau translucide LISIBLE quel que
- *    soit le décor derrière (contraste garanti par le CSS, pas par la chance).
- *
- * Les textes localisés passent par `registerDynamic` : mis à jour au changement
- * de langue sans re-render (les décors restent en place).
+ * Le seuil annonce les univers sans dupliquer les données projet. Chaque
+ * chapitre conserve ensuite deux temps de lecture dans le même panneau
+ * sémantique : contexte, puis preuve/résultat.
  */
 export function renderProjects(mount: HTMLElement): void {
   const frag = document.createDocumentFragment();
+  frag.appendChild(buildThreshold());
   PROJECTS.forEach((project, i) => frag.appendChild(buildChapter(project, i)));
   mount.appendChild(frag);
+}
+
+function buildThreshold(): HTMLElement {
+  const threshold = document.createElement('div');
+  threshold.id = 'projects-intro';
+  threshold.className = 'project-threshold';
+
+  const inner = document.createElement('div');
+  inner.className = 'project-threshold__inner';
+
+  const kicker = el('p', 'project-threshold__kicker', '');
+  kicker.setAttribute('data-reveal', '');
+  kicker.dataset.i18n = 'projects.threshold.kicker';
+
+  const title = el('h2', 'project-threshold__title', '');
+  title.dataset.i18n = 'projects.threshold.title';
+  title.setAttribute('data-reveal', '');
+
+  const lead = el('p', 'project-threshold__lead', '');
+  lead.dataset.i18n = 'projects.threshold.lead';
+  lead.setAttribute('data-reveal', '');
+
+  const list = document.createElement('ol');
+  list.className = 'project-threshold__list';
+  list.dataset.i18nAria = 'projects.threshold.aria';
+  list.setAttribute('aria-label', t('projects.threshold.aria'));
+  list.setAttribute('data-reveal', '');
+
+  PROJECTS.forEach((project, index) => {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${project.id}`;
+    link.setAttribute('data-magnetic', '');
+    link.setAttribute('data-story-focus', '');
+    link.setAttribute('data-reveal', '');
+
+    const number = el('span', 'project-threshold__number', `0${index + 1}`);
+    const name = el('strong', 'project-threshold__name', project.name);
+    const thesis = el('span', 'project-threshold__thesis', '');
+    registerDynamic(thesis, () => tl(project.thesis));
+    const arrow = el('span', 'project-threshold__arrow', '↘');
+    arrow.setAttribute('aria-hidden', 'true');
+
+    link.append(number, name, thesis, arrow);
+    item.appendChild(link);
+    list.appendChild(item);
+  });
+
+  inner.append(kicker, title, lead, list);
+  threshold.appendChild(inner);
+  return threshold;
 }
 
 function buildChapter(project: Project, index: number): HTMLElement {
@@ -25,16 +72,27 @@ function buildChapter(project: Project, index: number): HTMLElement {
   article.id = project.id;
   article.style.setProperty('--chapter-accent', project.accent);
 
-  // Panneau texte.
   const inner = document.createElement('div');
   inner.className = 'chapter__inner';
+  const shell = document.createElement('div');
+  shell.className = 'chapter__panel-shell';
   const panel = document.createElement('div');
   panel.className = 'chapter__panel';
   panel.setAttribute('data-reveal-panel', '');
 
+  const context = document.createElement('div');
+  context.className = 'chapter__beat chapter__beat--context';
+  const outcome = document.createElement('div');
+  outcome.className = 'chapter__beat chapter__beat--outcome';
+
   const num = `0${index + 1}`;
+  const meta = el('div', 'chapter__meta', '');
   const idx = el('p', 'chapter__index', '');
   registerDynamic(idx, () => `${num} — ${t('project.label')}`);
+
+  const status = el('span', 'chapter__status', '');
+  registerDynamic(status, () => tl(project.status));
+  meta.append(idx, status);
 
   const name = el('h3', 'chapter__name', project.name);
 
@@ -44,24 +102,14 @@ function buildChapter(project: Project, index: number): HTMLElement {
   const tagline = el('p', 'chapter__tagline', '');
   registerDynamic(tagline, () => tl(project.tagline));
 
-  const proof = document.createElement('dl');
-  proof.className = 'chapter__proof';
   const proofEntries = [
     ['problem', project.proof.problem],
     ['role', project.proof.role],
     ['challenge', project.proof.challenge],
     ['result', project.proof.result],
   ] as const;
-  proofEntries.forEach(([key, value]) => {
-    const item = document.createElement('div');
-    item.className = 'chapter__proof-item';
-    const term = el('dt', 'chapter__proof-label', t(`project.${key}`));
-    term.dataset.i18n = `project.${key}`;
-    const description = el('dd', 'chapter__proof-value', '');
-    registerDynamic(description, () => tl(value));
-    item.append(term, description);
-    proof.appendChild(item);
-  });
+  const contextProof = buildProof(proofEntries.slice(0, 2));
+  const outcomeProof = buildProof(proofEntries.slice(2));
 
   const stack = document.createElement('ul');
   stack.className = 'chapter__stack';
@@ -84,11 +132,62 @@ function buildChapter(project: Project, index: number): HTMLElement {
     registerDynamic(note, () => tl(project.linkNote!));
     links.appendChild(note);
   }
+  const share = document.createElement('button');
+  share.type = 'button';
+  share.className = 'chapter__share';
+  share.dataset.i18n = 'action.share';
+  share.textContent = t('action.share');
+  share.setAttribute('data-magnetic', '');
+  share.addEventListener('click', async () => {
+    const url = new URL('#' + project.id, window.location.href).href;
+    try {
+      await navigator.clipboard.writeText(url);
+      share.dataset.i18n = 'action.shared';
+      share.textContent = t('action.shared');
+      window.setTimeout(() => {
+        share.dataset.i18n = 'action.share';
+        share.textContent = t('action.share');
+      }, 1800);
+    } catch {
+      window.location.hash = project.id;
+    }
+  });
+  links.appendChild(share);
 
-  panel.append(idx, thesis, name, tagline, proof, stack, links);
-  inner.appendChild(panel);
+  context.append(meta, thesis, name, tagline, contextProof);
+  outcome.append(outcomeProof, stack, links);
+  panel.append(context, outcome);
+  shell.appendChild(panel);
+  inner.appendChild(shell);
   article.append(inner);
   return article;
+}
+
+function buildProof(
+  entries: ReadonlyArray<
+    readonly [
+      'problem' | 'role' | 'challenge' | 'result',
+      Project['proof'][keyof Project['proof']],
+    ]
+  >
+): HTMLDListElement {
+  const proof = document.createElement('dl');
+  proof.className = 'chapter__proof';
+
+  entries.forEach(([key, value]) => {
+    const item = document.createElement('div');
+    item.className = 'chapter__proof-item';
+    item.tabIndex = 0;
+    item.dataset.storyFocus = '';
+    const term = el('dt', 'chapter__proof-label', t(`project.${key}`));
+    term.dataset.i18n = `project.${key}`;
+    const description = el('dd', 'chapter__proof-value', '');
+    registerDynamic(description, () => tl(value));
+    item.append(term, description);
+    proof.appendChild(item);
+  });
+
+  return proof;
 }
 
 function el(tag: string, className: string, text: string): HTMLElement {

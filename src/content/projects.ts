@@ -1,17 +1,19 @@
-import type { Localized } from '@/i18n/dictionary';
+﻿import type { Localized } from '@/i18n/dictionary';
 
 /**
- * Catalogue des projets — SOURCE UNIQUE.
+ * Catalogue des projets - SOURCE UNIQUE.
  *
  * Le DOM des sections, la navigation, la palette de commandes et les chapitres
- * animés se dérivent de ce tableau. Chaque entrée contient aussi une mini étude
- * de cas factuelle : problème, rôle, défi et résultat.
+ * animes se derivent de ce tableau. Chaque entree contient aussi une mini etude
+ * de cas factuelle : probleme, role, defi et resultat.
  */
 export interface Project {
   id: string;
   name: string;
+  status: Localized;
+  visual: 'immersive' | 'generic';
   tagline: Localized;
-  /** Idée directrice du chapitre dans la progression globale. */
+  /** Idee directrice du chapitre dans la progression globale. */
   thesis: Localized;
   proof: {
     problem: Localized;
@@ -21,7 +23,7 @@ export interface Project {
   };
   stack: string[];
   links: { label: Localized; href: string }[];
-  /** Précision honnête lorsque le code ou une démo ne sont pas publics. */
+  /** Precision honnete lorsque le code ou une demo ne sont pas publics. */
   linkNote?: Localized;
   accent: string;
   chapter: string;
@@ -29,13 +31,16 @@ export interface Project {
 
 const demo: Localized = { fr: 'Démo', en: 'Live' };
 const code: Localized = { fr: 'Code source', en: 'Source code' };
+const live: Localized = { fr: 'Démo en ligne', en: 'Live demo' };
 
 export const PROJECTS: Project[] = [
   {
     id: 'galaxy',
     name: 'Galaxy',
+    status: live,
+    visual: 'immersive',
     thesis: {
-      fr: 'Rendre l’immensité navigable.',
+      fr: "Rendre l'immensité navigable.",
       en: 'Making immensity navigable.',
     },
     tagline: {
@@ -62,7 +67,7 @@ export const PROJECTS: Project[] = [
     },
     stack: ['TypeScript', 'Three.js', 'astronomy-engine', 'Playwright', 'Vite'],
     links: [
-      { label: demo, href: 'https://addey34.github.io/SolarSystem3D/' },
+      { label: demo, href: 'https://galaxy.adrianguichard.dev/' },
       { label: code, href: 'https://github.com/Addey34/galaxy-3d' },
     ],
     accent: '#4a8fff',
@@ -71,6 +76,8 @@ export const PROJECTS: Project[] = [
   {
     id: 'ludora',
     name: 'Ludora',
+    status: live,
+    visual: 'immersive',
     thesis: {
       fr: 'Faire tenir la diversité dans un même système.',
       en: 'Making variety work as one system.',
@@ -81,7 +88,7 @@ export const PROJECTS: Project[] = [
     },
     proof: {
       problem: {
-        fr: 'Réunir des dizaines de gameplays sans dupliquer toute l’infrastructure.',
+        fr: "Réunir des dizaines de gameplays sans dupliquer toute l'infrastructure.",
         en: 'Bring dozens of gameplays together without duplicating the entire infrastructure.',
       },
       role: {
@@ -97,11 +104,14 @@ export const PROJECTS: Project[] = [
         en: 'A cohesive catalogue with daily challenges, global rankings and connected modes.',
       },
     },
-    stack: ['TypeScript', 'Vite MPA', 'Nakama', 'Canvas / RAF', 'PWA'],
-    links: [],
+    stack: ['TypeScript', 'Vite MPA', 'Nakama', 'Canvas', 'PWA'],
+    links: [
+      { label: demo, href: 'https://ludora.adrianguichard.dev/' },
+      { label: code, href: 'https://github.com/Addey34/ludora-frontend' },
+    ],
     linkNote: {
-      fr: 'Code non publié ici — architecture présentée dans ce chapitre.',
-      en: 'Source code not published here — architecture presented in this chapter.',
+      fr: 'Backend privé ; frontend public et architecture présentés ici.',
+      en: 'Private backend; public frontend and architecture presented here.',
     },
     accent: '#7dd3fc',
     chapter: 'ludora',
@@ -109,6 +119,8 @@ export const PROJECTS: Project[] = [
   {
     id: 'magnotes',
     name: 'MagNotes',
+    status: live,
+    visual: 'immersive',
     thesis: {
       fr: 'Transformer le chaos en produit.',
       en: 'Turning chaos into a product.',
@@ -131,15 +143,18 @@ export const PROJECTS: Project[] = [
         en: 'Synchronise an infinite canvas, links and structured views around the same data.',
       },
       result: {
-        fr: 'Un produit Dockerisé déployé sur Oracle Cloud, du stockage à l’interface.',
+        fr: "Un produit Dockerisé déployé sur Oracle Cloud, du stockage à l'interface.",
         en: 'A Dockerised product deployed on Oracle Cloud, from storage to interface.',
       },
     },
     stack: ['React', 'TypeScript', 'MongoDB', 'Docker', 'Node'],
-    links: [],
+    links: [
+      { label: demo, href: 'https://magnotes.adrianguichard.dev/' },
+      { label: code, href: 'https://github.com/Addey34/magnotes-frontend' },
+    ],
     linkNote: {
-      fr: 'Code non publié ici — produit et architecture détaillés dans ce chapitre.',
-      en: 'Source code not published here — product and architecture detailed in this chapter.',
+      fr: 'Backend privé ; frontend public et architecture détaillés ici.',
+      en: 'Private backend; public frontend and architecture detailed here.',
     },
     accent: '#6366f1',
     chapter: 'magnotes',

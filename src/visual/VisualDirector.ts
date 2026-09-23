@@ -1,4 +1,4 @@
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+﻿import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROJECTS } from '@/content/projects';
 import type { SignalField } from '@/visual/SignalField';
 import type { VisualScene, VisualState } from '@/visual/types';
@@ -12,10 +12,10 @@ interface SceneTarget {
 }
 
 /**
- * Direction artistique centrale. Elle ne dessine rien elle-même : elle traduit
- * le parcours de scroll en un état visuel partagé par le champ persistant et
- * les chapitres. Les univers gardent leur personnalité, mais battent sur la
- * même pulsation et partagent le même point d'attention.
+ * Direction artistique centrale. Elle ne dessine rien elle-mÃªme : elle traduit
+ * le parcours de scroll en un Ã©tat visuel partagÃ© par le champ persistant et
+ * les chapitres. Les univers gardent leur personnalitÃ©, mais battent sur la
+ * mÃªme pulsation et partagent le mÃªme point d'attention.
  */
 export class VisualDirector {
   private readonly triggers: ScrollTrigger[] = [];
@@ -53,10 +53,14 @@ export class VisualDirector {
     this.field?.setInteractive(on);
   }
 
+  setLiteMode(on: boolean): void {
+    this.field?.setLiteMode(on);
+  }
+
   render(time: number): void {
     const delta = this.lastTime ? Math.min(time - this.lastTime, 50) : 16;
     this.lastTime = time;
-    const ease = 1 - Math.pow(0.9, delta / 16);
+    const ease = 1 - Math.pow(0.91, delta / 16);
     this.state.transition += (1 - this.state.transition) * ease;
     this.state.energy += (this.targetEnergy - this.state.energy) * ease;
     this.state.pulse = Math.sin(time * 0.00085) * 0.5 + 0.5;
@@ -89,6 +93,20 @@ export class VisualDirector {
         accentNext: '#8f7bff',
         energy: 0.5,
       },
+      {
+        selector: '#freelance',
+        scene: 'solutions',
+        accent: '#7dd3fc',
+        accentNext: '#8f7bff',
+        energy: 0.54,
+      },
+      {
+        selector: '#projects-intro',
+        scene: 'selection',
+        accent: '#ffb35f',
+        accentNext: PROJECTS[0]?.accent ?? '#4a8fff',
+        energy: 0.48,
+      },
       ...PROJECTS.map((project) => ({
         selector: `#${project.id}`,
         scene: project.id as VisualScene,
@@ -105,8 +123,7 @@ export class VisualDirector {
       },
     ];
 
-    // Chaque univers connaît l'accent du suivant — les transitions peuvent
-    // ainsi pré-annoncer (écho de couleur) ce qui arrive.
+    // Chaque univers connait l'accent du suivant pour annoncer la transition.
     for (let i = 0; i < targets.length - 1; i++) {
       targets[i].accentNext = targets[i + 1].accent;
     }
@@ -143,6 +160,7 @@ export class VisualDirector {
   private activate(target: SceneTarget): void {
     if (this.state.scene === target.scene) return;
     this.state.scene = target.scene;
+    this.state.sceneProgress = 0;
     this.state.accent = target.accent;
     this.state.accentNext = target.accentNext;
     this.state.transition = 0;

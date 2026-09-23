@@ -82,20 +82,20 @@ export function initHero(scroll: SmoothScroll): void {
   const ctas = document.querySelector<HTMLElement>('.hero__ctas');
 
   // --- Timeline principale ---
-  const tl = gsap.timeline({ delay: 0.25 });
+  const tl = gsap.timeline({ delay: 0.1 });
 
   // 1. Badges identity → arrivent en stagger léger
   tl.fromTo(
     tags,
     { opacity: 0, y: 16 },
-    { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: 'power2.out' }
+    { opacity: 1, y: 0, duration: 0.44, stagger: 0.07, ease: 'power2.out' }
   );
 
   // 2. « Adrian » lettre par lettre (démarre avant la fin des badges)
   if (letterGroups[0]) {
     tl.to(
       letterGroups[0],
-      { y: 0, duration: 0.8, stagger: 0.042, ease: 'power3.out' },
+      { y: 0, duration: 0.62, stagger: 0.03, ease: 'power3.out' },
       '-=0.2'
     );
   }
@@ -104,7 +104,7 @@ export function initHero(scroll: SmoothScroll): void {
   if (letterGroups[1]) {
     tl.to(
       letterGroups[1],
-      { y: 0, duration: 0.8, stagger: 0.038, ease: 'power3.out' },
+      { y: 0, duration: 0.62, stagger: 0.028, ease: 'power3.out' },
       '-=0.58'
     );
   }
@@ -114,7 +114,7 @@ export function initHero(scroll: SmoothScroll): void {
     tl.fromTo(
       lead,
       { opacity: 0, y: 22 },
-      { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
+      { opacity: 1, y: 0, duration: 0.58, ease: 'power2.out' },
       '-=0.1'
     );
   }
@@ -124,7 +124,7 @@ export function initHero(scroll: SmoothScroll): void {
     tl.fromTo(
       ctas,
       { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
       '-=0.5'
     );
   }

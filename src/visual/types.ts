@@ -1,5 +1,12 @@
 export type VisualScene =
-  'identity' | 'stack' | 'galaxy' | 'ludora' | 'magnotes' | 'contact';
+  | 'identity'
+  | 'stack'
+  | 'solutions'
+  | 'selection'
+  | 'galaxy'
+  | 'ludora'
+  | 'magnotes'
+  | 'contact';
 
 export interface VisualState {
   scene: VisualScene;

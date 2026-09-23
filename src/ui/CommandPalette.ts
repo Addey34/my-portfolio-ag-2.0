@@ -1,14 +1,13 @@
 import type { SmoothScroll } from '@/core/SmoothScroll';
 import { PROJECTS } from '@/content/projects';
-import { t, toggleLocale } from '@/i18n';
+import { onLocaleChange, t, toggleLocale } from '@/i18n';
 
 /**
- * Command palette — navigation clavier au style Raycast/⌘K (écho à MagNotes).
+ * Command palette: keyboard navigation in a Raycast-like style.
  *
- * Ouverture : Ctrl/⌘ + K (ou le bouton du HUD). Filtrage instantané, flèches
- * pour naviguer, Entrée pour exécuter, Échap pour fermer. Le focus est renvoyé
- * à l'élément d'origine à la fermeture (a11y). Les libellés sont relus à chaque
- * rendu → suivent la langue courante sans câblage supplémentaire.
+ * Opens with Ctrl/Cmd + K or the HUD button. It filters instantly, supports
+ * arrows, Enter and Escape, restores focus on close, and refreshes labels when
+ * the active language changes.
  */
 interface Command {
   id: string;
@@ -26,6 +25,27 @@ export class CommandPalette {
   private active = 0;
   private open = false;
   private lastFocused: HTMLElement | null = null;
+  private readonly onDocumentKeydown = (event: KeyboardEvent): void => {
+    if (!this.open) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.close();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable: HTMLElement[] = [
+      this.input,
+      ...Array.from(this.list.querySelectorAll<HTMLElement>('.palette__item')),
+    ];
+    const index = focusable.indexOf(document.activeElement as HTMLElement);
+    const next = event.shiftKey
+      ? index <= 0
+        ? focusable.length - 1
+        : index - 1
+      : (index + 1) % focusable.length;
+    event.preventDefault();
+    focusable[next].focus();
+  };
 
   constructor(private readonly scroll: SmoothScroll) {
     this.commands = this.buildCommands();
@@ -34,6 +54,8 @@ export class CommandPalette {
     this.list = this.root.querySelector('.palette__list') as HTMLUListElement;
     document.body.appendChild(this.root);
     this.bind();
+    onLocaleChange(() => this.syncLocale());
+    this.syncLocale();
   }
 
   private buildCommands(): Command[] {
@@ -49,6 +71,12 @@ export class CommandPalette {
         group: 'nav',
         label: () => t('nav.intro'),
         run: () => this.go('#intro'),
+      },
+      {
+        id: 'freelance',
+        group: 'nav',
+        label: () => t('nav.freelance'),
+        run: () => this.go('#freelance'),
       },
       {
         id: 'projects',
@@ -113,7 +141,7 @@ export class CommandPalette {
     root.hidden = true;
     root.innerHTML = `
       <div class="palette__backdrop" data-close></div>
-      <div class="palette__panel" role="dialog" aria-modal="true" aria-label="Commandes">
+      <div class="palette__panel" role="dialog" aria-modal="true">
         <input
           class="palette__input"
           type="text"
@@ -136,6 +164,7 @@ export class CommandPalette {
         this.toggle();
       }
     });
+    document.addEventListener('keydown', this.onDocumentKeydown);
 
     this.root
       .querySelector('[data-close]')
@@ -161,7 +190,13 @@ export class CommandPalette {
     });
   }
 
-  /** Bouton du HUD (ou tout autre déclencheur). */
+  /**
+   * Command palette: keyboard navigation in a Raycast-like style.
+   *
+   * Opens with Ctrl/Cmd + K or the HUD button. It filters instantly, supports
+   * arrows, Enter and Escape, restores focus on close, and refreshes labels when
+   * the active language changes.
+   */
   attachTrigger(el: HTMLElement): void {
     el.addEventListener('click', () => this.toggle());
   }
@@ -178,7 +213,7 @@ export class CommandPalette {
     this.input.value = '';
     this.active = 0;
     this.filter();
-    requestAnimationFrame(() => this.input.focus());
+    this.input.focus({ preventScroll: true });
   }
 
   private close(): void {
@@ -188,6 +223,13 @@ export class CommandPalette {
     this.lastFocused?.focus();
   }
 
+  private syncLocale(): void {
+    const panel = this.root.querySelector<HTMLElement>('.palette__panel');
+    panel?.setAttribute('aria-label', t('palette.hint'));
+    this.input.placeholder = t('palette.placeholder');
+    this.input.setAttribute('aria-label', t('palette.placeholder'));
+    if (this.open) this.filter();
+  }
   private filter(): void {
     const q = this.input.value.trim().toLowerCase();
     this.filtered = q
@@ -204,6 +246,7 @@ export class CommandPalette {
     };
 
     if (this.filtered.length === 0) {
+      this.input.removeAttribute('aria-activedescendant');
       this.list.innerHTML = `<li class="palette__empty">${t('palette.empty')}</li>`;
       return;
     }
@@ -221,6 +264,8 @@ export class CommandPalette {
       }
       const li = document.createElement('li');
       li.className = 'palette__item';
+      li.id = 'palette-option-' + i;
+      li.tabIndex = -1;
       li.textContent = cmd.label();
       li.setAttribute('role', 'option');
       li.setAttribute('aria-selected', String(i === this.active));
@@ -235,6 +280,7 @@ export class CommandPalette {
       });
       this.list.appendChild(li);
     });
+    this.syncActive();
   }
 
   private move(delta: number): void {
@@ -250,7 +296,10 @@ export class CommandPalette {
       const on = i === this.active;
       el.classList.toggle('is-active', on);
       el.setAttribute('aria-selected', String(on));
-      if (on) el.scrollIntoView({ block: 'nearest' });
+      if (on) {
+        this.input.setAttribute('aria-activedescendant', el.id);
+        el.scrollIntoView({ block: 'nearest' });
+      }
     });
   }
 

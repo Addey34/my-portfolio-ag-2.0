@@ -25,7 +25,7 @@ Voir [`src/core/SmoothScroll.ts`](src/core/SmoothScroll.ts) — c'est la pièce 
 | -------------------- | ------------------------------------------------------- |
 | Vite                 | Bundler + dev server                                    |
 | TypeScript           | Typage strict (`noUnusedLocals` / `noUnusedParameters`) |
-| Canvas 2D maison     | Champ topographique réactif du héros                    |
+| Canvas 2D maison     | Signal topographique + topologie technique AG           |
 | Canvas 2D + DOM      | Chapitres projet : décors fidèles à chaque app          |
 | GSAP + ScrollTrigger | Scrub des chapitres, reveals batchés, ticker maître     |
 | Lenis                | Smooth-scroll normalisé (anti-jank)                     |
@@ -61,6 +61,7 @@ pnpm dev            # serveur de dev (http://localhost:5173)
 pnpm build          # tsc --noEmit puis build de production → dist/
 pnpm preview        # servir le build localement
 pnpm typecheck      # vérification de types seule
+pnpm test           # tests unitaires Vitest
 pnpm lint           # ESLint (flat config) ; lint:fix pour corriger
 pnpm format         # Prettier
 pnpm verify         # format:check + lint + typecheck + build (gate avant « fini »)
@@ -83,6 +84,7 @@ src/
 ├── chapters/                # LE CŒUR : un décor immersif fidèle par projet
 │   ├── types.ts             # Contrat ChapterScene + helpers (clamp/ease/window)
 │   ├── ChapterManager.ts    # Lazy-import + IntersectionObserver + scrub + pause
+│   ├── PortfolioStoryScene.ts # Topologie pieuvre : 24 nœuds composent A et G
 │   ├── GalaxyChapter.ts     # Système solaire + nav planètes à halo (Canvas 2D)
 │   ├── LudoraChapter.ts     # Portail navy + grille de tuiles de jeux (DOM)
 │   ├── MagNotesChapter.ts   # Post-it éparpillés → Kanban (DOM + SVG)

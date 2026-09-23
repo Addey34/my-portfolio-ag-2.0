@@ -23,3 +23,19 @@ AGENTS.md
 
 # Firebase deploy cache
 .firebase/
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Test and audit output
+coverage/
+.lighthouseci/
+playwright-report/
+test-results/
+
+# Local package-manager cache
+.pnpm-store/
+
+# Private working documentation
+docs/private/

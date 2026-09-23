@@ -4,24 +4,19 @@ import { prefersReducedMotion } from '@/core/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * Animations globales pilotées par le scroll (`scrub`).
- *
- * Le héros part en parallaxe et s'estompe en défilant. Les chapitres projet
- * ont leur PROPRE moteur d'animation au scroll (chapters/ChapterManager.ts) —
- * rien à faire ici pour eux.
- *
- * Tout est en transform/opacity (composité GPU), cadencé par ScrollTrigger
- * synchronisé Lenis. En reduced-motion : aucune animation posée.
- * Le « feeling » se règle dans CONFIG, sans toucher à la logique.
- */
 const CONFIG = {
-  heroParallax: 24, // % de translation verticale du bloc titre héros
-  heroFade: 0.2, // opacité résiduelle du héros en fin de course
+  heroParallax: 20,
+  heroFade: 0.18,
+  copyDrift: 4,
 };
 
+/**
+ * Montage global du scroll : progression lisible, profondeur douce et sorties
+ * nettes. Les chapitres conservent leur moteur dédié dans ChapterManager.
+ */
 export function initScrollScenes(): void {
   initWordmarkReveal();
+  initStoryProgress();
 
   if (prefersReducedMotion()) return;
 
@@ -40,14 +35,28 @@ export function initScrollScenes(): void {
     });
   }
 
-  // La section stack s'efface en quittant l'écran : sa légende ne traîne pas
-  // en haut du viewport pendant l'entrée dans le premier chapitre.
+  gsap.utils
+    .toArray<HTMLElement>('.section--offers .section-copy')
+    .forEach((copy) => {
+      gsap.to(copy, {
+        yPercent: -CONFIG.copyDrift,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: copy.closest('.section'),
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.4,
+        },
+      });
+    });
+
   const stackParts = document.querySelectorAll<HTMLElement>(
     '#stack .stack__copy, #stack .stack-viz'
   );
   if (stackParts.length > 0) {
     gsap.to(stackParts, {
       opacity: 0,
+      yPercent: -2,
       ease: 'none',
       scrollTrigger: {
         trigger: '#stack',
@@ -57,13 +66,50 @@ export function initScrollScenes(): void {
       },
     });
   }
+
+  gsap.utils.toArray<HTMLElement>('.chapter__panel-shell').forEach((shell) => {
+    const chapter = shell.closest<HTMLElement>('.chapter');
+    if (!chapter) return;
+    gsap.to(shell, {
+      opacity: 0,
+      yPercent: -3,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: chapter,
+        start: 'bottom 72%',
+        end: 'bottom 42%',
+        scrub: true,
+      },
+    });
+  });
 }
 
-/**
- * Le wordmark `AG` se dévoile une fois le héros dépassé — comme une navbar qui
- * apparaît au scroll, plus intentionnel qu'un logo fixe en permanence. En
- * reduced-motion, le CSS le montre d'emblée : ici, on ne câble rien.
- */
+/** Une micro-ligne près du kicker rend la progression de chaque acte tangible. */
+function initStoryProgress(): void {
+  const sections = gsap.utils.toArray<HTMLElement>(
+    '#intro, #stack, #freelance, #projects-intro, .chapter, #contact'
+  );
+  const reduced = prefersReducedMotion();
+
+  sections.forEach((section) => {
+    section.dataset.storySequence = '';
+    if (reduced) {
+      section.style.setProperty('--story-progress', '1');
+      return;
+    }
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 72%',
+      end: 'bottom 28%',
+      onToggle: (self) =>
+        section.classList.toggle('is-story-active', self.isActive),
+      onUpdate: (self) =>
+        section.style.setProperty('--story-progress', self.progress.toFixed(3)),
+    });
+  });
+}
+
 function initWordmarkReveal(): void {
   const wordmark = document.querySelector<HTMLElement>('.wordmark');
   if (!wordmark || prefersReducedMotion()) return;

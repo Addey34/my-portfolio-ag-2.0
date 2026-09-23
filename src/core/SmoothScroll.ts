@@ -5,6 +5,10 @@ import { prefersReducedMotion } from '@/core/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
+interface SmoothScrollOptions {
+  duration?: number;
+}
+
 /**
  * SmoothScroll — le cœur anti-jank du site.
  *
@@ -56,9 +60,13 @@ export class SmoothScroll {
    * Avec Lenis : animé et lissé. En reduced-motion (Lenis absent) : saut natif
    * instantané via `scrollIntoView`/`scrollTo` — la navigation reste fonctionnelle.
    */
-  scrollTo(target: string | number | HTMLElement, offset = 0): void {
+  scrollTo(
+    target: string | number | HTMLElement,
+    offset = 0,
+    options: SmoothScrollOptions = {}
+  ): void {
     if (this.lenis) {
-      this.lenis.scrollTo(target, { offset });
+      this.lenis.scrollTo(target, { offset, ...options });
       return;
     }
     if (typeof target === 'number') {

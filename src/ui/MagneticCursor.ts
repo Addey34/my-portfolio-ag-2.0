@@ -2,7 +2,7 @@ import { prefersReducedMotion } from '@/core/motion';
 import type { VisualState } from '@/visual/types';
 
 /**
- * Curseur « comète » — la petite sœur du PhantomOrb.
+ * Curseur « comète » — un accent discret lié au signal global.
  *
  * Un cœur lumineux colle au pointeur ; un halo doux le suit avec du retard et
  * S'ÉTIRE dans le sens du mouvement (squash & stretch), comme une traînée de

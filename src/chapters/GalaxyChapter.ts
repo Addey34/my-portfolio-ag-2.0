@@ -69,6 +69,7 @@ class GalaxyChapter implements ChapterScene {
   private h = 1;
   private dpr = 1;
   private activeNav = 2; // Terre d'abord — le point de départ de l'app
+  private hoveredNav = -1;
   private lastCycle = 0;
   private visualState: VisualState | null = null;
 
@@ -140,6 +141,7 @@ class GalaxyChapter implements ChapterScene {
 
     // Système centré à droite (le panneau texte occupe la gauche).
     const pointer = this.visualState?.pointer;
+    this.updateNavHover(pointer);
     const sharedPulse = this.visualState?.pulse ?? 0.5;
     const cx = w * 0.64 + ((pointer?.x ?? 0.5) - 0.5) * 12;
     const cy = h * 0.52 + ((pointer?.y ?? 0.5) - 0.5) * 8;
@@ -228,6 +230,24 @@ class GalaxyChapter implements ChapterScene {
     this.navBtns.forEach((b, i) =>
       b.classList.toggle('is-active', i === this.activeNav)
     );
+  }
+
+  /** Les pilules restent réactives même si la scène vit dans le fond fixe. */
+  private updateNavHover(pointer: VisualState['pointer'] | undefined): void {
+    if (!pointer) return;
+    const x = pointer.x * window.innerWidth;
+    const y = pointer.y * window.innerHeight;
+    let hovered = -1;
+
+    this.navBtns.forEach((button, index) => {
+      const rect = button.getBoundingClientRect();
+      const inside =
+        x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+      if (inside) hovered = index;
+      button.classList.toggle('is-hovered', inside);
+    });
+
+    if (hovered !== this.hoveredNav) this.hoveredNav = hovered;
   }
 }
 

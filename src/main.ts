@@ -1,5 +1,6 @@
 import '@/style.css';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SmoothScroll } from '@/core/SmoothScroll';
 import { ScrollChoreographer } from '@/core/ScrollChoreographer';
 import { initHero } from '@/core/heroAnim';
@@ -7,7 +8,6 @@ import { initReveals } from '@/core/reveals';
 import { initScrollScenes } from '@/core/scrollScenes';
 import { ChapterManager } from '@/chapters/ChapterManager';
 import { SignalField } from '@/visual/SignalField';
-import { PhantomOrb } from '@/visual/PhantomOrb';
 import { VisualDirector } from '@/visual/VisualDirector';
 import { FPSCounter } from '@/utils/FPSCounter';
 import { renderProjects } from '@/content/renderProjects';
@@ -25,13 +25,47 @@ import { initGitHubProfile } from '@/integrations/githubProfile';
  * pour scroll, animations, chapitres et curseur = pas de désynchronisation ni
  * de jank en scroll rapide.
  */
+function enableDeferredFonts(): void {
+  const stylesheet = document.getElementById('font-stylesheet');
+  if (stylesheet instanceof HTMLLinkElement) stylesheet.media = 'all';
+}
+
+function initContactForm(): void {
+  const form = document.getElementById('contact-form');
+  if (!(form instanceof HTMLFormElement)) return;
+
+  const disclosure = form.closest('details');
+  disclosure?.addEventListener('toggle', () => {
+    // Le dépliage change la hauteur du document : les ancres restent exactes.
+    gsap.delayedCall(0.05, () => ScrollTrigger.refresh());
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const data = new FormData(form);
+    const name = String(data.get('name') ?? '').trim();
+    const email = String(data.get('email') ?? '').trim();
+    const message = String(data.get('message') ?? '').trim();
+    const subject = encodeURIComponent(`Projet — ${name}`);
+    const body = encodeURIComponent(
+      `Nom : ${name}\nEmail : ${email}\n\n${message}`
+    );
+
+    window.location.href = `mailto:adrian34470@gmail.com?subject=${subject}&body=${body}`;
+  });
+}
+
 function boot(): void {
+  enableDeferredFonts();
+
   // 1. Contenu injecté depuis la source unique (les chapitres projet).
   const projectsMount = document.getElementById('projects');
   if (projectsMount) renderProjects(projectsMount);
 
   // 2. i18n : applique la langue courante à tout le DOM (statique + dynamique).
   initI18n();
+  initContactForm();
   const langBtn = document.getElementById('lang-toggle');
   if (langBtn) initLocaleToggle(langBtn);
 
@@ -54,14 +88,16 @@ function boot(): void {
   ) as HTMLCanvasElement | null;
   const field = canvas ? new SignalField(canvas) : null;
   const visual = new VisualDirector(field);
-
-  // 4b. Orbe fantomatique : peintre autonome du décor, lit l'état visuel partagé.
-  const orbCanvas = document.getElementById(
-    'phantom-orb'
-  ) as HTMLCanvasElement | null;
-  const orb = orbCanvas
-    ? new PhantomOrb(orbCanvas, () => visual.getState())
-    : null;
+  const connection = (
+    navigator as Navigator & { connection?: { saveData?: boolean } }
+  ).connection;
+  const liteMode = Boolean(
+    connection?.saveData ||
+    (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4) ||
+    window.innerWidth < 480
+  );
+  visual.setLiteMode(liteMode);
+  document.documentElement.classList.toggle('lite-mode', liteMode);
 
   // 5. Chapitres projet : décors immersifs lazy, scrubés au scroll.
   const storyStage = document.getElementById('story-stage');
@@ -79,7 +115,7 @@ function boot(): void {
   if (paletteBtn) palette.attachTrigger(paletteBtn);
 
   // 8. Panneau de réglages visuels (⚙) : fond, souris, chapitres.
-  const controls = new ControlPanel({ hero: visual, chapters, orb });
+  const controls = new ControlPanel({ hero: visual, chapters });
   const controlsBtn = document.getElementById('controls-open');
   if (controlsBtn) controls.attachTrigger(controlsBtn);
 
@@ -99,7 +135,6 @@ function boot(): void {
   gsap.ticker.add(() => {
     const now = performance.now();
     visual.render(now);
-    orb?.update(now);
     chapters.renderVisible(now);
     choreographer.update(now);
     cursor?.update();
@@ -111,7 +146,6 @@ function boot(): void {
     scroll.destroy();
     choreographer.destroy();
     visual.destroy();
-    orb?.destroy();
     chapters.destroy();
     cursor?.destroy();
     rail.destroy();

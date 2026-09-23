@@ -1,6 +1,5 @@
 import { t } from '@/i18n';
 import type { VisualDirector } from '@/visual/VisualDirector';
-import type { PhantomOrb } from '@/visual/PhantomOrb';
 import type { ChapterManager } from '@/chapters/ChapterManager';
 
 /**
@@ -15,8 +14,6 @@ import type { ChapterManager } from '@/chapters/ChapterManager';
 interface Deps {
   hero: VisualDirector;
   chapters: ChapterManager;
-  /** Orbe peintre — suit le réglage « fond animé » (voile levé quand coupé). */
-  orb?: PhantomOrb | null;
 }
 
 interface Toggle {
@@ -32,6 +29,7 @@ export class ControlPanel {
   private readonly toggles: Toggle[];
   private state: Record<string, boolean>;
   private open = false;
+  private lastFocused: HTMLElement | null = null;
 
   constructor(private readonly deps: Deps) {
     this.state = this.load();
@@ -39,10 +37,7 @@ export class ControlPanel {
       {
         key: 'bg',
         i18n: 'controls.bg',
-        apply: (on) => {
-          this.deps.hero.setPaused(!on);
-          this.deps.orb?.setPaused(!on);
-        },
+        apply: (on) => this.deps.hero.setPaused(!on),
       },
       {
         key: 'mouse',
@@ -76,12 +71,17 @@ export class ControlPanel {
 
   private show(): void {
     this.open = true;
+    this.lastFocused = document.activeElement as HTMLElement | null;
     this.root.hidden = false;
+    this.root
+      .querySelector<HTMLElement>('.controls__switch')
+      ?.focus({ preventScroll: true });
   }
 
   private close(): void {
     this.open = false;
     this.root.hidden = true;
+    this.lastFocused?.focus({ preventScroll: true });
   }
 
   private build(): HTMLDivElement {
@@ -89,10 +89,12 @@ export class ControlPanel {
     root.className = 'controls';
     root.hidden = true;
     root.setAttribute('role', 'dialog');
-    root.setAttribute('aria-label', t('controls.title'));
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-labelledby', 'controls-title');
 
     const title = document.createElement('p');
     title.className = 'controls__title';
+    title.id = 'controls-title';
     title.dataset.i18n = 'controls.title';
     title.textContent = t('controls.title');
     root.appendChild(title);
@@ -131,6 +133,12 @@ export class ControlPanel {
   }
 
   private bindOutsideClose(): void {
+    document.addEventListener('keydown', (e) => {
+      if (this.open && e.key === 'Escape') {
+        e.preventDefault();
+        this.close();
+      }
+    });
     document.addEventListener('click', (e) => {
       if (!this.open) return;
       const target = e.target as HTMLElement;
@@ -144,7 +152,20 @@ export class ControlPanel {
     const def = { bg: true, mouse: true, ambiance: true };
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return { ...def, ...JSON.parse(raw) };
+      if (raw) {
+        const parsed: unknown = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          const value = parsed as Record<string, unknown>;
+          return {
+            bg: typeof value.bg === 'boolean' ? value.bg : def.bg,
+            mouse: typeof value.mouse === 'boolean' ? value.mouse : def.mouse,
+            ambiance:
+              typeof value.ambiance === 'boolean'
+                ? value.ambiance
+                : def.ambiance,
+          };
+        }
+      }
     } catch {
       /* stockage indisponible → valeurs par défaut */
     }

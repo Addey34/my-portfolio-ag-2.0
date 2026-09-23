@@ -10,15 +10,74 @@ interface SignalProfile {
   orbit: number;
   links: number;
   convergence: number;
+  flow: number;
 }
 
 const PROFILES: Record<VisualScene, SignalProfile> = {
-  identity: { curve: 1, grid: 0, orbit: 0, links: 0, convergence: 0 },
-  stack: { curve: 0.55, grid: 0.28, orbit: 0, links: 0.62, convergence: 0 },
-  galaxy: { curve: 0.22, grid: 0, orbit: 1, links: 0, convergence: 0 },
-  ludora: { curve: 0.08, grid: 1, orbit: 0.08, links: 0.18, convergence: 0 },
-  magnotes: { curve: 0.38, grid: 0.2, orbit: 0, links: 1, convergence: 0 },
-  contact: { curve: 0.5, grid: 0, orbit: 0, links: 0.22, convergence: 1 },
+  identity: {
+    curve: 1,
+    grid: 0,
+    orbit: 0,
+    links: 0,
+    convergence: 0,
+    flow: 0,
+  },
+  stack: {
+    curve: 0.72,
+    grid: 0.08,
+    orbit: 0,
+    links: 0.28,
+    convergence: 0,
+    flow: 0.16,
+  },
+  solutions: {
+    curve: 0.58,
+    grid: 0.12,
+    orbit: 0.05,
+    links: 0.38,
+    convergence: 0.08,
+    flow: 0.32,
+  },
+  selection: {
+    curve: 0.32,
+    grid: 0,
+    orbit: 0.34,
+    links: 0.44,
+    convergence: 0.18,
+    flow: 0.12,
+  },
+  galaxy: {
+    curve: 0.22,
+    grid: 0,
+    orbit: 1,
+    links: 0,
+    convergence: 0,
+    flow: 0,
+  },
+  ludora: {
+    curve: 0.08,
+    grid: 1,
+    orbit: 0.08,
+    links: 0.18,
+    convergence: 0,
+    flow: 0.25,
+  },
+  magnotes: {
+    curve: 0.38,
+    grid: 0.2,
+    orbit: 0,
+    links: 1,
+    convergence: 0,
+    flow: 0.42,
+  },
+  contact: {
+    curve: 0.5,
+    grid: 0,
+    orbit: 0,
+    links: 0.22,
+    convergence: 1,
+    flow: 0.12,
+  },
 };
 
 const LINK_NODES: Point[] = [
@@ -29,7 +88,6 @@ const LINK_NODES: Point[] = [
   { x: 0.58, y: 0.76 },
   { x: 0.28, y: 0.68 },
 ];
-
 const LINK_PAIRS: [number, number][] = [
   [0, 1],
   [1, 2],
@@ -42,11 +100,11 @@ const LINK_PAIRS: [number, number][] = [
 
 /**
  * Signature visuelle du portfolio : un champ de lignes topographiques qui
- * évoque à la fois une carte, un signal et des trajectoires de données.
+ * Ã©voque Ã  la fois une carte, un signal et des trajectoires de donnÃ©es.
  *
  * Le rendu reste volontairement calme : Canvas 2D, 30 fps maximum, aucune
- * allocation importante par frame et une réaction amortie au pointeur. Comme
- * le reste du site, il est piloté par le ticker GSAP partagé depuis main.ts.
+ * allocation importante par frame et une rÃ©action amortie au pointeur. Comme
+ * le reste du site, il est pilotÃ© par le ticker GSAP partagÃ© depuis main.ts.
  */
 export class SignalField {
   private readonly context: CanvasRenderingContext2D | null;
@@ -65,6 +123,7 @@ export class SignalField {
   private progress = 0;
   private lastFrame = 0;
   private paused = false;
+  private liteMode = false;
   private interactive = false;
   private visualState: VisualState | null = null;
   private targetProfile: SignalProfile = PROFILES.identity;
@@ -91,19 +150,24 @@ export class SignalField {
     this.progress = state.progress;
   }
 
-  /** Prépare le morphing vers le vocabulaire du prochain univers. */
+  /** PrÃ©pare le morphing vers le vocabulaire du prochain univers. */
   setScene(scene: VisualScene, accent: string): void {
     this.targetProfile = PROFILES[scene];
     this.targetColor = parseHex(accent);
   }
 
-  /** Fige le champ dans son état courant, sans le faire disparaître. */
+  /** Fige le champ dans son Ã©tat courant, sans le faire disparaÃ®tre. */
   setPaused(paused: boolean): void {
     this.paused = paused;
     if (!paused) this.lastFrame = 0;
   }
 
-  /** Active la déformation douce des lignes autour du pointeur. */
+  /** Active la dÃ©formation douce des lignes autour du pointeur. */
+  setLiteMode(on: boolean): void {
+    this.liteMode = on;
+    this.lastFrame = 0;
+  }
+
   setInteractive(on: boolean): void {
     if (this.reduced || on === this.interactive) return;
     this.interactive = on;
@@ -129,15 +193,16 @@ export class SignalField {
     }
   }
 
-  /** Appelé par le ticker partagé ; le rendu est limité à 30 fps. */
+  /** AppelÃ© par le ticker partagÃ© ; le rendu est limitÃ© Ã  30 fps. */
   render(time = 0): void {
     if (!this.context || this.paused || this.reduced) return;
-    if (time - this.lastFrame < 1000 / 30) return;
+    const frameInterval = this.liteMode ? 1000 / 20 : 1000 / 30;
+    if (time - this.lastFrame < frameInterval) return;
 
     const delta = this.lastFrame ? Math.min(time - this.lastFrame, 50) : 16;
     this.lastFrame = time;
-    const pointerEase = 1 - Math.pow(0.88, delta / 16); // réactif
-    const profileEase = 1 - Math.pow(0.86, delta / 16); // délibéré
+    const pointerEase = 1 - Math.pow(0.88, delta / 16); // rÃ©actif
+    const profileEase = 1 - Math.pow(0.86, delta / 16); // dÃ©libÃ©rÃ©
     this.pointer.x += (this.target.x - this.pointer.x) * pointerEase;
     this.pointer.y += (this.target.y - this.pointer.y) * pointerEase;
     this.approachProfile(profileEase);
@@ -167,21 +232,25 @@ export class SignalField {
     const width = this.canvas.clientWidth;
     const height = this.canvas.clientHeight;
     const compact = width < 720;
-    const lines = compact ? 11 : 17;
-    const samples = compact ? 32 : 48;
+    const lines = compact ? (this.liteMode ? 7 : 11) : this.liteMode ? 10 : 17;
+    const samples = compact
+      ? this.liteMode
+        ? 24
+        : 32
+      : this.liteMode
+        ? 32
+        : 48;
     const focusX = this.pointer.x * width;
     const focusY = this.pointer.y * height;
     const drift = time * 0.16 + this.progress * Math.PI * 1.8;
     const energy = this.visualState?.energy ?? 0.42;
-    const pulse = this.visualState?.pulse ?? 0.5;
     const transition = this.visualState?.transition ?? 1;
     const fadeFactor = 0.72 + 0.28 * transition;
-    const waveMod = 0.85 + pulse * 0.3;
+    const waveMod = 1;
 
     ctx.clearRect(0, 0, width, height);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-
     for (let line = 0; line < lines; line++) {
       const t = line / Math.max(lines - 1, 1);
       const baseY = height * (0.08 + t * 0.84);
@@ -230,9 +299,10 @@ export class SignalField {
     this.drawGrid(ctx, width, height, fadeFactor);
     this.drawOrbits(ctx, focusX, focusY, width, height, time, fadeFactor);
     this.drawLinks(ctx, width, height, time, fadeFactor);
-    this.drawFocus(ctx, focusX, focusY, time, fadeFactor);
+    this.drawFlow(ctx, width, height, time, fadeFactor);
   }
 
+  /** Grille discrète issue du même champ de lignes que le reste du décor. */
   private drawGrid(
     ctx: CanvasRenderingContext2D,
     width: number,
@@ -293,41 +363,68 @@ export class SignalField {
     ctx.strokeStyle = rgba(this.color, alpha);
     ctx.fillStyle = rgba(this.color, alpha * 2.5);
     ctx.lineWidth = 0.7;
+    ctx.setLineDash([2, 10]);
+    ctx.lineDashOffset = -time * 8;
     for (const [a, b] of LINK_PAIRS) {
       const from = LINK_NODES[a];
       const to = LINK_NODES[b];
+      const x1 = from.x * width;
+      const y1 = from.y * height;
+      const x2 = to.x * width;
+      const y2 = to.y * height;
       ctx.beginPath();
-      ctx.moveTo(from.x * width, from.y * height);
-      ctx.lineTo(to.x * width, to.y * height);
+      ctx.moveTo(x1, y1);
+      ctx.quadraticCurveTo(
+        (x1 + x2) * 0.5,
+        (y1 + y2) * 0.5 - height * 0.035,
+        x2,
+        y2
+      );
       ctx.stroke();
     }
+    ctx.setLineDash([]);
     for (let i = 0; i < LINK_NODES.length; i++) {
       const node = LINK_NODES[i];
-      const pulse = 1.4 + Math.sin(time * 0.8 + i) * 0.45;
-      ctx.beginPath();
-      ctx.arc(node.x * width, node.y * height, pulse, 0, Math.PI * 2);
-      ctx.fill();
+      const size = i % 2 === 0 ? 2.5 : 1.8;
+      ctx.fillRect(
+        node.x * width - size / 2,
+        node.y * height - size / 2,
+        size,
+        size
+      );
     }
   }
 
-  private drawFocus(
+  /** Flux de livraison continu pour la séquence Solutions. */
+  private drawFlow(
     ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
+    width: number,
+    height: number,
     time: number,
     fadeFactor: number
   ): void {
-    const pulse = 18 + Math.sin(time * 0.8) * 2;
-    ctx.beginPath();
-    ctx.arc(x, y, pulse, 0, Math.PI * 2);
-    ctx.strokeStyle = rgba(this.color, 0.16 * fadeFactor);
-    ctx.lineWidth = 0.75;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(x, y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(244, 246, 251, ${0.46 * fadeFactor})`;
-    ctx.fill();
+    const alpha = this.profile.flow * 0.12 * fadeFactor;
+    if (alpha < 0.002) return;
+    ctx.save();
+    ctx.strokeStyle = rgba(this.color, alpha);
+    ctx.lineWidth = 0.8;
+    ctx.setLineDash([3, 16]);
+    ctx.lineDashOffset = -time * 18;
+    for (let lane = 0; lane < 3; lane++) {
+      const y = height * (0.29 + lane * 0.2);
+      ctx.beginPath();
+      ctx.moveTo(width * 0.08, y);
+      ctx.bezierCurveTo(
+        width * 0.32,
+        y - height * 0.08,
+        width * 0.7,
+        y + height * 0.08,
+        width * 0.92,
+        y
+      );
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   private approachProfile(ease: number): void {
@@ -337,6 +434,7 @@ export class SignalField {
       'orbit',
       'links',
       'convergence',
+      'flow',
     ];
     for (const key of keys) {
       this.profile[key] += (this.targetProfile[key] - this.profile[key]) * ease;
