@@ -7,7 +7,6 @@ gsap.registerPlugin(ScrollTrigger);
 const CONFIG = {
   heroParallax: 20,
   heroFade: 0.18,
-  copyDrift: 4,
 };
 
 /**
@@ -34,54 +33,7 @@ export function initScrollScenes(): void {
       },
     });
   }
-
-  gsap.utils
-    .toArray<HTMLElement>('.section--offers .section-copy')
-    .forEach((copy) => {
-      gsap.to(copy, {
-        yPercent: -CONFIG.copyDrift,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: copy.closest('.section'),
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.4,
-        },
-      });
-    });
-
-  const stackParts = document.querySelectorAll<HTMLElement>(
-    '#stack .stack__copy, #stack .stack-viz'
-  );
-  if (stackParts.length > 0) {
-    gsap.to(stackParts, {
-      opacity: 0,
-      yPercent: -2,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '#stack',
-        start: 'bottom 45%',
-        end: 'bottom 15%',
-        scrub: true,
-      },
-    });
-  }
-
-  gsap.utils.toArray<HTMLElement>('.chapter__panel-shell').forEach((shell) => {
-    const chapter = shell.closest<HTMLElement>('.chapter');
-    if (!chapter) return;
-    gsap.to(shell, {
-      opacity: 0,
-      yPercent: -3,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: chapter,
-        start: 'bottom 72%',
-        end: 'bottom 42%',
-        scrub: true,
-      },
-    });
-  });
+  // Entrées et sorties des autres actes : voir SectionTransitions.
 }
 
 /** Une micro-ligne près du kicker rend la progression de chaque acte tangible. */

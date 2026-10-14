@@ -6,6 +6,7 @@ import { ScrollChoreographer } from '@/core/ScrollChoreographer';
 import { initHero } from '@/core/heroAnim';
 import { initReveals } from '@/core/reveals';
 import { initScrollScenes } from '@/core/scrollScenes';
+import { SectionTransitions } from '@/core/sectionTransitions';
 import { ChapterManager } from '@/chapters/ChapterManager';
 import { SignalField } from '@/visual/SignalField';
 import { VisualDirector } from '@/visual/VisualDirector';
@@ -159,9 +160,10 @@ function boot(): void {
   // 6. Reveals + parallaxe du héros.
   initReveals();
   initScrollScenes();
+  const transitions = new SectionTransitions();
 
   // 8. Panneau de réglages visuels (⚙) : fond, souris, chapitres.
-  const controls = new ControlPanel({ hero: visual, chapters });
+  const controls = new ControlPanel({ hero: visual, chapters, transitions });
   const controlsBtn = document.getElementById('controls-open');
   if (controlsBtn) controls.attachTrigger(controlsBtn);
 
@@ -204,6 +206,7 @@ function boot(): void {
   // Sortie propre pour un futur routeur/HMR.
   window.addEventListener('beforeunload', () => {
     scroll.destroy();
+    transitions.destroy();
     choreographer.destroy();
     visual.destroy();
     chapters.destroy();
