@@ -5190,17 +5190,21 @@ button:focus-visible {
 
 /* Lisibilite : petits textes un peu plus grands, panneaux de chapitre plus
    legers pour laisser respirer l'univers derriere. */
-.hero__tag {
-  font-size: 0.74rem;
+@media (min-width: 861px) {
+  .hero__tag {
+    font-size: 0.74rem;
+  }
+
+  .rail__label {
+    font-size: 0.74rem;
+    opacity: calc(
+      0.12 + var(--rail-depth) * 0.82 + var(--rail-proximity) * 0.1
+    );
+  }
 }
 
 .contact__availability {
   font-size: 0.95rem;
-}
-
-.rail__label {
-  font-size: 0.74rem;
-  opacity: calc(0.12 + var(--rail-depth) * 0.82 + var(--rail-proximity) * 0.1);
 }
 
 .chapter__panel {
