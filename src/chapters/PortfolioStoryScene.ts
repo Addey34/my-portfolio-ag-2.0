@@ -1069,7 +1069,7 @@ export class PortfolioStoryScene implements ChapterScene {
         5 * Math.cos(2 * heartAngle) -
         2 * Math.cos(3 * heartAngle) -
         Math.cos(4 * heartAngle);
-      const heart: [number, number] = [0.5 + heartX / 38, 0.49 - heartY / 34];
+      const heart: [number, number] = [0.5 + heartX / 42, 0.4 - heartY / 38];
       const cycle = this.reduced ? 0 : (time % 12000) / 12000;
       const phase =
         cycle < 0.35
