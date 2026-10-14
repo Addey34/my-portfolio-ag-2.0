@@ -4810,6 +4810,7 @@ button:focus-visible {
   /* Seul le chapitre courant porte son nom, centré au-dessus de la molette. */
   .rail__label {
     position: absolute;
+    top: auto;
     bottom: 100%;
     left: 50%;
     grid-column: auto;
@@ -5287,4 +5288,119 @@ button:focus-visible {
   .scroll-progress {
     bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* =========================================================================
+   Audit UX desktop : colonnes de texte, panneaux de chapitre, contraste
+   ========================================================================= */
+
+/* Les colonnes de texte s'arrêtent avant la zone des formes (60 % de la
+   largeur) : plus aucune collision entre titre et points. */
+@media (min-width: 981px) {
+  :root {
+    --copy-left: max(clamp(11.5rem, 15vw, 13rem), calc((100vw - 68rem) / 2));
+  }
+
+  .intro__title,
+  .stack__title,
+  .stack__lead,
+  .project-threshold__title,
+  .project-threshold__lead {
+    max-width: calc(60vw - var(--copy-left) - 2rem);
+  }
+
+  /* Gouttière gauche réduite : seul le rail (≈ 110 px) l'occupe. */
+  .chapter__inner {
+    padding-left: clamp(8.5rem, 11vw, 10rem);
+  }
+
+  .chapter__panel-shell {
+    width: min(54%, 44rem);
+  }
+}
+
+/* Détail technique dépliable : le panneau reste lisible sans défilement. */
+.chapter__more {
+  margin-top: 1rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.6rem;
+}
+
+.chapter__more-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--chapter-accent, var(--accent));
+}
+
+.chapter__more-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.chapter__more-toggle::after {
+  content: '+';
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.chapter__more[open] > .chapter__more-toggle::after {
+  content: '–';
+}
+
+.chapter__more-toggle:focus-visible {
+  outline: 2px solid var(--chapter-accent, var(--accent));
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+}
+
+.chapter__more > .chapter__proof {
+  grid-template-columns: 1fr;
+  margin-top: 0.4rem;
+}
+
+.chapter__beat--outcome > .chapter__proof {
+  grid-template-columns: 1fr;
+}
+
+/* Ouvert, le panneau peut dépasser l'écran : il défile alors sur lui-même. */
+@media (min-width: 861px) {
+  .chapter__panel:has(.chapter__more[open]) {
+    max-height: calc(100svh - 6rem);
+    overflow-y: auto;
+  }
+}
+
+/* Contraste : même les noms lointains du rail restent lisibles (≥ 4,5:1). */
+@media (min-width: 861px) {
+  .rail__label {
+    opacity: calc(0.5 + var(--rail-depth) * 0.5 + var(--rail-proximity) * 0.1);
+  }
+}
+
+/* Bouton « Partager » : même famille que les liens, en retrait (action secondaire). */
+.chapter__links .chapter__share {
+  border: 0;
+  border-bottom: 1px dashed color-mix(in srgb, var(--fg-muted) 70%, transparent);
+  padding: 0 0 2px;
+  color: var(--fg-muted);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.chapter__links .chapter__share:hover,
+.chapter__links .chapter__share:focus-visible {
+  color: var(--chapter-accent, var(--accent));
+  border-bottom-color: var(--chapter-accent, var(--accent));
+}
+
+.chapter__links .chapter__share:focus-visible {
+  outline: 2px solid var(--chapter-accent, var(--accent));
+  outline-offset: 4px;
 }

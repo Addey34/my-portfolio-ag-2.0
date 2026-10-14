@@ -102,16 +102,27 @@ function buildChapter(project: Project, index: number): HTMLElement {
   const tagline = el('p', 'chapter__tagline', '');
   registerDynamic(tagline, () => tl(project.tagline));
 
-  const proofEntries = [
+  // Hiérarchie : contexte et contribution, puis résultat ; le défi, le choix
+  // technique et les preuves vérifiées sont à un clic (détail dépliable).
+  const contextProof = buildProof([
     ['problem', project.proof.problem],
     ['role', project.proof.role],
-    ['challenge', project.proof.challenge],
-    ['result', project.proof.result],
-    ['decision', project.proof.decision],
-    ['evidence', project.proof.evidence],
-  ] as const;
-  const contextProof = buildProof(proofEntries.slice(0, 2));
-  const outcomeProof = buildProof(proofEntries.slice(2));
+  ]);
+  const outcomeProof = buildProof([['result', project.proof.result]]);
+  const more = document.createElement('details');
+  more.className = 'chapter__more';
+  const summary = document.createElement('summary');
+  summary.className = 'chapter__more-toggle';
+  summary.dataset.i18n = 'project.more';
+  summary.textContent = t('project.more');
+  more.append(
+    summary,
+    buildProof([
+      ['challenge', project.proof.challenge],
+      ['decision', project.proof.decision],
+      ['evidence', project.proof.evidence],
+    ])
+  );
 
   const stack = document.createElement('ul');
   stack.className = 'chapter__stack';
@@ -157,7 +168,7 @@ function buildChapter(project: Project, index: number): HTMLElement {
   links.appendChild(share);
 
   context.append(meta, thesis, name, tagline, contextProof);
-  outcome.append(outcomeProof, stack, links);
+  outcome.append(outcomeProof, more, stack, links);
   panel.append(context, outcome);
   shell.appendChild(panel);
   inner.appendChild(shell);

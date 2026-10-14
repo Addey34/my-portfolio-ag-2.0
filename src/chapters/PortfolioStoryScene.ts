@@ -1215,9 +1215,11 @@ export class PortfolioStoryScene implements ChapterScene {
           height: usableHeight * 0.2,
         };
       }
-      const width = Math.min(this.w * 0.4, 620);
+      // Zone réservée à la matière de points : jamais sous les colonnes de texte
+      // (voir --copy-left et les largeurs de texte dans style.css).
+      const width = Math.min(this.w * 0.36, 620);
       return {
-        left: this.w * 0.53,
+        left: this.w * 0.6,
         top: this.topInset + usableHeight * 0.1,
         width,
         height: Math.min(usableHeight * 0.78, width * 1.45),

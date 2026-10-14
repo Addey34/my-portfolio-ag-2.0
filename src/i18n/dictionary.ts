@@ -18,11 +18,10 @@ type Dict = Record<string, string>;
 const fr: Dict = {
   'hero.tag.1': 'Full-stack TypeScript',
   'hero.tag.2': 'Expériences interactives',
-  'hero.tag.3': 'Product builder',
   'hero.cta.projects': 'Explorer les produits',
   'hero.cta.contact': 'Parler d’un projet',
   'hero.lead':
-    'Développeur full-stack TypeScript & expériences interactives. Je conçois des produits web complets, de l’interface aux données, au temps réel et au déploiement.',
+    'Je conçois des produits web complets, de l’interface aux données, au temps réel et au déploiement.',
   'intro.kicker': 'Des produits réels, pas seulement des écrans',
   'intro.title':
     'Je pars d’un usage et je construis le système qui le rend simple, fiable et vivant.',
@@ -34,6 +33,7 @@ const fr: Dict = {
   'project.decision': 'Choix technique',
   'project.evidence': 'Preuves vérifiées',
   'project.limit': 'Limite connue',
+  'project.more': 'Détail technique et preuves vérifiées',
   'studies.kicker': 'Études complémentaires',
   'studies.title': 'Deux projets privés, présentés sans code.',
   'studies.lead':
@@ -136,11 +136,10 @@ const fr: Dict = {
 const en: Dict = {
   'hero.tag.1': 'Full-stack TypeScript',
   'hero.tag.2': 'Interactive experiences',
-  'hero.tag.3': 'Product builder',
   'hero.cta.projects': 'Explore the products',
   'hero.cta.contact': 'Discuss a project',
   'hero.lead':
-    'Full-stack TypeScript developer building interactive experiences. I design complete web products, from interface to data, real-time systems and deployment.',
+    'I design complete web products, from interface to data, real-time systems and deployment.',
   'intro.kicker': 'Real products, not just screens',
   'intro.title':
     'I start with a use case and build the system that makes it simple, reliable and alive.',
@@ -152,6 +151,7 @@ const en: Dict = {
   'project.decision': 'Technical choice',
   'project.evidence': 'Verified evidence',
   'project.limit': 'Known limit',
+  'project.more': 'Technical detail and verified evidence',
   'studies.kicker': 'Additional case studies',
   'studies.title': 'Two private projects, presented without code.',
   'studies.lead':
