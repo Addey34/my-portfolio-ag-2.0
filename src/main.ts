@@ -82,6 +82,18 @@ function initContactEmail(): void {
   });
 }
 
+/**
+ * Exécute `task` quand le navigateur est disponible (ou après 1,2 s au plus).
+ * Ce n'est pas une boucle d'animation : l'horloge unique reste le ticker GSAP.
+ */
+function whenIdle(task: () => void): void {
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(task, { timeout: 1200 });
+  } else {
+    setTimeout(task, 200);
+  }
+}
+
 function boot(): void {
   enableDeferredFonts();
 
@@ -98,8 +110,10 @@ function boot(): void {
   const langBtn = document.getElementById('lang-toggle');
   if (langBtn) initLocaleToggle(langBtn);
 
-  // 2b. Intégration GitHub REST publique : activité et profil à jour dans le contact.
-  const disposeGitHubProfile = initGitHubProfile();
+  // Éléments secondaires montés après le premier rendu (voir `whenIdle`).
+  let disposeGitHubProfile: () => void = () => {};
+  let cursor: MagneticCursor | null = null;
+  let rail: SectionRail | null = null;
 
   // 3. Scroll lissé (installe Lenis sur le ticker GSAP, sauf reduced-motion).
   const scroll = new SmoothScroll();
@@ -138,25 +152,32 @@ function boot(): void {
   initReveals();
   initScrollScenes();
 
-  // 7. Command palette (Ctrl/⌘+K) + son déclencheur dans le HUD.
-  const palette = new CommandPalette(scroll);
-  const paletteBtn = document.getElementById('palette-open');
-  if (paletteBtn) palette.attachTrigger(paletteBtn);
-
   // 8. Panneau de réglages visuels (⚙) : fond, souris, chapitres.
   const controls = new ControlPanel({ hero: visual, chapters });
   const controlsBtn = document.getElementById('controls-open');
   if (controlsBtn) controls.attachTrigger(controlsBtn);
 
-  // 9. Curseur comète (pointeur fin uniquement, jamais en reduced-motion).
-  // Il lit l'état visuel partagé pour prendre l'accent de l'univers actif.
-  const cursor = MagneticCursor.isSupported()
-    ? new MagneticCursor(() => visual.getState())
-    : null;
+  // Le premier rendu n'attend ni la palette, ni le rail, ni le curseur, ni
+  // l'appel GitHub : ils sont montés dès que le thread principal est libre.
+  whenIdle(() => {
+    // 2b. Intégration GitHub REST publique : activité et profil dans le contact.
+    disposeGitHubProfile = initGitHubProfile();
 
-  // 9b. Fil de progression vertical (desktop). Suit la section active via
-  // ScrollTrigger, sans écouteur scroll propre.
-  const rail = new SectionRail(scroll);
+    // 7. Command palette (Ctrl/⌘+K) + son déclencheur dans le HUD.
+    const palette = new CommandPalette(scroll);
+    const paletteBtn = document.getElementById('palette-open');
+    if (paletteBtn) palette.attachTrigger(paletteBtn);
+
+    // 9. Curseur comète (pointeur fin uniquement, jamais en reduced-motion).
+    // Il lit l'état visuel partagé pour prendre l'accent de l'univers actif.
+    cursor = MagneticCursor.isSupported()
+      ? new MagneticCursor(() => visual.getState())
+      : null;
+
+    // 9b. Fil de progression vertical. Suit la section active via
+    // ScrollTrigger, sans écouteur scroll propre.
+    rail = new SectionRail(scroll);
+  });
 
   // 10. Boucle maîtresse : tout le rendu par frame, sur le MÊME ticker que le scroll.
   const fpsEl = document.getElementById('fps');
@@ -177,7 +198,7 @@ function boot(): void {
     visual.destroy();
     chapters.destroy();
     cursor?.destroy();
-    rail.destroy();
+    rail?.destroy();
     disposeGitHubProfile();
   });
 }
