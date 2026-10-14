@@ -3,6 +3,9 @@ import { PROJECTS } from '@/content/projects';
 import type { SignalField } from '@/visual/SignalField';
 import type { VisualScene, VisualState } from '@/visual/types';
 
+/** Durée d'un passage d'une forme à l'autre (ms), avec départ et arrivée adoucis. */
+const TRANSITION_MS = 2600;
+
 interface SceneTarget {
   selector: string;
   scene: VisualScene;
@@ -22,6 +25,7 @@ export class VisualDirector {
   private readonly state: VisualState;
   private targetEnergy = 0.42;
   private lastTime = 0;
+  private transitionElapsed = TRANSITION_MS;
 
   constructor(private readonly field: SignalField | null) {
     const pointer = field?.getPointer() ?? { x: 0.72, y: 0.42 };
@@ -61,10 +65,15 @@ export class VisualDirector {
     const delta = this.lastTime ? Math.min(time - this.lastTime, 50) : 16;
     this.lastTime = time;
     const ease = 1 - Math.pow(0.91, delta / 16);
-    // Le passage d'une forme à l'autre est volontairement lent (~1,3 s) pour
-    // laisser lire le mouvement des points ; l'énergie reste plus réactive.
-    const transitionEase = 1 - Math.pow(0.962, delta / 16);
-    this.state.transition += (1 - this.state.transition) * transitionEase;
+    // Le passage d'une forme à l'autre est chronométré (smoothstep sur
+    // TRANSITION_MS) pour laisser lire le mouvement des points ; l'énergie,
+    // elle, reste plus réactive.
+    this.transitionElapsed = Math.min(
+      TRANSITION_MS,
+      this.transitionElapsed + delta
+    );
+    const k = this.transitionElapsed / TRANSITION_MS;
+    this.state.transition = k * k * (3 - 2 * k);
     this.state.energy += (this.targetEnergy - this.state.energy) * ease;
     this.state.pulse = Math.sin(time * 0.00085) * 0.5 + 0.5;
     this.field?.setVisualState(this.state);
@@ -164,6 +173,7 @@ export class VisualDirector {
     if (this.state.scene === target.scene) return;
     this.state.scene = target.scene;
     this.state.sceneProgress = 0;
+    this.transitionElapsed = 0;
     this.state.accent = target.accent;
     this.state.accentNext = target.accentNext;
     this.state.transition = 0;

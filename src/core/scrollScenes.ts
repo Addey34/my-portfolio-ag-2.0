@@ -14,6 +14,7 @@ const CONFIG = {
  * nettes. Les chapitres conservent leur moteur dédié dans ChapterManager.
  */
 export function initScrollScenes(): void {
+  initScrollProgress();
   initWordmarkReveal();
   initStoryProgress();
 
@@ -71,5 +72,19 @@ function initWordmarkReveal(): void {
     start: 'bottom 60%',
     onEnter: () => wordmark.classList.add('is-visible'),
     onLeaveBack: () => wordmark.classList.remove('is-visible'),
+  });
+}
+
+/** Barre de progression du bas de page : `transform` seul, piloté par ScrollTrigger. */
+function initScrollProgress(): void {
+  const bar = document.querySelector<HTMLElement>('.scroll-progress__bar');
+  if (!bar) return;
+  ScrollTrigger.create({
+    trigger: '#scroll-root',
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: (self) => {
+      bar.style.transform = `scaleX(${self.progress.toFixed(4)})`;
+    },
   });
 }
