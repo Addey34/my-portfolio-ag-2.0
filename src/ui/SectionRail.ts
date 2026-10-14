@@ -57,6 +57,7 @@ export class SectionRail {
     if (!this.drag) this.clearProximity();
   };
   private readonly onHoldTick = () => this.updateHold();
+  private readonly onLayoutChange = () => this.renderFocus(this.activeId);
 
   constructor(private readonly scroll: SmoothScroll) {
     this.items = [
@@ -82,6 +83,7 @@ export class SectionRail {
     });
     gsap.ticker.add(this.onHoldTick);
     onLocaleChange(() => this.syncLabels());
+    this.horizontalQuery.addEventListener('change', this.onLayoutChange);
   }
 
   private build(): HTMLElement {
@@ -163,6 +165,8 @@ export class SectionRail {
       const distance = Math.abs(index - focusIndex);
       const depth = Math.pow(0.4, distance);
       link.classList.toggle('is-current', key === id);
+      // Molette horizontale : les points hors écran ne reçoivent pas le focus.
+      link.tabIndex = this.horizontalQuery.matches && distance > 4 ? -1 : 0;
       link.style.setProperty('--rail-distance', String(distance));
       link.style.setProperty('--rail-depth', depth.toFixed(3));
       link.style.setProperty(
@@ -374,6 +378,7 @@ export class SectionRail {
     this.nav.removeEventListener('pointercancel', this.onPointerCancel);
     this.nav.removeEventListener('pointerleave', this.onPointerLeave);
     gsap.ticker.remove(this.onHoldTick);
+    this.horizontalQuery.removeEventListener('change', this.onLayoutChange);
     this.nav.remove();
   }
 }

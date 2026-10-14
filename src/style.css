@@ -548,7 +548,8 @@ button:focus-visible {
 
 /* Masquage initial gÃ©rÃ© par heroAnim.ts (uniquement si JS actif) */
 .js .hero__lead,
-.js .hero__ctas {
+.js .hero__ctas,
+.js .hero__status {
   opacity: 0;
 }
 
@@ -5403,4 +5404,102 @@ button:focus-visible {
 .chapter__links .chapter__share:focus-visible {
   outline: 2px solid var(--chapter-accent, var(--accent));
   outline-offset: 4px;
+}
+
+/* =========================================================================
+   Audit UX, lot 2 : puces de preuves, statut du hero, textes d'aide
+   ========================================================================= */
+
+/* Trois faits vérifiés, toujours visibles sous le résultat. */
+.chapter__highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapter__highlights li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.chapter__highlights li::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--chapter-accent, var(--accent));
+  background: color-mix(
+    in srgb,
+    var(--chapter-accent, var(--accent)) 40%,
+    transparent
+  );
+  transform: rotate(45deg);
+}
+
+/* Statut du hero : disponibilité et localisation, dès le premier écran. */
+.hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.6rem 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+}
+
+.hero__status-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ag-cyan);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ag-cyan) 22%, transparent);
+}
+
+@media (max-width: 860px) {
+  .hero__inner {
+    text-align: center;
+  }
+
+  /* Le contenu est centré dans l'espace libre entre l'horloge (haut) et la
+     molette (bas), au lieu de rester collé sous l'horloge. */
+  .section--hero {
+    padding-top: 24svh;
+    padding-bottom: 6.5rem;
+  }
+}
+
+/* Textes d'aide : lisibles (≥ 12 px, contraste correct). */
+.stack-hover-note {
+  font-size: 0.74rem;
+  color: var(--fg-muted);
+}
+
+.stack-legend {
+  font-size: 0.8rem;
+}
+
+.hud__kbd {
+  font-size: 0.74rem;
+  color: var(--fg);
+}
+
+/* Écrans bas : le panneau reste entièrement visible, les pastilles de
+   technologies (secondaires) laissent la place aux preuves. */
+@media (min-width: 861px) and (max-height: 780px) {
+  .chapter__stack {
+    display: none;
+  }
+}
+
+/* Le statut reste après les boutons, y compris dans la colonne flex mobile. */
+.hero__status {
+  order: 99;
 }

@@ -25,6 +25,8 @@ export interface Project {
     /** Preuves vérifiables uniquement ; mentionner les limites connues. */
     evidence: Localized;
   };
+  /** Trois faits vérifiés, affichés en puces sous le résultat. */
+  highlights: Localized[];
   stack: string[];
   links: { label: Localized; href: string }[];
   /** Precision honnete lorsque le code ou une demo ne sont pas publics. */
@@ -81,6 +83,11 @@ export const PROJECTS: Project[] = [
         en: 'NASA/JPL Horizons data, time travel, documented sources. No FPS measurement published.',
       },
     },
+    highlights: [
+      { fr: 'Données NASA/JPL Horizons', en: 'NASA/JPL Horizons data' },
+      { fr: 'Voyage temporel', en: 'Time travel' },
+      { fr: 'Démo en ligne', en: 'Live demo' },
+    ],
     stack: ['TypeScript', 'Three.js', 'astronomy-engine', 'Playwright', 'Vite'],
     links: [
       { label: demo, href: 'https://galaxy.adrianguichard.dev/' },
@@ -128,6 +135,14 @@ export const PROJECTS: Project[] = [
         en: '144 games and 144 game pages present (config of 14 Oct 2026); room creation and launch tested on all 144 (audit of 5 Oct). Full matches validated on a sample. No usage figures.',
       },
     },
+    highlights: [
+      { fr: '144 jeux catalogués', en: '144 games catalogued' },
+      {
+        fr: 'Salons testés sur les 144 (05/10)',
+        en: 'Rooms tested on all 144 (5 Oct)',
+      },
+      { fr: 'Démo en ligne', en: 'Live demo' },
+    ],
     stack: ['TypeScript', 'Vite MPA', 'Nakama', 'Canvas', 'PWA'],
     links: [
       { label: demo, href: 'https://ludora.adrianguichard.dev/' },
@@ -179,6 +194,17 @@ export const PROJECTS: Project[] = [
         en: 'Playwright E2E tests + axe audit, local demo without backend, daily production check green (14 Oct 2026). Users not measured.',
       },
     },
+    highlights: [
+      {
+        fr: 'Canvas, Kanban, agenda, timeline',
+        en: 'Canvas, Kanban, calendar, timeline',
+      },
+      { fr: 'Tests E2E et audit axe', en: 'E2E tests and axe audit' },
+      {
+        fr: 'Contrôle de production quotidien',
+        en: 'Daily production check',
+      },
+    ],
     stack: ['React', 'TypeScript', 'MongoDB', 'Docker', 'Node'],
     links: [
       { label: demo, href: 'https://magnotes.adrianguichard.dev/' },

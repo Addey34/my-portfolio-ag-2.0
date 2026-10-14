@@ -39,7 +39,9 @@ export function initHero(scroll: SmoothScroll): void {
 
   if (prefersReducedMotion()) {
     document
-      .querySelectorAll<HTMLElement>('.hero__tag, .hero__lead, .hero__ctas')
+      .querySelectorAll<HTMLElement>(
+        '.hero__tag, .hero__lead, .hero__ctas, .hero__status'
+      )
       .forEach((el) => {
         el.style.opacity = '1';
         el.style.transform = 'none';
@@ -82,6 +84,7 @@ export function initHero(scroll: SmoothScroll): void {
   const tags = gsap.utils.toArray<HTMLElement>('.hero__tag');
   const lead = document.querySelector<HTMLElement>('.hero__lead');
   const ctas = document.querySelector<HTMLElement>('.hero__ctas');
+  const status = document.querySelector<HTMLElement>('.hero__status');
 
   // --- Timeline principale ---
   const tl = gsap.timeline({ delay: 0.1 });
@@ -128,6 +131,16 @@ export function initHero(scroll: SmoothScroll): void {
       { opacity: 0, y: 18 },
       { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
       '-=0.5'
+    );
+  }
+
+  // 6. Statut (disponibilité) — dernier à apparaître, sans voler la vedette
+  if (status) {
+    tl.fromTo(
+      status,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+      '-=0.25'
     );
   }
 }

@@ -1770,6 +1770,25 @@ export class PortfolioStoryScene implements ChapterScene {
     ctx.beginPath();
     ctx.arc(center[0], center[1], compact ? 2.4 : 3.4, 0, TAU);
     ctx.fill();
+
+    // Légende : l'horloge affiche l'heure du visiteur, il faut le dire.
+    // Sur mobile, la place manque sous l'horloge : pas de légende.
+    if (!compact) {
+      const pad = (value: number): string => String(value).padStart(2, '0');
+      const caption = `${
+        getLocale() === 'fr' ? 'VOTRE HEURE LOCALE' : 'YOUR LOCAL TIME'
+      } · ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      ctx.globalAlpha = clamp01((clockAlpha - 0.5) / 0.5) * 0.85;
+      ctx.fillStyle = COLORS.interface;
+      ctx.font = `${compact ? 10 : 12}px ui-monospace, monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(
+        caption,
+        center[0],
+        center[1] + radius * 1.22 + (compact ? 10 : 16)
+      );
+    }
     ctx.restore();
   }
 
@@ -1836,9 +1855,9 @@ export class PortfolioStoryScene implements ChapterScene {
     const alpha = easeOut(clamp01((opacity - 0.35) / 0.55));
     if (alpha <= 0.01) return;
     ctx.save();
-    ctx.globalAlpha = alpha * 0.7;
+    ctx.globalAlpha = alpha * 0.85;
     ctx.fillStyle = COLORS.interface;
-    ctx.font = `${compact ? 7 : 10}px ui-monospace, monospace`;
+    ctx.font = `${compact ? 9 : 12}px ui-monospace, monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(

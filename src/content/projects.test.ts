@@ -12,12 +12,17 @@ describe('project catalogue', () => {
     });
   });
 
+  it('gives every project three verified highlights', () => {
+    PROJECTS.forEach((project) => expect(project.highlights).toHaveLength(3));
+  });
+
   it('provides complete bilingual case-study content', () => {
     PROJECTS.forEach((project) => {
       const localized = [
         project.tagline,
         project.thesis,
         ...Object.values(project.proof),
+        ...project.highlights,
       ];
       localized.forEach((value) => {
         expect(value.fr.trim()).not.toBe('');

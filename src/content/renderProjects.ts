@@ -109,6 +109,13 @@ function buildChapter(project: Project, index: number): HTMLElement {
     ['role', project.proof.role],
   ]);
   const outcomeProof = buildProof([['result', project.proof.result]]);
+  const highlights = document.createElement('ul');
+  highlights.className = 'chapter__highlights';
+  project.highlights.forEach((highlight) => {
+    const item = el('li', '', '');
+    registerDynamic(item, () => tl(highlight));
+    highlights.appendChild(item);
+  });
   const more = document.createElement('details');
   more.className = 'chapter__more';
   const summary = document.createElement('summary');
@@ -168,7 +175,7 @@ function buildChapter(project: Project, index: number): HTMLElement {
   links.appendChild(share);
 
   context.append(meta, thesis, name, tagline, contextProof);
-  outcome.append(outcomeProof, more, stack, links);
+  outcome.append(outcomeProof, highlights, more, stack, links);
   panel.append(context, outcome);
   shell.appendChild(panel);
   inner.appendChild(shell);
