@@ -1,5 +1,6 @@
 import type { SmoothScroll } from '@/core/SmoothScroll';
-import { PROJECTS } from '@/content/projects';
+import { CONTACT_EMAIL } from '@/content/contact';
+import { CASE_STUDIES, PROJECTS } from '@/content/projects';
 import { onLocaleChange, t, toggleLocale } from '@/i18n';
 
 /**
@@ -99,6 +100,13 @@ export class CommandPalette {
       run: () => this.go(`#${p.id}`),
     }));
 
+    const studies: Command[] = CASE_STUDIES.map((study) => ({
+      id: `study-${study.id}`,
+      group: 'projects',
+      label: () => study.name,
+      run: () => this.go(`#${study.id}`),
+    }));
+
     const actions: Command[] = [
       {
         id: 'lang',
@@ -128,11 +136,11 @@ export class CommandPalette {
         id: 'email',
         group: 'actions',
         label: () => t('action.email'),
-        run: () => (window.location.href = 'mailto:adrian34470@gmail.com'),
+        run: () => (window.location.href = `mailto:${CONTACT_EMAIL}`),
       },
     ];
 
-    return [...nav, ...projects, ...actions];
+    return [...nav, ...projects, ...studies, ...actions];
   }
 
   private buildDom(): HTMLDivElement {

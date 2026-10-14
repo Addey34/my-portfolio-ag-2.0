@@ -129,9 +129,9 @@ const NODE_COPY: Record<string, LocalizedText> = {
     fr: 'Valide les données des collecteurs et modèles avant leur traitement par les services.',
     en: 'Validates collector and model data before it reaches the services.',
   },
-  'Upstash Redis': {
-    fr: 'Fournit cache, quotas et états courts aux prototypes sans imposer une infrastructure persistante.',
-    en: 'Provides caching, quotas and short-lived state without imposing persistent infrastructure.',
+  PostgreSQL: {
+    fr: 'Base relationnelle pour les données qui exigent transactions, contraintes et requêtes fiables.',
+    en: 'Relational database for data that needs transactions, constraints and reliable queries.',
   },
   'Docker / Oracle Cloud': {
     fr: 'Reproduit les services et organise leur déploiement sur une infrastructure distante maîtrisée.',
@@ -145,17 +145,17 @@ const NODE_COPY: Record<string, LocalizedText> = {
     fr: 'Assemble les pipelines d’image en séparant modèles, mémoire GPU et paramètres d’inférence.',
     en: 'Assembles image pipelines while separating models, GPU memory and inference parameters.',
   },
-  'Playwright / Cheerio': {
-    fr: 'Automatise les parcours critiques et transforme les pages collectées en données comparables pour Comparator.',
-    en: 'Automates critical journeys and turns collected pages into comparable Comparator data.',
+  'GitHub Actions / CI': {
+    fr: 'Rejoue formatage, lint, types, tests et build à chaque changement pour garder les dépôts livrables.',
+    en: 'Replays formatting, lint, types, tests and build on every change to keep repositories shippable.',
   },
-  'Discord.js / voice': {
-    fr: 'Explore les interactions vocales temps réel et la gestion de sessions hors du navigateur.',
-    en: 'Explores real-time voice interactions and session management outside the browser.',
+  'Firebase Hosting': {
+    fr: 'Sert les interfaces statiques de Galaxy et MagNotes avec headers de sécurité et cache maîtrisés.',
+    en: 'Serves the static Galaxy and MagNotes frontends with controlled security headers and caching.',
   },
-  'FFmpeg / yt-dlp': {
-    fr: 'Prépare et normalise les médias avant traitement, stockage ou intégration dans un flux produit.',
-    en: 'Prepares and normalizes media before processing, storage or product integration.',
+  'Vitest / Playwright': {
+    fr: 'Vérifie la logique par des tests unitaires et les parcours critiques par des tests de bout en bout.',
+    en: 'Checks logic with unit tests and critical journeys with end-to-end tests.',
   },
 };
 
@@ -188,8 +188,7 @@ const NODES: NodeDef[] = [
     color: COLORS.interface,
     layer: 'interface',
     mark: [0.23, 0.35],
-    projects: ['Prototypes R&D'],
-    primary: true,
+    projects: ['Autres projets'],
   },
   {
     label: 'Vite',
@@ -204,7 +203,7 @@ const NODES: NodeDef[] = [
     color: COLORS.interface,
     layer: 'interface',
     mark: [0.33, 0.35],
-    projects: ['MagNotes', 'Prototypes R&D'],
+    projects: ['MagNotes', 'Autres projets'],
   },
   {
     label: 'HTML / CSS',
@@ -278,43 +277,42 @@ const NODES: NodeDef[] = [
     color: COLORS.data,
     layer: 'data',
     mark: [0.6, 0.32],
-    projects: ['Prototypes R&D'],
+    projects: ['Autres projets'],
   },
   {
     label: 'Python / Pydantic',
     color: COLORS.data,
     layer: 'data',
     mark: [0.56, 0.49],
-    projects: ['Comparateur', 'Prototypes R&D'],
+    projects: ['Autres projets'],
   },
   {
-    label: 'Upstash Redis',
+    label: 'PostgreSQL',
     color: COLORS.data,
     layer: 'data',
     mark: [0.59, 0.68],
-    projects: ['Prototypes R&D'],
+    projects: ['Autres projets'],
   },
   {
     label: 'PyTorch / CUDA / PEFT',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.7, 0.82],
-    projects: ['Génération locale'],
-    primary: true,
+    projects: ['Autres projets'],
   },
   {
     label: 'Diffusers / Transformers',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.83, 0.84],
-    projects: ['Génération locale'],
+    projects: ['Autres projets'],
   },
   {
-    label: 'Playwright / Cheerio',
+    label: 'GitHub Actions / CI',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.92, 0.72],
-    projects: ['Galaxy', 'Ludora', 'Comparateur'],
+    projects: ['Ludora', 'Portfolio AG'],
   },
   {
     label: 'Docker / Oracle Cloud',
@@ -322,20 +320,23 @@ const NODES: NodeDef[] = [
     layer: 'deploy',
     mark: [0.92, 0.58],
     projects: ['MagNotes', 'Infrastructure'],
+    primary: true,
   },
   {
-    label: 'Discord.js / voice',
+    label: 'Firebase Hosting',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.79, 0.55],
-    projects: ['Prototypes R&D'],
+    projects: ['Galaxy', 'MagNotes', 'Portfolio AG'],
+    primary: true,
   },
   {
-    label: 'FFmpeg / yt-dlp',
-    color: COLORS.realtime,
-    layer: 'realtime',
+    label: 'Vitest / Playwright',
+    color: COLORS.deploy,
+    layer: 'deploy',
     mark: [0.89, 0.55],
-    projects: ['Prototypes R&D'],
+    projects: ['MagNotes', 'Portfolio AG'],
+    primary: true,
   },
 ];
 

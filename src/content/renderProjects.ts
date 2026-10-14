@@ -1,4 +1,4 @@
-import { PROJECTS, type Project } from '@/content/projects';
+import { CASE_STUDIES, PROJECTS, type Project } from '@/content/projects';
 import { registerDynamic, t, tl } from '@/i18n';
 
 /**
@@ -107,6 +107,8 @@ function buildChapter(project: Project, index: number): HTMLElement {
     ['role', project.proof.role],
     ['challenge', project.proof.challenge],
     ['result', project.proof.result],
+    ['decision', project.proof.decision],
+    ['evidence', project.proof.evidence],
   ] as const;
   const contextProof = buildProof(proofEntries.slice(0, 2));
   const outcomeProof = buildProof(proofEntries.slice(2));
@@ -166,7 +168,7 @@ function buildChapter(project: Project, index: number): HTMLElement {
 function buildProof(
   entries: ReadonlyArray<
     readonly [
-      'problem' | 'role' | 'challenge' | 'result',
+      'problem' | 'role' | 'challenge' | 'result' | 'decision' | 'evidence',
       Project['proof'][keyof Project['proof']],
     ]
   >
@@ -195,4 +197,53 @@ function el(tag: string, className: string, text: string): HTMLElement {
   if (className) node.className = className;
   node.textContent = text;
   return node;
+}
+
+/** Etudes de cas complementaires, rendues hors du parcours des chapitres. */
+export function renderStudies(mount: HTMLElement): void {
+  const frag = document.createDocumentFragment();
+  CASE_STUDIES.forEach((study) => {
+    const article = document.createElement('article');
+    article.className = 'study';
+    article.id = study.id;
+    article.style.setProperty('--study-accent', study.accent);
+
+    const head = el('header', 'study__head', '');
+    const name = el('h3', 'study__name', study.name);
+    const status = el('span', 'study__status', '');
+    registerDynamic(status, () => tl(study.status));
+    head.append(name, status);
+
+    const rows = document.createElement('dl');
+    rows.className = 'study__rows';
+    (
+      [
+        ['problem', study.problem],
+        ['role', study.role],
+        ['decision', study.decision],
+        ['evidence', study.evidence],
+        ['limit', study.limit],
+      ] as const
+    ).forEach(([key, value]) => {
+      const row = document.createElement('div');
+      row.className = 'study__row';
+      const term = el('dt', 'study__label', t(`project.${key}`));
+      term.dataset.i18n = `project.${key}`;
+      const description = el('dd', 'study__value', '');
+      registerDynamic(description, () => tl(value));
+      row.append(term, description);
+      rows.appendChild(row);
+    });
+
+    const stack = document.createElement('ul');
+    stack.className = 'chapter__stack';
+    study.stack.forEach((tech) => stack.appendChild(el('li', '', tech)));
+
+    const note = el('p', 'chapter__link-note', '');
+    registerDynamic(note, () => tl(study.note));
+
+    article.append(head, rows, stack, note);
+    frag.appendChild(article);
+  });
+  mount.appendChild(frag);
 }

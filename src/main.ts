@@ -10,12 +10,13 @@ import { ChapterManager } from '@/chapters/ChapterManager';
 import { SignalField } from '@/visual/SignalField';
 import { VisualDirector } from '@/visual/VisualDirector';
 import { FPSCounter } from '@/utils/FPSCounter';
-import { renderProjects } from '@/content/renderProjects';
-import { initI18n, initLocaleToggle } from '@/i18n';
+import { renderProjects, renderStudies } from '@/content/renderProjects';
+import { initI18n, initLocaleToggle, t } from '@/i18n';
 import { CommandPalette } from '@/ui/CommandPalette';
 import { ControlPanel } from '@/ui/ControlPanel';
 import { MagneticCursor } from '@/ui/MagneticCursor';
 import { SectionRail } from '@/ui/SectionRail';
+import { CONTACT_EMAIL } from '@/content/contact';
 import { initGitHubProfile } from '@/integrations/githubProfile';
 
 /**
@@ -52,7 +53,32 @@ function initContactForm(): void {
       `Nom : ${name}\nEmail : ${email}\n\n${message}`
     );
 
-    window.location.href = `mailto:adrian34470@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+  });
+}
+
+/** Adresse visible et copiable : le formulaire mailto ne suffit pas en webmail. */
+function initContactEmail(): void {
+  const link = document.querySelector<HTMLAnchorElement>(
+    '[data-contact-email]'
+  );
+  const copy = document.querySelector<HTMLButtonElement>('[data-copy-email]');
+  if (link) {
+    link.href = `mailto:${CONTACT_EMAIL}`;
+    link.textContent = CONTACT_EMAIL;
+  }
+  copy?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_EMAIL);
+    } catch {
+      return;
+    }
+    copy.dataset.i18n = 'contact.copied';
+    copy.textContent = t('contact.copied');
+    window.setTimeout(() => {
+      copy.dataset.i18n = 'contact.copy';
+      copy.textContent = t('contact.copy');
+    }, 1800);
   });
 }
 
@@ -62,10 +88,13 @@ function boot(): void {
   // 1. Contenu injecté depuis la source unique (les chapitres projet).
   const projectsMount = document.getElementById('projects');
   if (projectsMount) renderProjects(projectsMount);
+  const studiesMount = document.getElementById('studies-list');
+  if (studiesMount) renderStudies(studiesMount);
 
   // 2. i18n : applique la langue courante à tout le DOM (statique + dynamique).
   initI18n();
   initContactForm();
+  initContactEmail();
   const langBtn = document.getElementById('lang-toggle');
   if (langBtn) initLocaleToggle(langBtn);
 

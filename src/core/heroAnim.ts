@@ -17,9 +17,11 @@ import type { SmoothScroll } from '@/core/SmoothScroll';
  * En reduced-motion : tout visible immédiatement, zéro animation.
  */
 export function initHero(scroll: SmoothScroll): void {
-  // Les CTAs ancres + le wordmark utilisent scrollTo de Lenis pour un défilement lissé.
+  // Les CTAs ancres, le lien Contact du HUD + le wordmark utilisent scrollTo de Lenis pour un défilement lissé.
   document
-    .querySelectorAll<HTMLAnchorElement>('.hero__cta[href^="#"]')
+    .querySelectorAll<HTMLAnchorElement>(
+      '.hero__cta[href^="#"], .hud__btn--link[href^="#"]'
+    )
     .forEach((a) => {
       a.addEventListener('click', (e) => {
         e.preventDefault();

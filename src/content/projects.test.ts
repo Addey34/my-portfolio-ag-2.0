@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PROJECTS } from './projects';
+import { CASE_STUDIES, PROJECTS } from './projects';
 
 describe('project catalogue', () => {
   it('keeps project identifiers unique and linkable', () => {
@@ -20,6 +20,25 @@ describe('project catalogue', () => {
         ...Object.values(project.proof),
       ];
       localized.forEach((value) => {
+        expect(value.fr.trim()).not.toBe('');
+        expect(value.en.trim()).not.toBe('');
+      });
+    });
+  });
+
+  it('keeps complementary case studies bilingual and out of the chapters', () => {
+    const ids = new Set(PROJECTS.map((project) => project.id));
+    CASE_STUDIES.forEach((study) => {
+      expect(ids.has(study.id)).toBe(false);
+      [
+        study.status,
+        study.problem,
+        study.role,
+        study.decision,
+        study.evidence,
+        study.limit,
+        study.note,
+      ].forEach((value) => {
         expect(value.fr.trim()).not.toBe('');
         expect(value.en.trim()).not.toBe('');
       });

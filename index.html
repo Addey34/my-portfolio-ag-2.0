@@ -3,21 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Adrian Guichard — Product Builder Full-Stack</title>
+    <title>Adrian Guichard — Développeur full-stack TypeScript</title>
     <meta
       name="description"
-      content="Adrian Guichard transforme des idées complexes en produits web clairs, robustes et déployés : full-stack TypeScript, temps réel, WebGL et infrastructure."
+      content="Adrian Guichard, développeur full-stack TypeScript et expériences interactives : produits web complets, temps réel, WebGL et déploiement."
     />
     <meta name="theme-color" content="#03050a" />
     <meta name="robots" content="index,follow" />
     <meta property="og:type" content="website" />
     <meta
       property="og:title"
-      content="Adrian Guichard — Product Builder Full-Stack"
+      content="Adrian Guichard — Développeur full-stack TypeScript"
     />
     <meta
       property="og:description"
-      content="Produits web complets, systèmes temps réel, WebGL et infrastructure."
+      content="Développeur full-stack TypeScript & expériences interactives : Galaxy, Ludora, MagNotes."
     />
     <meta name="twitter:card" content="summary" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -34,7 +34,7 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Adrian Guichard",
-        "jobTitle": "Full Stack Product Developer",
+        "jobTitle": "Développeur full-stack TypeScript",
         "sameAs": [
           "https://github.com/Addey34",
           "https://www.linkedin.com/in/adrianguichard/"
@@ -70,6 +70,13 @@
 
     <!-- HUD fixe : reglages visuels, langue et palette. -->
     <div class="hud">
+      <a
+        class="hud__btn hud__btn--link"
+        href="#contact"
+        data-magnetic
+        data-i18n="nav.contact"
+        >Contact</a
+      >
       <button
         id="controls-open"
         class="hud__btn hud__btn--icon"
@@ -120,13 +127,13 @@
           <!-- Badges identite animes par heroAnim.ts -->
           <div class="hero__tags">
             <span class="hero__tag" data-i18n="hero.tag.1"
-              >Product builder</span
-            >
-            <span class="hero__tag" data-i18n="hero.tag.2"
               >Full-stack TypeScript</span
             >
+            <span class="hero__tag" data-i18n="hero.tag.2"
+              >Expériences interactives</span
+            >
             <span class="hero__tag" data-i18n="hero.tag.3"
-              >WebGL &amp; temps réel</span
+              >Product builder</span
             >
           </div>
 
@@ -137,9 +144,9 @@
           </h1>
 
           <p class="hero__lead" data-i18n="hero.lead">
-            Je transforme des idées complexes en produits web clairs, robustes
-            et déployés — de l’interface aux données, au temps réel et à
-            l’infrastructure.
+            Développeur full-stack TypeScript &amp; expériences interactives. Je
+            conçois des produits web complets, de l’interface aux données, au
+            temps réel et au déploiement.
           </p>
 
           <!-- CTAs smoothscroll via heroAnim.ts + effet magnetique -->
@@ -209,9 +216,7 @@
             <li class="stack-node" data-layer="interface" data-weight="primary">
               React
             </li>
-            <li class="stack-node" data-layer="interface" data-weight="primary">
-              Next.js
-            </li>
+            <li class="stack-node" data-layer="interface">Next.js</li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
               Vite
             </li>
@@ -237,19 +242,21 @@
             <li class="stack-node" data-layer="data">MongoDB / Mongoose</li>
             <li class="stack-node" data-layer="data">FastAPI / Uvicorn</li>
             <li class="stack-node" data-layer="data">Python / Pydantic</li>
-            <li class="stack-node" data-layer="data">Upstash Redis</li>
-            <li class="stack-node" data-layer="deploy" data-weight="primary">
-              PyTorch / CUDA
-            </li>
+            <li class="stack-node" data-layer="data">PostgreSQL</li>
+            <li class="stack-node" data-layer="deploy">PyTorch / CUDA</li>
             <li class="stack-node" data-layer="deploy">
               Diffusers / Transformers
             </li>
-            <li class="stack-node" data-layer="deploy">Playwright / Cheerio</li>
-            <li class="stack-node" data-layer="deploy">
+            <li class="stack-node" data-layer="deploy">GitHub Actions / CI</li>
+            <li class="stack-node" data-layer="deploy" data-weight="primary">
               Docker / Oracle Cloud
             </li>
-            <li class="stack-node" data-layer="deploy">Discord.js / voice</li>
-            <li class="stack-node" data-layer="realtime">FFmpeg / yt-dlp</li>
+            <li class="stack-node" data-layer="deploy" data-weight="primary">
+              Firebase Hosting
+            </li>
+            <li class="stack-node" data-layer="deploy" data-weight="primary">
+              Vitest / Playwright
+            </li>
           </ul>
 
           <ul class="stack-legend">
@@ -291,52 +298,52 @@
         <div class="offer-grid">
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>01</span>
-            <h3 data-i18n="freelance.card.product.title">Produit sur mesure</h3>
+            <h3 data-i18n="freelance.card.product.title">
+              Interfaces &amp; sites web
+            </h3>
             <p data-i18n="freelance.card.product.text">
-              SaaS, dashboard, outil métier, espace client ou MVP complet, du
-              parcours utilisateur jusqu'à la logique applicative.
+              Sites vitrines, refontes et interfaces rapides, responsives et
+              accessibles.
             </p>
             <p class="story-note" data-i18n="freelance.card.product.note">
-              Du cadrage au déploiement.
+              Contenu, design, mise en ligne.
             </p>
           </article>
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>02</span>
             <h3 data-i18n="freelance.card.system.title">
-              Architecture complète
+              Applications &amp; outils métiers
             </h3>
             <p data-i18n="freelance.card.system.text">
-              Frontend TypeScript, API, base de données, authentification,
-              automatisation, déploiement VPS et maintenance évolutive.
+              Dashboards, espaces clients, MVP SaaS et automatisations.
             </p>
             <p class="story-note" data-i18n="freelance.card.system.note">
-              Front, API, données et infrastructure.
+              Besoin, interface, API, données.
             </p>
           </article>
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>03</span>
             <h3 data-i18n="freelance.card.automation.title">
-              Automatisation et données
+              Expériences 3D &amp; interactives
             </h3>
             <p data-i18n="freelance.card.automation.text">
-              Scraping, comparaison de prix, orchestration d'API, extraction,
-              nettoyage et interfaces de pilotage.
+              Visualisations WebGL, configurateurs, expériences immersives et
+              mini-jeux.
             </p>
             <p class="story-note" data-i18n="freelance.card.automation.note">
-              Collecter, nettoyer, décider.
+              Données, scène, interaction.
             </p>
           </article>
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>04</span>
             <h3 data-i18n="freelance.card.delivery.title">
-              Livraison augmentée
+              APIs, intégration &amp; déploiement
             </h3>
             <p data-i18n="freelance.card.delivery.text">
-              IA comme accélérateur de conception, revue et production, avec
-              validation humaine sur l'architecture, la sécurité et la qualité.
+              Connexion de services, persistance, CI et mise en production.
             </p>
             <p class="story-note" data-i18n="freelance.card.delivery.note">
-              Accélérer sans sacrifier la qualité.
+              Service, test, production.
             </p>
           </article>
         </div>
@@ -425,6 +432,19 @@
           </div>
         </details>
         <div class="contact__links" data-reveal>
+          <p class="contact__availability" data-i18n="contact.availability">
+            Ouvert aux opportunités · Montpellier, France
+          </p>
+          <a href="mailto:" data-contact-email data-magnetic></a>
+          <button
+            type="button"
+            class="contact__copy"
+            data-copy-email
+            data-magnetic
+            data-i18n="contact.copy"
+          >
+            Copier l’adresse
+          </button>
           <a
             href="https://github.com/Addey34"
             rel="noopener"
@@ -464,6 +484,21 @@
             >Latest GitHub activity</a
           >
         </div>
+      </section>
+
+      <!-- ETUDES COMPLEMENTAIRES : hors parcours principal, injectees depuis CASE_STUDIES. -->
+      <section id="studies" class="section section--studies">
+        <p class="contact__kicker" data-i18n="studies.kicker">
+          Études complémentaires
+        </p>
+        <h2 class="studies__title" data-i18n="studies.title">
+          Deux projets privés, présentés sans code.
+        </h2>
+        <p class="studies__lead" data-i18n="studies.lead">
+          Ce que je peux montrer avec précision : problème, choix technique,
+          preuves datées et limites connues.
+        </p>
+        <div id="studies-list" class="studies__list"></div>
       </section>
     </main>
 
