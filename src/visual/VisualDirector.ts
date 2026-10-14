@@ -61,7 +61,10 @@ export class VisualDirector {
     const delta = this.lastTime ? Math.min(time - this.lastTime, 50) : 16;
     this.lastTime = time;
     const ease = 1 - Math.pow(0.91, delta / 16);
-    this.state.transition += (1 - this.state.transition) * ease;
+    // Le passage d'une forme à l'autre est volontairement lent (~1,3 s) pour
+    // laisser lire le mouvement des points ; l'énergie reste plus réactive.
+    const transitionEase = 1 - Math.pow(0.962, delta / 16);
+    this.state.transition += (1 - this.state.transition) * transitionEase;
     this.state.energy += (this.targetEnergy - this.state.energy) * ease;
     this.state.pulse = Math.sin(time * 0.00085) * 0.5 + 0.5;
     this.field?.setVisualState(this.state);

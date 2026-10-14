@@ -342,32 +342,58 @@ const NODES: NodeDef[] = [
 
 const TAU = Math.PI * 2;
 
-const AG_MARKS: [number, number][] = [
-  [0.04, 0.86],
-  [0.09, 0.66],
-  [0.15, 0.44],
-  [0.22, 0.22],
-  [0.29, 0.08],
-  [0.36, 0.22],
-  [0.43, 0.44],
-  [0.49, 0.66],
-  [0.54, 0.86],
-  [0.13, 0.56],
-  [0.29, 0.56],
-  [0.45, 0.56],
-  [0.93, 0.24],
-  [0.85, 0.12],
-  [0.72, 0.08],
-  [0.61, 0.18],
-  [0.57, 0.38],
-  [0.59, 0.62],
-  [0.68, 0.8],
-  [0.82, 0.86],
-  [0.93, 0.74],
-  [0.94, 0.54],
-  [0.8, 0.54],
-  [0.69, 0.54],
-];
+/**
+ * Monogramme AG géométrique, en unités de dessin (hauteur des lettres = 140).
+ * Le A est un triangle isocèle avec une barre ; le G est un arc de cercle
+ * parfait (rayon 70) fermé par une barre centrale. Les 24 points suivent
+ * l'ordre historique : 0-8 jambes du A, 9-11 barre du A, 12-21 arc du G,
+ * 22-23 barre du G.
+ */
+const AG_HEIGHT = 140;
+const AG_WIDTH = 290;
+const AG_UNITS: [number, number][] = (() => {
+  const points: [number, number][] = [];
+  const apexX = 65;
+  for (let k = 0; k <= 4; k += 1) {
+    const t = k / 4;
+    points.push([apexX * t, AG_HEIGHT - AG_HEIGHT * t]);
+  }
+  for (let k = 1; k <= 4; k += 1) {
+    const u = k / 4;
+    points.push([apexX + apexX * u, AG_HEIGHT * u]);
+  }
+  const barY = AG_HEIGHT * 0.64;
+  const barT = (AG_HEIGHT - barY) / AG_HEIGHT;
+  points.push([apexX * barT, barY], [apexX, barY], [130 - apexX * barT, barY]);
+  const cx = 220;
+  const cy = AG_HEIGHT / 2;
+  const radius = AG_HEIGHT / 2;
+  for (let k = 0; k <= 9; k += 1) {
+    const angle = ((40 + (320 / 9) * k) * Math.PI) / 180;
+    points.push([cx + Math.cos(angle) * radius, cy - Math.sin(angle) * radius]);
+  }
+  points.push([cx + radius * 0.5, cy], [cx, cy]);
+  return points;
+})();
+
+/** Cadre du monogramme : échelle uniforme, centré dans les limites de la scène. */
+function agFrame(
+  left: number,
+  top: number,
+  width: number,
+  height: number
+): { left: number; top: number; scale: number; width: number; height: number } {
+  const scale = Math.min(width / AG_WIDTH, height / AG_HEIGHT);
+  const frameWidth = AG_WIDTH * scale;
+  const frameHeight = AG_HEIGHT * scale;
+  return {
+    left: left + (width - frameWidth) / 2,
+    top: top + (height - frameHeight) / 2,
+    scale,
+    width: frameWidth,
+    height: frameHeight,
+  };
+}
 
 interface PlanetDef {
   orbit: number;
@@ -991,9 +1017,10 @@ export class PortfolioStoryScene implements ChapterScene {
       return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
     }
     if (scene === 'stack') {
+      const frame = agFrame(left, top, width, height);
       return [
-        left + AG_MARKS[index][0] * width,
-        top + AG_MARKS[index][1] * height,
+        frame.left + AG_UNITS[index][0] * frame.scale,
+        frame.top + AG_UNITS[index][1] * frame.scale,
       ];
     }
     if (scene === 'solutions') {
@@ -1770,8 +1797,10 @@ export class PortfolioStoryScene implements ChapterScene {
         const current = points[i];
         const segmentReveal = Math.min(previous.reveal, current.reveal);
         if (segmentReveal <= 0.01) continue;
-        const midX = (previous.x + current.x) * 0.5;
-        const midY = (previous.y + current.y) * 0.5;
+        // Spline de Catmull-Rom : le G reste un arc lisse, les jambes du A
+        // (points alignés) restent droites.
+        const before = points[i - 2] ?? previous;
+        const after = points[i + 1] ?? current;
         const railMagnet = Math.max(previous.magnet, current.magnet);
         ctx.globalAlpha =
           alpha * segmentReveal * (0.22 + motion + railMagnet * 0.36);
@@ -1781,8 +1810,14 @@ export class PortfolioStoryScene implements ChapterScene {
         ctx.lineWidth = railIndex === 2 ? 0.9 : 1.1;
         ctx.beginPath();
         ctx.moveTo(previous.x, previous.y);
-        ctx.quadraticCurveTo(previous.x, previous.y, midX, midY);
-        ctx.quadraticCurveTo(current.x, current.y, current.x, current.y);
+        ctx.bezierCurveTo(
+          previous.x + (current.x - before.x) / 6,
+          previous.y + (current.y - before.y) / 6,
+          current.x - (after.x - previous.x) / 6,
+          current.y - (after.y - previous.y) / 6,
+          current.x,
+          current.y
+        );
         ctx.stroke();
       }
     });
@@ -1795,6 +1830,7 @@ export class PortfolioStoryScene implements ChapterScene {
     compact: boolean
   ): void {
     const bounds = this.sceneBounds('stack', compact);
+    const frame = agFrame(bounds.left, bounds.top, bounds.width, bounds.height);
     const alpha = easeOut(clamp01((opacity - 0.35) / 0.55));
     if (alpha <= 0.01) return;
     ctx.save();
@@ -1807,8 +1843,8 @@ export class PortfolioStoryScene implements ChapterScene {
       compact
         ? 'AG / DIGITAL SYSTEMS'
         : 'AG / ADRIAN GUICHARD — DIGITAL SYSTEMS',
-      bounds.left + bounds.width * 0.5,
-      bounds.top + bounds.height + (compact ? 10 : 20)
+      frame.left + frame.width * 0.5,
+      frame.top + frame.height + (compact ? 22 : 34)
     );
     ctx.restore();
   }

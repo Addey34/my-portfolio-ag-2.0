@@ -8,17 +8,21 @@ import type { SmoothScroll } from '@/core/SmoothScroll';
  * Navigation persistante par chapitres.
  *
  * Le point et son titre forment une seule cible. Le chapitre courant constitue
- * le foyer d'une molette verticale ; les voisins décroissent avec la distance.
- * Un appui-glissé fait défiler les chapitres en direct. Maintenir le geste vers
- * le haut ou le bas répète le déplacement comme une molette de date.
+ * le foyer d'une molette ; les voisins décroissent avec la distance. Sur
+ * desktop la molette est verticale (à gauche), sur mobile horizontale (en bas,
+ * glisser vers la gauche avance). Un appui-glissé fait défiler les chapitres en
+ * direct ; maintenir le geste répète le déplacement comme une molette de date.
  */
 interface RailItem {
   id: string;
   label: () => string;
 }
 
+type RailAxis = 'x' | 'y';
+
 interface RailDrag {
   pointerId: number;
+  axis: RailAxis;
   startY: number;
   lastY: number;
   previewIndex: number;
@@ -38,6 +42,7 @@ export class SectionRail {
   private activeId = 'top';
   private drag: RailDrag | null = null;
   private suppressClick = false;
+  private readonly horizontalQuery = window.matchMedia('(max-width: 860px)');
   private readonly onPointerMove = (event: PointerEvent) => {
     this.updateProximity(event);
     this.updateDrag(event);
@@ -182,14 +187,16 @@ export class SectionRail {
   }
 
   /** Démarre la molette sans perturber les clics courts. */
-  private nearestIndex(clientY: number): number {
+  private nearestIndex(coordinate: number, axis: RailAxis): number {
     let nearest = 0;
     let nearestDistance = Number.POSITIVE_INFINITY;
     this.items.forEach((item, index) => {
       const link = this.links.get(item.id);
       if (!link) return;
       const rect = link.getBoundingClientRect();
-      const distance = Math.abs(clientY - (rect.top + rect.height / 2));
+      const center =
+        axis === 'x' ? rect.left + rect.width / 2 : rect.top + rect.height / 2;
+      const distance = Math.abs(coordinate - center);
       if (distance < nearestDistance) {
         nearest = index;
         nearestDistance = distance;
@@ -201,6 +208,7 @@ export class SectionRail {
   private startDrag(event: PointerEvent): void {
     if (event.button !== 0) return;
     this.suppressClick = false;
+    const axis: RailAxis = this.horizontalQuery.matches ? 'x' : 'y';
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>(
       '.rail__dot'
     );
@@ -210,13 +218,15 @@ export class SectionRail {
           0,
           this.items.findIndex((item) => item.id === targetId)
         )
-      : this.nearestIndex(event.clientY);
+      : this.nearestIndex(axis === 'x' ? event.clientX : event.clientY, axis);
     this.navigate(this.items[startIndex]);
     const now = performance.now();
+    const coordinate = axis === 'x' ? -event.clientX : event.clientY;
     this.drag = {
       pointerId: event.pointerId,
-      startY: event.clientY,
-      lastY: event.clientY,
+      axis,
+      startY: coordinate,
+      lastY: coordinate,
       previewIndex: startIndex,
       originWasSurface: !target,
       moved: false,
@@ -233,9 +243,12 @@ export class SectionRail {
   private updateDrag(event: PointerEvent): void {
     if (!this.drag || event.pointerId !== this.drag.pointerId) return;
     const drag = this.drag;
-    const displacement = event.clientY - drag.startY;
-    const incrementalDelta = event.clientY - drag.lastY;
-    drag.lastY = event.clientY;
+    // Sur l'axe horizontal, glisser vers la gauche avance : on inverse X pour
+    // que « positif » signifie toujours « chapitre suivant ».
+    const coordinate = drag.axis === 'x' ? -event.clientX : event.clientY;
+    const displacement = coordinate - drag.startY;
+    const incrementalDelta = coordinate - drag.lastY;
+    drag.lastY = coordinate;
     drag.accumulatedY += incrementalDelta;
 
     const direction: -1 | 0 | 1 =
@@ -262,10 +275,8 @@ export class SectionRail {
       }
       drag.accumulatedY -= stepDirection * 36;
     }
-    this.nav.style.setProperty(
-      '--rail-drag-shift',
-      `${drag.accumulatedY.toFixed(2)}px`
-    );
+    const shift = drag.axis === 'x' ? -drag.accumulatedY : drag.accumulatedY;
+    this.nav.style.setProperty('--rail-drag-shift', `${shift.toFixed(2)}px`);
   }
 
   /** Répète le pas lorsque le pointeur reste maintenu dans une direction. */

@@ -4750,87 +4750,111 @@ button:focus-visible {
   }
 }
 
-/* Sur mobile, le rail reste latéral et se manipule comme une molette verticale. */
+/* Sur mobile, le rail est une molette horizontale en bas de l'écran : le
+   chapitre courant reste au centre, son nom s'affiche au-dessus et un
+   glissement du doigt vers la gauche ou la droite change de chapitre. */
 @media (max-width: 860px) {
   .rail {
-    top: 0;
-    right: auto;
-    bottom: auto;
-    left: max(0.25rem, env(safe-area-inset-left));
-    width: 7.5rem;
-    height: 9rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.06rem;
-    padding: 0.48rem 0.32rem;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(5.2rem + env(safe-area-inset-bottom));
+    display: block;
+    padding: 0;
     overflow: visible;
     border: 0;
-    border-radius: 0.85rem;
+    border-radius: 0;
     background: transparent;
     box-shadow: none;
     backdrop-filter: none;
     transform: none;
     mask-image: none;
-    touch-action: none;
+    touch-action: pan-y;
     user-select: none;
   }
 
+  /* Dégradé de lecture : le contenu s'efface doucement derrière la molette. */
   .rail::before {
-    top: 1.15rem;
-    right: auto;
-    bottom: 1.15rem;
-    left: 0.93rem;
-    width: 1px;
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: auto;
     height: auto;
+    background: linear-gradient(
+      to top,
+      rgba(3, 5, 10, 0.96) 0%,
+      rgba(3, 5, 10, 0.92) 58%,
+      transparent 100%
+    );
+    pointer-events: none;
     transform: none;
   }
 
   .rail__dot {
     position: absolute;
-    top: 50%;
+    top: auto;
     right: auto;
-    left: 0.32rem;
-    width: 100%;
-    height: 2.25rem;
+    bottom: calc(0.7rem + env(safe-area-inset-bottom));
+    left: 50%;
+    width: 2.31rem;
+    height: 2.31rem;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 0.8rem;
-    gap: 0.5rem;
-    padding: 0.28rem 0.34rem;
-    border-radius: 0.48rem;
+    place-items: center;
+    padding: 0;
+    border-radius: 999px;
     background: transparent;
-    transform: translateY(calc(-50% + var(--rail-offset, 0rem)))
-      scale(calc(0.9 + var(--rail-depth) * 0.1 + var(--rail-proximity) * 0.04));
-    transform-origin: left center;
+    transform: translateX(calc(-50% + var(--rail-offset, 0rem)))
+      scale(calc(0.8 + var(--rail-depth) * 0.2));
+    transform-origin: center;
   }
 
   .rail__dot.is-current {
     background: transparent;
-    transform: translateY(calc(-50% + var(--rail-offset, 0rem))) scale(1.08);
+    transform: translateX(calc(-50% + var(--rail-offset, 0rem))) scale(1.15);
   }
 
   .rail.is-dragging .rail__dot {
-    transform: translateY(
+    transform: translateX(
         calc(-50% + var(--rail-offset, 0rem) + var(--rail-drag-shift, 0px))
       )
-      scale(calc(0.9 + var(--rail-depth) * 0.1 + var(--rail-proximity) * 0.04));
+      scale(calc(0.8 + var(--rail-depth) * 0.2));
+  }
+
+  .rail.is-dragging .rail__dot.is-current {
+    transform: translateX(
+        calc(-50% + var(--rail-offset, 0rem) + var(--rail-drag-shift, 0px))
+      )
+      scale(1.2);
   }
 
   .rail__marker {
-    grid-column: 1;
-    grid-row: 1;
+    grid-column: auto;
+    grid-row: auto;
     justify-self: center;
   }
 
+  /* Seul le chapitre courant porte son nom, centré au-dessus de la molette. */
   .rail__label {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: start;
-    overflow: hidden;
-    text-align: left;
-    text-overflow: ellipsis;
-    font-size: 0.63rem;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    grid-column: auto;
+    grid-row: auto;
+    margin-bottom: 0.1rem;
+    overflow: visible;
+    text-align: center;
+    font-size: 0.72rem;
     opacity: 0;
     white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  .rail__dot.is-current .rail__label {
+    opacity: 1;
+    transform: translateX(-50%);
   }
 
   .rail.is-pressed {
@@ -4838,23 +4862,22 @@ button:focus-visible {
     backdrop-filter: none;
   }
 
-  .rail.is-pressed .rail__label {
-    opacity: calc(0.05 + var(--rail-depth) * 0.82);
+  .rail.is-pressed .rail__label,
+  .rail.is-pressed .rail__dot:not(.is-current) .rail__label {
+    opacity: 0;
   }
 
   .rail.is-pressed .rail__dot.is-current .rail__label {
     opacity: 1;
   }
 
-  .rail.is-dragging .rail__dot.is-current {
-    transform: translateY(
-        calc(-50% + var(--rail-offset, 0rem) + var(--rail-drag-shift, 0px))
-      )
-      scale(1.13);
-  }
-
   .rail.is-dragging .rail__dot.is-current .rail__label {
     color: var(--accent);
+  }
+
+  /* Le dernier contenu ne reste pas caché sous la molette. */
+  #scroll-root {
+    padding-bottom: 3.5rem;
   }
 }
 
@@ -5214,4 +5237,28 @@ button:focus-visible {
 /* Espace entre le libelle du cœur de points et le surtitre du contact. */
 .section--contact .contact__kicker {
   margin-top: 1.1rem;
+}
+
+/* Molette mobile : points voisins nettement visibles, nom bien dégagé. */
+@media (max-width: 860px) {
+  .rail__marker {
+    width: 0.5rem;
+    height: 0.5rem;
+    opacity: calc(0.45 + var(--rail-depth) * 0.55);
+  }
+
+  .rail__dot.is-current .rail__marker {
+    opacity: 1;
+  }
+
+  .rail__label {
+    margin-bottom: 0.45rem;
+  }
+}
+
+/* Pas de survol au doigt : l'indice n'a pas de sens sur un écran tactile. */
+@media (hover: none) {
+  .stack-hover-note {
+    display: none;
+  }
 }

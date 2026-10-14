@@ -94,6 +94,14 @@ function whenIdle(task: () => void): void {
   }
 }
 
+function createFpsProbe(): FPSCounter {
+  const el = document.createElement('div');
+  el.className = 'fps';
+  el.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(el);
+  return new FPSCounter(el);
+}
+
 function boot(): void {
   enableDeferredFonts();
 
@@ -180,8 +188,10 @@ function boot(): void {
   });
 
   // 10. Boucle maîtresse : tout le rendu par frame, sur le MÊME ticker que le scroll.
-  const fpsEl = document.getElementById('fps');
-  const fps = fpsEl ? new FPSCounter(fpsEl) : null;
+  // La sonde FPS n'existe que pour le développeur : ajouter ?fps à l'URL.
+  const fps = new URLSearchParams(window.location.search).has('fps')
+    ? createFpsProbe()
+    : null;
   gsap.ticker.add(() => {
     const now = performance.now();
     visual.render(now);
