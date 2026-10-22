@@ -1924,6 +1924,24 @@ export class StoryWorld3D {
     });
   }
 
+  /** Charte titane / laiton : l'abat-jour devient graphite, le métal reste chaud. */
+  private tuneLampMaterial(material: MeshStandardMaterial): void {
+    const name = material.name.toLowerCase();
+    if (name.includes('cobalt enamel')) {
+      material.color.set('#1a212b');
+      material.metalness = 0.78;
+      material.roughness = 0.36;
+    } else if (name.includes('graphite powder')) {
+      material.color.set('#68757f');
+      material.metalness = 0.8;
+      material.roughness = 0.34;
+    } else if (name.includes('brass socket')) {
+      material.color.set('#9a7a3f');
+      material.metalness = 0.85;
+      material.roughness = 0.3;
+    }
+  }
+
   /** Gravure du monogramme au dos de l'horloge : le dos visible pendant la rotation n'est plus vide. */
   private addClockBackEngraving(root: Object3D): void {
     const back = root.getObjectByName('Back__dark_steel');
@@ -3026,6 +3044,7 @@ export class StoryWorld3D {
         });
       });
       materials.forEach((material) => {
+        this.tuneLampMaterial(material);
         this.lampMaterials.push(material);
       });
       this.lampSwing.add(asset.scene);
