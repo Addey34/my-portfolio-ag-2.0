@@ -26,8 +26,8 @@ def emblem(key, parent, mat, y):
     n = f"SEAL / {key} emblem"
     if key == "galaxy":  # soleil, deux orbites, deux astres
         kit.cylinder(f"{n} sun", 0.055, 0.03, (0, y, 0), mat, parent, bevel=0.004, vertices=24)
-        kit.torus(f"{n} orbit 1", 0.17, 0.013, (0, y, 0), FACE, mat, parent, 64, 8)
-        kit.torus(f"{n} orbit 2", 0.28, 0.013, (0, y, 0), FACE, mat, parent, 64, 8)
+        kit.torus(f"{n} orbit 1", 0.17, 0.013, (0, y, 0), FACE, mat, parent, 48, 8)
+        kit.torus(f"{n} orbit 2", 0.28, 0.013, (0, y, 0), FACE, mat, parent, 48, 8)
         kit.cylinder(f"{n} planet 1", 0.032, 0.03, (0.17, y, 0), mat, parent, vertices=16)
         kit.cylinder(f"{n} planet 2", 0.04, 0.03, (-0.2, y, 0.2), mat, parent, vertices=16)
     elif key == "ludora":  # hexagone de plateau et trois dés
@@ -58,8 +58,8 @@ for index, key in enumerate(KEYS):
         cutter.rotation_euler = (0, -angle, 0)
         kit.cut(body, cutter)
     kit.cylinder(f"SEAL / {key} plate", 0.42, 0.02, (0, FRONT + 0.05, 0), m["graphite"], root, bevel=0.006)
-    kit.torus(f"SEAL / {key} polished rim", 0.44, 0.017, (0, FRONT - 0.003, 0), FACE, m["rhodium"], root)
-    kit.torus(f"SEAL / {key} brass ring", RADIUS + 0.015, 0.038, (0, 0, 0), FACE, m["brass"], root)
+    kit.torus(f"SEAL / {key} polished rim", 0.44, 0.017, (0, FRONT - 0.003, 0), FACE, m["rhodium"], root, 72, 8)
+    kit.torus(f"SEAL / {key} brass ring", RADIUS + 0.015, 0.038, (0, 0, 0), FACE, m["brass"], root, 72, 10)
     for k in range(6):
         angle = k * math.tau / 6 + math.pi / 6
         kit.hex_bolt(f"SEAL / {key} bolt", (0.495 * math.cos(angle), FRONT - 0.012, 0.495 * math.sin(angle)), root, m["rhodium"])

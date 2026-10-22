@@ -44,9 +44,9 @@ def ring_group(index, radius, minor, tilt, ring_mat, tick_count, tick_mat, plane
     tilt_pivot = kit.pivot(f"ASTRO / ring {index} tilt", (0, 0, 0))
     tilt_pivot.rotation_euler = tilt
     spin = kit.pivot(f"ASTRO / ring {index} spin", (0, 0, 0), tilt_pivot)
-    kit.torus(f"ASTRO / ring {index} band", radius, minor, (0, 0, 0), (0, 0, 0), ring_mat, spin, 128, 14)
+    kit.torus(f"ASTRO / ring {index} band", radius, minor, (0, 0, 0), (0, 0, 0), ring_mat, spin, 80, 10)
     ticks(spin, radius, tick_count, 0.05, 0.012, tick_mat, f"ASTRO / ring {index} ticks")
-    kit.sphere(f"ASTRO / ring {index} planet", planet, (radius, 0, 0), planet_mat, spin, 32, 16)
+    kit.sphere(f"ASTRO / ring {index} planet", planet, (radius, 0, 0), planet_mat, spin, 24, 12)
     return spin
 
 
@@ -55,12 +55,12 @@ axis_root = kit.pivot("ASTRO / axis pivot", (0, 0, 0))
 kit.cylinder("ASTRO / polar axis", 0.016, 2.3, (0, 0, 0), m["rhodium"], axis_root, rotation=(0, 0, 0), vertices=24)
 kit.sphere("ASTRO / axis cap top", 0.055, (0, 0, 1.17), m["brass"], axis_root)
 kit.sphere("ASTRO / axis cap bottom", 0.055, (0, 0, -1.17), m["brass"], axis_root)
-kit.sphere("ASTRO / sun", 0.2, (0, 0, 0), sun, axis_root, 40, 20)
+kit.sphere("ASTRO / sun", 0.2, (0, 0, 0), sun, axis_root, 32, 16)
 
 # Cadre extérieur fixe : méridien en titane avec boulons.
 frame = kit.pivot("ASTRO / frame pivot", (0, 0, 0))
-kit.torus("ASTRO / frame meridian", 1.22, 0.05, (0, 0, 0), (math.pi / 2, 0, 0), m["titanium"], frame, 128, 16)
-kit.torus("ASTRO / frame inner lip", 1.22, 0.022, (0, -0.05, 0), (math.pi / 2, 0, 0), m["brass"], frame, 128, 10)
+kit.torus("ASTRO / frame meridian", 1.22, 0.05, (0, 0, 0), (math.pi / 2, 0, 0), m["titanium"], frame, 80, 12)
+kit.torus("ASTRO / frame inner lip", 1.22, 0.022, (0, -0.05, 0), (math.pi / 2, 0, 0), m["brass"], frame, 80, 8)
 for k in range(8):
     angle = k * math.tau / 8
     kit.hex_bolt(

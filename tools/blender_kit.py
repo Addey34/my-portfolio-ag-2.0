@@ -135,7 +135,7 @@ def hex_bolt(name, location, parent, mat, axis_rotation=(math.pi / 2, 0, 0), rad
     return finish(obj, parent, mat, 0.004, 1)
 
 
-def cylinder(name, radius, depth, location, mat, parent, rotation=(math.pi / 2, 0, 0), bevel=0.0, vertices=64):
+def cylinder(name, radius, depth, location, mat, parent, rotation=(math.pi / 2, 0, 0), bevel=0.0, vertices=48):
     """Cylindre dont l'axe est Y par défaut (face avant vers -Y)."""
     bpy.ops.mesh.primitive_cylinder_add(
         vertices=vertices, radius=radius, depth=depth, location=location, rotation=rotation

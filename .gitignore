@@ -39,3 +39,7 @@ test-results/
 
 # Private working documentation
 docs/private/
+
+# Python
+__pycache__/
+*.blend1

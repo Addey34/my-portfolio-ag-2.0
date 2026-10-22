@@ -3,7 +3,9 @@ import {
   AmbientLight,
   BoxGeometry,
   BufferAttribute,
+  Box3,
   BufferGeometry,
+  CanvasTexture,
   CatmullRomCurve3,
   Color,
   DataTexture,
@@ -1922,6 +1924,68 @@ export class StoryWorld3D {
     });
   }
 
+  /** Gravure du monogramme au dos de l'horloge : le dos visible pendant la rotation n'est plus vide. */
+  private addClockBackEngraving(root: Object3D): void {
+    const back = root.getObjectByName('Back__dark_steel');
+    if (!back) return;
+    root.updateMatrixWorld(true);
+    const box = new Box3().setFromObject(back);
+    const size = box.getSize(new Vector3());
+    const center = box.getCenter(new Vector3());
+    const diameter = Math.min(size.x, size.y) * 0.8;
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    context.strokeStyle = '#e0a24a';
+    context.fillStyle = '#e0a24a';
+    context.lineWidth = 7;
+    context.beginPath();
+    context.arc(256, 256, 238, 0, TAU);
+    context.stroke();
+    context.lineWidth = 2;
+    context.beginPath();
+    context.arc(256, 256, 214, 0, TAU);
+    context.stroke();
+    for (let tick = 0; tick < 60; tick += 1) {
+      const angle = (tick / 60) * TAU;
+      const inner = tick % 5 === 0 ? 190 : 200;
+      context.lineWidth = tick % 5 === 0 ? 4 : 2;
+      context.beginPath();
+      context.moveTo(
+        256 + Math.cos(angle) * inner,
+        256 + Math.sin(angle) * inner
+      );
+      context.lineTo(256 + Math.cos(angle) * 210, 256 + Math.sin(angle) * 210);
+      context.stroke();
+    }
+    context.font = '700 170px system-ui, sans-serif';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText('AG', 256, 262);
+    const texture = new CanvasTexture(canvas);
+    texture.colorSpace = SRGBColorSpace;
+    const plane = new Mesh(
+      new PlaneGeometry(diameter, diameter),
+      new MeshStandardMaterial({
+        map: texture,
+        emissive: '#e0a24a',
+        emissiveMap: texture,
+        emissiveIntensity: 0.7,
+        color: '#000000',
+        metalness: 0,
+        roughness: 0.6,
+        transparent: true,
+        depthWrite: false,
+      })
+    );
+    plane.name = 'Engraving__AG';
+    plane.rotation.y = Math.PI;
+    plane.position.set(center.x, center.y, box.min.z - 0.003);
+    root.add(plane);
+  }
+
   /** Charte du prologue : titane brossé, graphite, laiton et un accent ambre (la lampe). */
   private tunePrologueMaterial(material: MeshStandardMaterial): void {
     const name = material.name;
@@ -2978,6 +3042,7 @@ export class StoryWorld3D {
       if (hands.some((hand) => !hand)) return;
       this.clockHands.push(...(hands as Object3D[]));
       if (this.legacyMorphEnabled) this.prepareClockMorph(asset.scene);
+      this.addClockBackEngraving(asset.scene);
       const materials = new Set<MeshStandardMaterial>();
       asset.scene.traverse((object) => {
         if (!(object instanceof Mesh)) return;
