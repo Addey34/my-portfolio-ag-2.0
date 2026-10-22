@@ -7,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface SmoothScrollOptions {
   duration?: number;
+  immediate?: boolean;
 }
 
 /**

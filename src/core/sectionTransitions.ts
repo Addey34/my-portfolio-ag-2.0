@@ -157,9 +157,9 @@ function readStoredMode(): TransitionMode {
       return raw as TransitionMode;
     }
   } catch {
-    /* stockage indisponible → aléatoire */
+    /* stockage indisponible → montée stable */
   }
-  return 'random';
+  return 'rise';
 }
 
 /** Tire `count` styles au hasard, sans deux fois le même d'affilée. */

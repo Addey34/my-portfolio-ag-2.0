@@ -35,7 +35,7 @@ export interface Project {
   chapter: string;
 }
 
-const demo: Localized = { fr: 'Démo', en: 'Live' };
+const demo: Localized = { fr: 'Voir la démo', en: 'Open live demo' };
 const code: Localized = { fr: 'Code source', en: 'Source code' };
 const showcase: Localized = {
   fr: 'Présentation technique',
@@ -190,8 +190,8 @@ export const PROJECTS: Project[] = [
         en: 'A single source of notes for canvas, Kanban, calendar and timeline.',
       },
       evidence: {
-        fr: 'Tests E2E Playwright + audit axe, démo locale sans backend, contrôle de production quotidien vert (14/10/2026). Utilisateurs non mesurés.',
-        en: 'Playwright E2E tests + axe audit, local demo without backend, daily production check green (14 Oct 2026). Users not measured.',
+        fr: 'Tests E2E Playwright + audit axe, démo locale sans backend, contrôle de production vert le 14/10/2026. Utilisateurs non mesurés.',
+        en: 'Playwright E2E tests + axe audit, local demo without backend, production check green on 14 Oct 2026. Users not measured.',
       },
     },
     highlights: [
@@ -201,8 +201,8 @@ export const PROJECTS: Project[] = [
       },
       { fr: 'Tests E2E et audit axe', en: 'E2E tests and axe audit' },
       {
-        fr: 'Contrôle de production quotidien',
-        en: 'Daily production check',
+        fr: 'Contrôle de production documenté',
+        en: 'Documented production check',
       },
     ],
     stack: ['React', 'TypeScript', 'MongoDB', 'Docker', 'Node'],
@@ -229,6 +229,8 @@ export interface CaseStudy {
   name: string;
   status: Localized;
   accent: string;
+  summary: Localized;
+  highlight: Localized;
   problem: Localized;
   role: Localized;
   decision: Localized;
@@ -244,6 +246,14 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'SiteGuardian',
     status: { fr: 'Pilote technique', en: 'Technical pilot' },
     accent: '#ffb35f',
+    summary: {
+      fr: 'Surveiller les sites livrés et transformer les incidents détectés en actions compréhensibles.',
+      en: 'Monitor delivered websites and turn detected incidents into understandable actions.',
+    },
+    highlight: {
+      fr: '194 tests documentés · sonde publique datée',
+      en: '194 documented tests · dated public probe',
+    },
     problem: {
       fr: 'Surveiller les sites livrés, détecter les incidents et transformer les anomalies techniques en actions compréhensibles pour les freelances et petites agences.',
       en: 'Monitor delivered websites, detect incidents and turn technical anomalies into understandable actions for freelancers and small agencies.',
@@ -282,6 +292,14 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'ImageGeneratorLocal',
     status: { fr: 'En développement', en: 'In development' },
     accent: '#a78bfa',
+    summary: {
+      fr: 'Installer et orchestrer des modèles de génération d’images sur son propre ordinateur.',
+      en: 'Install and orchestrate image generation models on your own computer.',
+    },
+    highlight: {
+      fr: 'Runtimes Windows vérifiés au téléchargement · calcul CUDA testé',
+      en: 'Windows runtime downloads verified · CUDA compute tested',
+    },
     problem: {
       fr: 'Générer des images par IA avec la puissance de son propre ordinateur, plutôt que de dépendre d’un serveur GPU hébergé.',
       en: 'Generate AI images with the power of your own computer instead of depending on a hosted GPU server.',
@@ -291,8 +309,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       en: 'Design of the application and orchestration around existing models: jobs, agents, memory, installation.',
     },
     decision: {
-      fr: 'Un lanceur d’environ 100 Mo télécharge le runtime adapté au matériel, au lieu d’un paquet CUDA d’environ 4,8 Go.',
-      en: 'A launcher of about 100 MB downloads the runtime that fits the hardware, instead of a CUDA package of about 4.8 GB.',
+      fr: 'Un lanceur léger télécharge le runtime adapté au matériel, sans imposer le paquet CUDA à toutes les machines.',
+      en: 'A small launcher downloads the runtime suited to the hardware, without forcing the CUDA package onto every machine.',
     },
     evidence: {
       fr: 'Runtimes Windows CUDA, CPU et DirectML validés au téléchargement, avec signatures et empreintes ; calcul CUDA vérifié sur RTX 5070 Ti (WSL2). Aucun benchmark de génération publié.',

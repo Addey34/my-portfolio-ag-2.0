@@ -1,6 +1,5 @@
 import { t } from '@/i18n';
 import type { VisualDirector } from '@/visual/VisualDirector';
-import type { ChapterManager } from '@/chapters/ChapterManager';
 import {
   TRANSITION_MODES,
   type SectionTransitions,
@@ -9,8 +8,8 @@ import {
 
 /**
  * Panneau de réglages visuels (bouton ⚙ du HUD). Laisse l'utilisateur reprendre
- * la main sur le décor : couper/relancer le fond animé du héros, la réactivité
- * à la souris, et l'animation des chapitres projet. L'état est persisté
+ * la main sur le décor : afficher le monde 3D, régler sa réactivité
+ * à la souris et son mouvement. L'état est persisté
  * (localStorage) et réappliqué au chargement.
  *
  * Les libellés portent `data-i18n` → ils suivent la langue automatiquement
@@ -18,7 +17,7 @@ import {
  */
 interface Deps {
   hero: VisualDirector;
-  chapters: ChapterManager;
+  chapters: Pick<VisualDirector, 'setAnimated'>;
   transitions: SectionTransitions;
 }
 

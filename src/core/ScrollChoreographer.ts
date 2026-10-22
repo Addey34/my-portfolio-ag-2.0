@@ -105,7 +105,7 @@ export class ScrollChoreographer {
     this.targets = [];
     document
       .querySelectorAll<HTMLElement>(
-        '#intro, #stack, #freelance, #projects-intro, .chapter, .chapter__beat--outcome, #contact'
+        '#intro, #stack, #freelance, #projects-intro, .chapter, .chapter__beat--outcome, #studies, #contact'
       )
       .forEach((section) => {
         const rect = section.getBoundingClientRect();
@@ -113,6 +113,12 @@ export class ScrollChoreographer {
         let target = top + (rect.height - viewport) / 2;
 
         if (section.id === 'projects-intro') {
+          target = top;
+        } else if (
+          window.innerWidth <= 860 &&
+          (section.id === 'studies' || section.id === 'contact')
+        ) {
+          // Sur mobile, l'objet 3D occupe le haut : le texte reste sous la zone réservée.
           target = top;
         } else if (window.innerWidth <= 860 && section.id === 'freelance') {
           // Sur mobile, l'arrêt montre le texte, la tresse puis le premier

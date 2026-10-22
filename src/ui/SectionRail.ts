@@ -3,6 +3,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROJECTS } from '@/content/projects';
 import { t, onLocaleChange } from '@/i18n';
 import type { SmoothScroll } from '@/core/SmoothScroll';
+import type { VisualDirector } from '@/visual/VisualDirector';
+import type { VisualScene } from '@/visual/types';
 
 /**
  * Navigation persistante par chapitres.
@@ -19,6 +21,18 @@ interface RailItem {
 }
 
 type RailAxis = 'x' | 'y';
+
+const SCENE_TO_RAIL: Record<VisualScene, string> = {
+  identity: 'top',
+  stack: 'stack',
+  solutions: 'freelance',
+  selection: 'projects-intro',
+  galaxy: 'galaxy',
+  ludora: 'ludora',
+  magnotes: 'magnotes',
+  studies: 'studies',
+  contact: 'contact',
+};
 
 interface RailDrag {
   pointerId: number;
@@ -37,7 +51,10 @@ interface RailDrag {
 export class SectionRail {
   private readonly nav: HTMLElement;
   private readonly links = new Map<string, HTMLAnchorElement>();
-  private readonly triggers: ScrollTrigger[] = [];
+  private readonly unsubscribeScene: () => void;
+  private readonly introTrigger: ScrollTrigger;
+  private scene: VisualScene = 'identity';
+  private introVisible = false;
   private readonly items: RailItem[];
   private activeId = 'top';
   private drag: RailDrag | null = null;
@@ -59,19 +76,37 @@ export class SectionRail {
   private readonly onHoldTick = () => this.updateHold();
   private readonly onLayoutChange = () => this.renderFocus(this.activeId);
 
-  constructor(private readonly scroll: SmoothScroll) {
+  constructor(
+    private readonly scroll: SmoothScroll,
+    visual: VisualDirector
+  ) {
     this.items = [
       { id: 'top', label: () => t('nav.hero') },
+      { id: 'intro', label: () => t('nav.intro') },
       { id: 'stack', label: () => t('rail.stack') },
       { id: 'freelance', label: () => t('nav.freelance') },
       { id: 'projects-intro', label: () => t('nav.projects') },
       ...PROJECTS.map((p) => ({ id: p.id, label: () => p.name })),
+      { id: 'studies', label: () => t('studies.kicker') },
       { id: 'contact', label: () => t('nav.contact') },
     ];
     this.nav = this.build();
     document.body.appendChild(this.nav);
-    this.setActive('top');
-    this.bindScroll();
+    // Le directeur partage les mêmes seuils de section avec le rail.
+    this.unsubscribeScene = visual.onSceneChange((scene) => {
+      this.scene = scene;
+      this.syncActive();
+    });
+    // L'introduction partage la scène du héros : son étape suit sa propre position.
+    this.introTrigger = ScrollTrigger.create({
+      trigger: '#intro',
+      start: 'top 62%',
+      end: 'bottom 38%',
+      onToggle: (self) => {
+        this.introVisible = self.isActive;
+        this.syncActive();
+      },
+    });
     this.nav.addEventListener('pointermove', this.onPointerMove, {
       passive: false,
     });
@@ -123,21 +158,12 @@ export class SectionRail {
     return nav;
   }
 
-  private bindScroll(): void {
-    // onEnter / onEnterBack keeps one active section without dead zones.
-    this.items.forEach((item) => {
-      const target = document.getElementById(item.id);
-      if (!target) return;
-      this.triggers.push(
-        ScrollTrigger.create({
-          trigger: target,
-          start: 'top center',
-          end: 'bottom center',
-          onEnter: () => this.setActive(item.id),
-          onEnterBack: () => this.setActive(item.id),
-        })
-      );
-    });
+  private syncActive(): void {
+    this.setActive(
+      this.scene === 'identity' && this.introVisible
+        ? 'intro'
+        : SCENE_TO_RAIL[this.scene]
+    );
   }
 
   private setActive(id: string): void {
@@ -371,7 +397,8 @@ export class SectionRail {
   }
 
   destroy(): void {
-    this.triggers.forEach((trigger) => trigger.kill());
+    this.unsubscribeScene();
+    this.introTrigger.kill();
     this.nav.removeEventListener('pointermove', this.onPointerMove);
     this.nav.removeEventListener('pointerdown', this.onPointerDown);
     this.nav.removeEventListener('pointerup', this.onPointerUp);

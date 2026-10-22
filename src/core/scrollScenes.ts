@@ -11,12 +11,13 @@ const CONFIG = {
 
 /**
  * Montage global du scroll : progression lisible, profondeur douce et sorties
- * nettes. Les chapitres conservent leur moteur dédié dans ChapterManager.
+ * nettes. Le monde 3D actif reçoit sa progression depuis VisualDirector.
  */
 export function initScrollScenes(): void {
   initScrollProgress();
   initWordmarkReveal();
   initStoryProgress();
+  initIntroExit();
 
   if (prefersReducedMotion()) return;
 
@@ -37,10 +38,28 @@ export function initScrollScenes(): void {
   // Entrées et sorties des autres actes : voir SectionTransitions.
 }
 
+/** Le texte de l'introduction libère le médaillon pendant son second pivot. */
+function initIntroExit(): void {
+  const intro = document.querySelector<HTMLElement>('#intro');
+  if (!intro) return;
+  const reduced = prefersReducedMotion();
+  ScrollTrigger.create({
+    trigger: '#stack',
+    start: 'top 82%',
+    end: 'top 55%',
+    onUpdate: (self) => {
+      const opacity = reduced ? Number(self.progress < 0.5) : 1 - self.progress;
+      intro.style.setProperty('--intro-exit-opacity', opacity.toFixed(3));
+    },
+    onLeaveBack: () => intro.style.setProperty('--intro-exit-opacity', '1'),
+    onLeave: () => intro.style.setProperty('--intro-exit-opacity', '0'),
+  });
+}
+
 /** Une micro-ligne près du kicker rend la progression de chaque acte tangible. */
 function initStoryProgress(): void {
   const sections = gsap.utils.toArray<HTMLElement>(
-    '#intro, #stack, #freelance, #projects-intro, .chapter, #contact'
+    '#intro, #stack, #freelance, #projects-intro, .chapter, #studies, #contact'
   );
   const reduced = prefersReducedMotion();
 

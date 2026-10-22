@@ -15,6 +15,24 @@ export function renderProjects(mount: HTMLElement): void {
   mount.appendChild(frag);
 }
 
+/** Accès immédiat aux chapitres depuis le héros, dérivé du même catalogue. */
+export function renderHeroProjects(mount: HTMLElement): void {
+  mount.dataset.i18nAria = 'hero.projects';
+  mount.setAttribute('aria-label', t('hero.projects'));
+
+  const label = el('span', 'hero__projects-label', t('hero.projects'));
+  label.dataset.i18n = 'hero.projects';
+  const list = document.createElement('ul');
+  PROJECTS.forEach((project) => {
+    const item = document.createElement('li');
+    const link = el('a', '', project.name) as HTMLAnchorElement;
+    link.href = `#${project.id}`;
+    item.appendChild(link);
+    list.appendChild(item);
+  });
+  mount.append(label, list);
+}
+
 function buildThreshold(): HTMLElement {
   const threshold = document.createElement('div');
   threshold.id = 'projects-intro';
@@ -45,7 +63,6 @@ function buildThreshold(): HTMLElement {
     const item = document.createElement('li');
     const link = document.createElement('a');
     link.href = `#${project.id}`;
-    link.setAttribute('data-magnetic', '');
     link.setAttribute('data-story-focus', '');
     link.setAttribute('data-reveal', '');
 
@@ -137,12 +154,12 @@ function buildChapter(project: Project, index: number): HTMLElement {
 
   const links = document.createElement('div');
   links.className = 'chapter__links';
-  project.links.forEach(({ label, href }) => {
+  project.links.forEach(({ label, href }, index) => {
     const a = document.createElement('a');
+    if (index === 0) a.className = 'chapter__link--primary';
     a.href = href;
     a.rel = 'noopener';
     if (href.startsWith('http')) a.target = '_blank';
-    a.setAttribute('data-magnetic', '');
     registerDynamic(a, () => tl(label));
     links.appendChild(a);
   });
@@ -157,7 +174,6 @@ function buildChapter(project: Project, index: number): HTMLElement {
   share.className = 'chapter__share';
   share.dataset.i18n = 'action.share';
   share.textContent = t('action.share');
-  share.setAttribute('data-magnetic', '');
   share.addEventListener('click', async () => {
     const url = new URL('#' + project.id, window.location.href).href;
     try {
@@ -232,6 +248,16 @@ export function renderStudies(mount: HTMLElement): void {
     registerDynamic(status, () => tl(study.status));
     head.append(name, status);
 
+    const summary = el('p', 'study__summary', '');
+    registerDynamic(summary, () => tl(study.summary));
+    const highlight = el('p', 'study__highlight', '');
+    registerDynamic(highlight, () => tl(study.highlight));
+
+    const details = document.createElement('details');
+    details.className = 'study__details';
+    const toggle = el('summary', 'study__toggle', t('studies.more'));
+    toggle.dataset.i18n = 'studies.more';
+
     const rows = document.createElement('dl');
     rows.className = 'study__rows';
     (
@@ -260,7 +286,8 @@ export function renderStudies(mount: HTMLElement): void {
     const note = el('p', 'chapter__link-note', '');
     registerDynamic(note, () => tl(study.note));
 
-    article.append(head, rows, stack, note);
+    details.append(toggle, rows, stack, note);
+    article.append(head, summary, highlight, details);
     frag.appendChild(article);
   });
   mount.appendChild(frag);

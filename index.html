@@ -21,14 +21,7 @@
     />
     <meta name="twitter:card" content="summary" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      id="font-stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-      media="not all"
-    />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -55,8 +48,7 @@
     >
     <!-- Fond topographique du hero/contact ; les chapitres passent au-dessus. -->
     <div id="story-background" class="story-background" aria-hidden="true">
-      <canvas id="signal-field"></canvas>
-      <div id="story-stage" class="story-stage"></div>
+      <canvas id="world-3d" aria-hidden="true"></canvas>
       <div class="story-vignette"></div>
     </div>
 
@@ -66,40 +58,27 @@
     </div>
 
     <!-- Wordmark fixe haut-gauche, retour en haut. -->
-    <a class="wordmark" href="#top" data-magnetic aria-label="Retour en haut"
-      >AG</a
-    >
+    <a class="wordmark" href="#top" aria-label="Retour en haut">AG</a>
 
     <!-- HUD fixe : reglages visuels, langue et palette. -->
     <div class="hud">
-      <a
-        class="hud__btn hud__btn--link"
-        href="#contact"
-        data-magnetic
-        data-i18n="nav.contact"
+      <a class="hud__btn hud__btn--link" href="#contact" data-i18n="nav.contact"
         >Contact</a
       >
       <button
         id="controls-open"
         class="hud__btn hud__btn--icon"
         type="button"
-        data-magnetic
         data-i18n-aria="controls.aria"
         aria-label="Réglages visuels"
       >
         &#9881;
       </button>
-      <button
-        id="lang-toggle"
-        class="hud__btn"
-        type="button"
-        data-magnetic
-      ></button>
+      <button id="lang-toggle" class="hud__btn" type="button"></button>
       <button
         id="palette-open"
         class="hud__btn hud__btn--cmd"
         type="button"
-        data-magnetic
         data-i18n-aria="palette.aria"
         aria-label="Ouvrir la palette de commandes"
       >
@@ -149,22 +128,18 @@
 
           <!-- CTAs smoothscroll via heroAnim.ts + effet magnetique -->
           <div class="hero__ctas">
-            <a
-              href="#projects"
-              class="hero__cta hero__cta--primary"
-              data-magnetic
-            >
+            <a href="#projects" class="hero__cta hero__cta--primary">
               <span data-i18n="hero.cta.projects">Explorer les produits</span>
               <span class="hero__cta-icon" aria-hidden="true">&darr;</span>
             </a>
             <a
               href="#contact"
               class="hero__cta hero__cta--ghost"
-              data-magnetic
               data-i18n="hero.cta.contact"
               >Parler d’un projet</a
             >
           </div>
+          <nav id="hero-projects" class="hero__projects"></nav>
           <p class="hero__status">
             <span class="hero__status-dot" aria-hidden="true"></span>
             <span data-i18n="contact.availability"
@@ -186,99 +161,93 @@
         </h2>
       </section>
 
-      <!-- STACK : la board identitaire se recompose en systeme technique. -->
+      <!-- STACKS : les pièces de l'horloge se séparent en quatre familles. -->
       <section id="stack" class="section section--stack" data-scene="stack">
         <div class="stack__copy">
           <p class="intro__kicker" data-reveal data-i18n="stack.kicker">
-            La méthode derrière le produit
+            Stacks en pratique
           </p>
           <h2 class="stack__title" data-reveal data-i18n="stack.title">
-            Une architecture qui sert l’usage avant la technologie.
+            Du navigateur au déploiement.
           </h2>
           <p class="stack__lead" data-reveal data-i18n="stack.lead">
-            Je relie interface, logique métier, données, temps réel et
-            déploiement pour livrer des produits cohérents, testables et
-            capables d’évoluer.
+            L’horloge se brise en quatre modules : chacun porte une famille de
+            compétences mises en pratique dans mes projets.
           </p>
         </div>
 
-        <!-- La topologie AG est dessinee dans le fond Canvas. Cette liste reste
-             accessible aux lecteurs d'ecran et documente ses 24 noeuds principaux et plus de 35 technologies. -->
+        <!-- Les quatre familles restent lisibles sans WebGL et au clavier. -->
         <div class="stack-viz">
           <ul
-            class="stack-graph stack-graph--offloaded"
-            data-stack-graph
+            class="stack-graph"
             data-i18n-aria="stack.techs"
             aria-label="Technologies utilisées"
           >
-            <li class="stack-node" data-layer="interface">
-              JavaScript / ESBuild
-            </li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
               TypeScript
             </li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
               React
             </li>
-            <li class="stack-node" data-layer="interface">Next.js</li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
               Vite
             </li>
-            <li class="stack-node" data-layer="interface">
-              Tailwind / Radix UI
-            </li>
             <li class="stack-node" data-layer="interface">HTML / CSS</li>
-            <li class="stack-node" data-layer="interface">WebGL</li>
-            <li class="stack-node" data-layer="interface">Canvas 2D</li>
+            <li class="stack-node" data-layer="interface">GSAP</li>
+            <li class="stack-node" data-layer="interface">i18n</li>
             <li class="stack-node" data-layer="realtime" data-weight="primary">
               Three.js
             </li>
-            <li class="stack-node" data-layer="realtime">GSAP / Lenis</li>
-            <li class="stack-node" data-layer="realtime" data-weight="primary">
-              Nakama
-            </li>
+            <li class="stack-node" data-layer="realtime">WebGL</li>
+            <li class="stack-node" data-layer="realtime">WebXR</li>
+            <li class="stack-node" data-layer="realtime">GLSL</li>
+            <li class="stack-node" data-layer="realtime">Canvas 2D</li>
+            <li class="stack-node" data-layer="realtime">astronomy-engine</li>
             <li class="stack-node" data-layer="data" data-weight="primary">
               Node.js
             </li>
-            <li class="stack-node" data-layer="data" data-weight="primary">
-              Express
-            </li>
-            <li class="stack-node" data-layer="data">MongoDB / Mongoose</li>
-            <li class="stack-node" data-layer="data">FastAPI / Uvicorn</li>
-            <li class="stack-node" data-layer="data">Python / Pydantic</li>
+            <li class="stack-node" data-layer="data">MongoDB</li>
+            <li class="stack-node" data-layer="data">Nakama</li>
+            <li class="stack-node" data-layer="data">Express</li>
             <li class="stack-node" data-layer="data">PostgreSQL</li>
-            <li class="stack-node" data-layer="deploy">PyTorch / CUDA</li>
-            <li class="stack-node" data-layer="deploy">
-              Diffusers / Transformers
-            </li>
-            <li class="stack-node" data-layer="deploy">GitHub Actions / CI</li>
+            <li class="stack-node" data-layer="data">Python</li>
             <li class="stack-node" data-layer="deploy" data-weight="primary">
-              Docker / Oracle Cloud
+              Docker
             </li>
-            <li class="stack-node" data-layer="deploy" data-weight="primary">
-              Firebase Hosting
-            </li>
-            <li class="stack-node" data-layer="deploy" data-weight="primary">
-              Vitest / Playwright
-            </li>
+            <li class="stack-node" data-layer="deploy">Playwright</li>
+            <li class="stack-node" data-layer="deploy">GitHub Actions</li>
+            <li class="stack-node" data-layer="deploy">Vitest</li>
+            <li class="stack-node" data-layer="deploy">ESLint</li>
+            <li class="stack-node" data-layer="deploy">pnpm</li>
           </ul>
 
           <ul class="stack-legend">
             <li data-layer="interface">
-              <span data-i18n="arch.interface">Interface</span>
+              <span data-i18n="stack.part.interface">Module · Interface</span>
             </li>
             <li data-layer="realtime">
-              <span data-i18n="arch.realtime">Temps réel</span>
+              <span data-i18n="stack.part.realtime"
+                >Module · 3D &amp; interaction</span
+              >
             </li>
             <li data-layer="data">
-              <span data-i18n="arch.data">Données</span>
+              <span data-i18n="stack.part.data"
+                >Module · Services &amp; données</span
+              >
             </li>
             <li data-layer="deploy">
-              <span data-i18n="arch.deploy">Déploiement</span>
+              <span data-i18n="stack.part.deploy"
+                >Module · Livraison &amp; qualité</span
+              >
             </li>
           </ul>
-          <p class="stack-hover-note" data-i18n="arch.hover">
-            Points secondaires : survoler pour explorer
+          <p class="stack-proof">
+            <span data-i18n="stack.proof">Voir ces stacks en action :</span>
+            <a href="#galaxy">Galaxy</a>, <a href="#ludora">Ludora</a>,
+            <a href="#magnotes">MagNotes</a>,
+            <a href="#studies" data-i18n="stack.studies"
+              >études complémentaires</a
+            >.
           </p>
         </div>
       </section>
@@ -356,6 +325,21 @@
       <!-- PROJETS : chapitres immersifs injectes depuis src/content/projects.ts. -->
       <section id="projects" class="chapters"></section>
 
+      <!-- ETUDES COMPLEMENTAIRES : hors chapitres, avant la conclusion. -->
+      <section id="studies" class="section section--studies">
+        <p class="contact__kicker" data-i18n="studies.kicker">
+          Études complémentaires
+        </p>
+        <h2 class="studies__title" data-i18n="studies.title">
+          Deux autres systèmes, deux problèmes concrets.
+        </h2>
+        <p class="studies__lead" data-i18n="studies.lead">
+          Des projets au code privé, présentés par leurs décisions, leurs
+          preuves datées et leurs limites connues.
+        </p>
+        <div id="studies-list" class="studies__list"></div>
+      </section>
+
       <!-- CONTACT -->
       <section id="contact" class="section section--contact">
         <p class="contact__kicker" data-reveal data-i18n="contact.kicker">
@@ -424,7 +408,6 @@
               <button
                 class="contact__cta"
                 type="submit"
-                data-magnetic
                 data-i18n="contact.form.submit"
               >
                 Préparer le message
@@ -439,28 +422,22 @@
           <p class="contact__availability" data-i18n="contact.availability">
             Ouvert aux opportunités · Montpellier, France
           </p>
-          <a href="mailto:" data-contact-email data-magnetic></a>
+          <a href="mailto:" data-contact-email></a>
           <button
             type="button"
             class="contact__copy"
             data-copy-email
-            data-magnetic
             data-i18n="contact.copy"
           >
             Copier l’adresse
           </button>
-          <a
-            href="https://github.com/Addey34"
-            rel="noopener"
-            target="_blank"
-            data-magnetic
+          <a href="https://github.com/Addey34" rel="noopener" target="_blank"
             >GitHub</a
           >
           <a
             href="https://www.linkedin.com/in/adrianguichard/"
             rel="noopener"
             target="_blank"
-            data-magnetic
             >LinkedIn</a
           >
         </div>
@@ -488,21 +465,6 @@
             >Latest GitHub activity</a
           >
         </div>
-      </section>
-
-      <!-- ETUDES COMPLEMENTAIRES : hors parcours principal, injectees depuis CASE_STUDIES. -->
-      <section id="studies" class="section section--studies">
-        <p class="contact__kicker" data-i18n="studies.kicker">
-          Études complémentaires
-        </p>
-        <h2 class="studies__title" data-i18n="studies.title">
-          Deux projets privés, présentés sans code.
-        </h2>
-        <p class="studies__lead" data-i18n="studies.lead">
-          Ce que je peux montrer avec précision : problème, choix technique,
-          preuves datées et limites connues.
-        </p>
-        <div id="studies-list" class="studies__list"></div>
       </section>
     </main>
 

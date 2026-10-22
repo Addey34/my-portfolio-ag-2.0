@@ -37,6 +37,8 @@ describe('project catalogue', () => {
       expect(ids.has(study.id)).toBe(false);
       [
         study.status,
+        study.summary,
+        study.highlight,
         study.problem,
         study.role,
         study.decision,

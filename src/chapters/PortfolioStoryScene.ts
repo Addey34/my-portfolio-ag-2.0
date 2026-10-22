@@ -695,7 +695,9 @@ export class PortfolioStoryScene implements ChapterScene {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     this.ctx.clearRect(0, 0, this.w, this.h);
     this.placeNodes(form, delta, compact, time, transfer);
-    this.drawTransitionStreams(this.ctx, transfer, compact);
+    if (this.activeScene !== 'ludora') {
+      this.drawTransitionStreams(this.ctx, transfer, compact);
+    }
 
     const clockOpacity =
       this.activeScene === 'identity'
@@ -783,8 +785,14 @@ export class PortfolioStoryScene implements ChapterScene {
           this.scenePoint(this.previousScene, index, compact, false, time)
         );
       }
+      const assignmentOrigins =
+        this.activeScene === 'ludora'
+          ? NODES.map((_, index) =>
+              this.scenePoint('galaxy', index, compact, false, time)
+            )
+          : this.transitionOrigins;
       this.targetOriginMap = this.optimalPointAssignment(
-        this.transitionOrigins,
+        assignmentOrigins,
         targets
       );
       this.transitionMapDirty = false;
@@ -794,13 +802,16 @@ export class PortfolioStoryScene implements ChapterScene {
       const originIndex = this.targetOriginMap[index] ?? index;
       const origin = this.transitionOrigins[originIndex] ?? targets[index];
       const target = targets[index];
-      const [targetX, targetY] = this.hourglassPoint(
-        origin,
-        target,
-        transition,
-        index,
-        compact
-      );
+      const bridge = this.visualState?.galaxyLudoraProgress ?? 1;
+      const [targetX, targetY] =
+        this.activeScene === 'ludora' && !this.reduced
+          ? this.orbitGridPoint(
+              this.scenePoint('galaxy', originIndex, compact, false, time),
+              target,
+              bridge,
+              compact
+            )
+          : this.hourglassPoint(origin, target, transition, index, compact);
       const pos = this.positions[index];
       pos.baseX = targetX;
       pos.baseY = targetY;
@@ -954,6 +965,41 @@ export class PortfolioStoryScene implements ChapterScene {
     return [
       directX + (flowX - directX) * funnel,
       directY + (flowY - directY) * funnel,
+    ];
+  }
+
+  /** Le point quitte sa tangente orbitale et rejoint sa place dans la grille. */
+  private orbitGridPoint(
+    origin: [number, number],
+    target: [number, number],
+    progress: number,
+    compact: boolean
+  ): [number, number] {
+    const t = clamp01(progress);
+    if (t <= 0) return origin;
+    if (t >= 1) return target;
+    const center = this.scenePoint('galaxy', 0, compact, true);
+    const radialX = origin[0] - center[0];
+    const radialY = origin[1] - center[1];
+    const tangent = compact ? 0.16 : 0.22;
+    const control1: [number, number] = [
+      origin[0] - radialY * tangent,
+      origin[1] + radialX * tangent,
+    ];
+    const control2: [number, number] = [
+      target[0] - (target[0] - origin[0]) * 0.18,
+      target[1],
+    ];
+    const inverse = 1 - t;
+    return [
+      inverse ** 3 * origin[0] +
+        3 * inverse ** 2 * t * control1[0] +
+        3 * inverse * t ** 2 * control2[0] +
+        t ** 3 * target[0],
+      inverse ** 3 * origin[1] +
+        3 * inverse ** 2 * t * control1[1] +
+        3 * inverse * t ** 2 * control2[1] +
+        t ** 3 * target[1],
     ];
   }
 
@@ -1358,6 +1404,12 @@ export class PortfolioStoryScene implements ChapterScene {
 
     if (this.activeScene === 'galaxy') {
       this.drawGalaxySystem(ctx, form * transitionOpacity, compact, time);
+    } else if (this.activeScene === 'ludora') {
+      this.drawGalaxyLudoraBridge(
+        ctx,
+        this.reduced ? 1 : (this.visualState?.galaxyLudoraProgress ?? 1),
+        compact
+      );
     } else if (this.activeScene === 'magnotes') {
       this.drawMagNotesContent(ctx, form * transitionOpacity, time);
     } else if (this.activeScene === 'contact') {
@@ -1420,6 +1472,62 @@ export class PortfolioStoryScene implements ChapterScene {
             : center[1];
         ctx.fillText(label, center[0], labelY);
       }
+    }
+    ctx.restore();
+  }
+
+  /** Sept orbites se déplient en cadre et lignes de grille sans coupure. */
+  private drawGalaxyLudoraBridge(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    compact: boolean
+  ): void {
+    const bounds = this.sceneBounds('ludora', compact);
+    const centerX = bounds.left + bounds.width * 0.5;
+    const centerY = bounds.top + bounds.height * 0.5;
+    const p = clamp01(progress);
+    const eased = p * p * (3 - 2 * p);
+    const samples = compact ? 40 : 64;
+
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([1.5, compact ? 5 : 7]);
+    for (let ring = 0; ring < 7; ring += 1) {
+      const planet = PLANETS[ring + 1];
+      if (!planet) continue;
+      ctx.beginPath();
+      for (let sample = 0; sample <= samples; sample += 1) {
+        const angle = (sample / samples) * TAU;
+        const cosine = Math.cos(angle);
+        const sine = Math.sin(angle);
+        const orbitX = centerX + cosine * bounds.width * planet.orbit * 0.82;
+        const orbitY = centerY + sine * bounds.height * planet.orbit * 0.62;
+        let gridX: number;
+        let gridY: number;
+        if (ring === 6) {
+          gridX =
+            centerX +
+            Math.sign(cosine) * Math.abs(cosine) ** 0.25 * bounds.width * 0.44;
+          gridY =
+            centerY +
+            Math.sign(sine) * Math.abs(sine) ** 0.25 * bounds.height * 0.4;
+        } else if (ring < 3) {
+          gridX = bounds.left + bounds.width * (0.28 + ring * 0.22);
+          gridY = bounds.top + bounds.height * (0.5 + sine * 0.4);
+        } else {
+          gridX = bounds.left + bounds.width * (0.5 + cosine * 0.44);
+          gridY = bounds.top + bounds.height * (0.3 + (ring - 3) * 0.2);
+        }
+        const x = orbitX + (gridX - orbitX) * eased;
+        const y = orbitY + (gridY - orbitY) * eased;
+        if (sample === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.globalAlpha = (ring === 6 ? 0.44 : 0.32) * (1 - p * 0.18);
+      ctx.strokeStyle = planet.color;
+      ctx.lineWidth = ring === 6 ? 0.95 : 0.72;
+      ctx.stroke();
     }
     ctx.restore();
   }
