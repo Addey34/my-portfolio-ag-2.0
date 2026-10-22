@@ -5955,3 +5955,47 @@ button:focus-visible {
   background-image: linear-gradient(135deg, var(--titanium), var(--brass));
   opacity: 0.8;
 }
+
+/* Stacks : les quatre familles reprennent les couleurs des modules du cube. */
+:is(.stack-node, .stack-legend li)[data-layer='interface'] {
+  --node-color: #8fc3e8;
+}
+:is(.stack-node, .stack-legend li)[data-layer='realtime'] {
+  --node-color: #6fe0ea;
+}
+:is(.stack-node, .stack-legend li)[data-layer='data'] {
+  --node-color: #e8a3d6;
+}
+:is(.stack-node, .stack-legend li)[data-layer='deploy'] {
+  --node-color: #e7b95c;
+}
+
+.stack-node {
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--node-color) 14%, var(--graphite)),
+    color-mix(in srgb, var(--node-color) 6%, var(--bg-soft))
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Palette de commandes et formulaire : plaques graphite à filet laiton. */
+.palette__panel {
+  background: linear-gradient(180deg, #121821, var(--bg-soft));
+  border-color: rgba(201, 164, 92, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 214, 0.06),
+    0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+.palette__item.is-active {
+  background: rgba(201, 164, 92, 0.14);
+  color: #ecd9ab;
+}
+
+.contact__form input,
+.contact__form textarea {
+  border-color: rgba(180, 190, 198, 0.24);
+  background: rgba(10, 16, 25, 0.82);
+}
