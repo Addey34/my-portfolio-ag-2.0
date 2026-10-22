@@ -11,7 +11,7 @@ import {
  * Chapitre MAGNOTES — reconstitution du board de post-it.
  *
  * Fidèle à l'app réelle : le canvas sombre `#0d0f1d` à grille de points,
- * l'accent indigo `#6366f1`, des post-it colorés reliés entre eux. Et son
+ * l'accent rose `#f0a6d8`, des post-it colorés reliés entre eux. Et son
  * histoire produit racontée par le scroll : des notes ÉPARPILLÉES sur le
  * canvas infini qui S'ORGANISENT en trois colonnes Kanban (À faire / En
  * cours / Fait) à mesure qu'on avance — le chaos → la clarté, tout MagNotes.

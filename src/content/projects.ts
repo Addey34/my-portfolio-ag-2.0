@@ -93,7 +93,7 @@ export const PROJECTS: Project[] = [
       { label: demo, href: 'https://galaxy.adrianguichard.dev/' },
       { label: code, href: 'https://github.com/Addey34/galaxy-3d' },
     ],
-    accent: '#4a8fff',
+    accent: '#e7b95c',
     chapter: 'galaxy',
   },
   {
@@ -214,7 +214,7 @@ export const PROJECTS: Project[] = [
       fr: 'Backend privé ; frontend public et architecture détaillés ici.',
       en: 'Private backend; public frontend and architecture detailed here.',
     },
-    accent: '#6366f1',
+    accent: '#f0a6d8',
     chapter: 'magnotes',
   },
 ];
