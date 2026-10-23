@@ -41,6 +41,7 @@ interface FrameStats {
   p95ms: string;
   p99ms: string;
   sup50ms: number;
+  hitches: string[];
   errors: string[];
 }
 
@@ -100,9 +101,17 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
   // Mesure des images pendant tout le parcours, via requestAnimationFrame.
   await page.evaluate(() => {
     const frames: number[] = [];
-    (window as unknown as { __frames: number[] }).__frames = frames;
+    const hitches: Array<[number, number]> = [];
+    const win = window as unknown as {
+      __frames: number[];
+      __hitches: Array<[number, number]>;
+    };
+    win.__frames = frames;
+    win.__hitches = hitches;
     let last = performance.now();
     const tick = (time: number): void => {
+      if (time - last > 50)
+        hitches.push([Math.round(time - last), Math.round(window.scrollY)]);
       frames.push(time - last);
       last = time;
       requestAnimationFrame(tick);
@@ -144,6 +153,22 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
     }
   }
 
+  const hitchRaw = await page.evaluate(
+    () =>
+      (window as unknown as { __hitches: Array<[number, number]> }).__hitches
+  );
+  const tops = await page.evaluate(() =>
+    [...document.querySelectorAll('section[id]')].map((node) => [
+      node.id,
+      Math.round(node.getBoundingClientRect().top + window.scrollY),
+    ])
+  );
+  const where = (y: number): string => {
+    let name = 'haut';
+    for (const [id, top] of tops) if (y >= Number(top) - 300) name = String(id);
+    return name;
+  };
+  const hitches = hitchRaw.slice(1).map(([ms, y]) => `${where(y)}:${ms}ms`);
   const frames = (
     await page.evaluate(
       () => (window as unknown as { __frames: number[] }).__frames
@@ -174,6 +199,7 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
     p95ms: at(0.95),
     p99ms: at(0.99),
     sup50ms: frames.filter((v) => v > 50).length,
+    hitches,
     errors: siteErrors.slice(0, 5),
   };
   console.log(`RESULT ${JSON.stringify(stats)}`);

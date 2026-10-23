@@ -305,6 +305,7 @@ export class StoryWorld3D {
   private loadQueueBusy = false;
   private loadQueueStarted = false;
   private programsReady = false;
+  private primed = false;
   private safetyTimer = 0;
   private readonly liquidUniforms = {
     flow: { value: 0 },
@@ -2006,6 +2007,64 @@ export class StoryWorld3D {
       if (this.destroyed) return;
       renderer.initTexture(texture);
       await new Promise<void>((resolve) => window.setTimeout(resolve, 24));
+    }
+    await this.primePipelines();
+  }
+
+  /**
+   * Amorçage : sur Safari/iOS (Metal), l'état de rendu d'un matériau n'est créé qu'à son
+   * premier vrai dessin, même shader compilé. On dessine donc chaque pièce une fois,
+   * confinée à un pixel (scissor), par petits lots, pour que la première apparition
+   * d'une scène ne gèle plus l'image. Rien n'est visible : le pixel est effacé à l'image
+   * suivante et la visibilité d'origine est restaurée dans la même tâche.
+   */
+  private async primePipelines(): Promise<void> {
+    const renderer = this.renderer;
+    if (!renderer || this.destroyed || this.primed) return;
+    this.primed = true;
+    const meshes: Mesh[] = [];
+    this.scene.traverse((object) => {
+      if (object instanceof Mesh) meshes.push(object);
+    });
+    const BATCH = 36;
+    for (let start = 0; start < meshes.length; start += BATCH) {
+      if (this.destroyed) return;
+      const batch = meshes.slice(start, start + BATCH);
+      const saved: Array<() => void> = [];
+      const reveal = (object: Object3D): void => {
+        const visible = object.visible;
+        object.visible = true;
+        saved.push(() => {
+          object.visible = visible;
+        });
+      };
+      batch.forEach((mesh) => {
+        for (let node: Object3D | null = mesh; node; node = node.parent) {
+          reveal(node);
+        }
+        const list = Array.isArray(mesh.material)
+          ? mesh.material
+          : [mesh.material];
+        list.forEach((material) => {
+          const visible = material.visible;
+          material.visible = true;
+          saved.push(() => {
+            material.visible = visible;
+          });
+        });
+      });
+      renderer.setScissorTest(true);
+      renderer.setScissor(0, 0, 1, 1);
+      try {
+        renderer.render(this.scene, this.camera);
+      } finally {
+        renderer.setScissorTest(false);
+        // Restauration en ordre inverse : les parents après leurs enfants.
+        for (let i = saved.length - 1; i >= 0; i -= 1) saved[i]();
+      }
+      // Image normale tout de suite : le dessin d'amorçage ne doit jamais être présenté seul.
+      this.render(0);
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 60));
     }
   }
 
