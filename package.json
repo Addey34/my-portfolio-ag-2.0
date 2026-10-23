@@ -19,6 +19,7 @@
     "verify": "pnpm test && prettier --check \"src/**/*.{ts,css}\" && eslint . && tsc --noEmit && vite build",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:ios": "node tools/test-ios.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {
