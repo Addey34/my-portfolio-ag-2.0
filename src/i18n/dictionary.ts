@@ -74,7 +74,7 @@ const fr: Dict = {
   'contact.kicker': 'Construisons quelque chose d’utile',
   'contact.title': 'Un produit à lancer ?',
   'contact.lead':
-    'Parle-moi de l’usage, du problème et du niveau d’avancement. Je t’aiderai à trouver la prochaine bonne brique.',
+    'Parlez-moi de l’usage, du problème et du niveau d’avancement. Je vous aiderai à trouver la prochaine bonne brique.',
   'contact.cta': 'Écrire à Adrian',
   'contact.form.open': 'Déplier le formulaire',
   'contact.form.close': 'Replier le formulaire',
@@ -84,7 +84,7 @@ const fr: Dict = {
   'contact.form.message': 'Projet ou contexte',
   'contact.form.submit': 'Préparer le message',
   'contact.form.note':
-    'Le message s’ouvre dans ton client email. Sans client installé (webmail), copie l’adresse ci-dessous et écris-moi directement.',
+    'Le message s’ouvre dans votre client email. Sans client installé (webmail), copiez l’adresse ci-dessous et écrivez-moi directement.',
   'contact.availability': 'Ouvert aux opportunités · Montpellier, France',
   'contact.copy': 'Copier l’adresse',
   'contact.copied': 'Adresse copiée',

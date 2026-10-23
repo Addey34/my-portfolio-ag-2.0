@@ -6,7 +6,7 @@ on:
     inputs:
       url:
         description: URL du site à tester
-        default: https://portfolioag-3288c.web.app/
+        default: https://adrianguichard.dev/
         required: false
 
 permissions:
