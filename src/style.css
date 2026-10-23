@@ -3148,7 +3148,7 @@ button:focus-visible {
 
 /* Les technologies restent lisibles dans le HTML, même sans rendu 3D. */
 .stack-viz {
-  width: min(42rem, 100%);
+  width: min(38rem, 100%);
 }
 
 .section--offers,
