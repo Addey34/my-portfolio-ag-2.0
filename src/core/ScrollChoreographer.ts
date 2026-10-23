@@ -121,9 +121,9 @@ export class ScrollChoreographer {
           // Sur mobile, l'objet 3D occupe le haut : le texte reste sous la zone réservée.
           target = top;
         } else if (window.innerWidth <= 860 && section.id === 'freelance') {
-          // Sur mobile, l'arrêt montre le texte, la tresse puis le premier
-          // relais au lieu de centrer la liste sur le graphe.
-          target = top - Math.max(56, viewport * 0.06);
+          // Sur mobile, le monolithe n'est net qu'une fois la section engagée :
+          // l'arrêt le montre entre le texte et la liste des offres.
+          target = top + (rect.height - viewport) * 0.3;
         } else if (section.classList.contains('chapter__beat--outcome')) {
           if (window.innerWidth > 860) return;
           target = top - Math.max(72, viewport * 0.08);
