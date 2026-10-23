@@ -1,9 +1,35 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+import { PNG } from 'pngjs';
 
 const SITE = process.env.IOS_BASE_URL ?? 'https://adrianguichard.dev/';
 
+/** Nombre de pixels clairs du monde 3D seul (HTML masqué) : prouve que le canvas n'est pas vide. */
+async function visibleWorldPixels(page: Page, path: string): Promise<number> {
+  const hidden = '#scroll-root,.hud,.rail,.scroll-progress';
+  await page.evaluate((selector) => {
+    document
+      .querySelectorAll<HTMLElement>(selector)
+      .forEach((node) =>
+        node.style.setProperty('visibility', 'hidden', 'important')
+      );
+  }, hidden);
+  await page.waitForTimeout(600);
+  const image = PNG.sync.read(await page.screenshot({ path, type: 'png' }));
+  await page.evaluate((selector) => {
+    document
+      .querySelectorAll<HTMLElement>(selector)
+      .forEach((node) => node.style.removeProperty('visibility'));
+  }, hidden);
+  let count = 0;
+  for (let i = 0; i < image.data.length; i += 4 * 16) {
+    if (image.data[i] + image.data[i + 1] + image.data[i + 2] > 180) count += 1;
+  }
+  return count;
+}
+
 interface FrameStats {
   device: string;
+  worldPixels: number;
   baselineFps: string;
   renderer: string;
   dpr: number;
@@ -29,7 +55,7 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
 
   // Cadence maximale de l'appareil : page vide, pour distinguer un plafond matériel d'une surcharge du site.
   await page.goto('about:blank');
-  const baselineFps = await page.evaluate(
+  const measuredBaseline: unknown = await page.evaluate(
     () =>
       new Promise<number>((resolve) => {
         let count = 0;
@@ -43,6 +69,11 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
       })
   );
 
+  // Valeur illisible (aléa du service) : on retombe sur 60 i/s, cadence usuelle des écrans.
+  const baselineFps =
+    typeof measuredBaseline === 'number' && Number.isFinite(measuredBaseline)
+      ? measuredBaseline
+      : 60;
   await page.goto(SITE, { waitUntil: 'load' });
   await page.waitForTimeout(4000);
 
@@ -59,6 +90,12 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
       dpr: window.devicePixelRatio,
     };
   });
+
+  // La 3D doit réellement s'afficher : on masque le HTML et on compte les pixels clairs restants.
+  const worldPixels = await visibleWorldPixels(
+    page,
+    testInfo.outputPath('monde.png')
+  );
 
   // Mesure des images pendant tout le parcours, via requestAnimationFrame.
   await page.evaluate(() => {
@@ -125,6 +162,7 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
   );
   const stats: FrameStats = {
     device: testInfo.project.name,
+    worldPixels,
     baselineFps: baselineFps.toFixed(1),
     renderer: gl.renderer,
     dpr: gl.dpr,
@@ -141,6 +179,7 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
   console.log(`RESULT ${JSON.stringify(stats)}`);
 
   expect(gl.webgl).toBe(true);
+  expect(worldPixels, 'monde 3D vide à l’écran').toBeGreaterThan(40);
   expect(ids.length).toBeGreaterThanOrEqual(7);
   expect(maxOverflow).toBeLessThanOrEqual(1);
   expect(siteErrors).toEqual([]);

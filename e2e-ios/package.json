@@ -5,6 +5,8 @@
   "description": "Parcours sur iPhone réels (BrowserStack). Projet isolé : BrowserStack n'accepte pas encore le Playwright du dépôt (1.64).",
   "devDependencies": {
     "@playwright/test": "1.63.0",
-    "browserstack-node-sdk": "1.74.0"
+    "@types/pngjs": "^6.0.5",
+    "browserstack-node-sdk": "1.74.0",
+    "pngjs": "^7.0.0"
   }
 }
