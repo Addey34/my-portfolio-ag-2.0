@@ -75,8 +75,8 @@ export const PROJECTS: Project[] = [
         en: 'A progressive solar-system journey, from the overview down to planetary surfaces.',
       },
       decision: {
-        fr: 'Échelle vraie pour explorer, mode pédagogique pour comprendre : sans fausser les distances.',
-        en: 'True scale to explore, an educational mode to understand: without distorting distances.',
+        fr: 'Échelle vraie pour explorer, mode pédagogique pour comprendre, sans fausser les distances.',
+        en: 'True scale to explore, an educational mode to understand, without distorting distances.',
       },
       evidence: {
         fr: 'Données NASA/JPL Horizons, voyage temporel, sources documentées. Pas de mesure FPS publiée.',
@@ -86,7 +86,7 @@ export const PROJECTS: Project[] = [
     highlights: [
       { fr: 'Données NASA/JPL Horizons', en: 'NASA/JPL Horizons data' },
       { fr: 'Voyage temporel', en: 'Time travel' },
-      { fr: 'Démo en ligne', en: 'Live demo' },
+      { fr: 'Code source public', en: 'Public source code' },
     ],
     stack: ['TypeScript', 'Three.js', 'astronomy-engine', 'Playwright', 'Vite'],
     links: [
@@ -141,7 +141,7 @@ export const PROJECTS: Project[] = [
         fr: 'Salons testés sur les 144 (05/10)',
         en: 'Rooms tested on all 144 (5 Oct)',
       },
-      { fr: 'Démo en ligne', en: 'Live demo' },
+      { fr: 'Vitrine technique publique', en: 'Public technical overview' },
     ],
     stack: ['TypeScript', 'Vite MPA', 'Nakama', 'Canvas', 'PWA'],
     links: [
@@ -182,8 +182,8 @@ export const PROJECTS: Project[] = [
         en: 'Synchronise an infinite canvas, links and structured views around the same data.',
       },
       result: {
-        fr: "Un produit Dockerisé déployé sur Oracle Cloud, du stockage à l'interface.",
-        en: 'A Dockerised product deployed on Oracle Cloud, from storage to interface.',
+        fr: "Un produit conteneurisé avec Docker et déployé sur Oracle Cloud, du stockage à l'interface.",
+        en: 'A product containerised with Docker and deployed on Oracle Cloud, from storage to interface.',
       },
       decision: {
         fr: 'Une seule source de notes pour canvas, Kanban, agenda et timeline.',
@@ -247,8 +247,8 @@ export const CASE_STUDIES: CaseStudy[] = [
     status: { fr: 'Pilote technique', en: 'Technical pilot' },
     accent: '#ffb35f',
     summary: {
-      fr: 'Surveiller les sites livrés et transformer les incidents détectés en actions compréhensibles.',
-      en: 'Monitor delivered websites and turn detected incidents into understandable actions.',
+      fr: 'Un outil de surveillance qui dit quoi faire, pas seulement ce qui est cassé.',
+      en: 'A monitoring tool that says what to do, not just what is broken.',
     },
     highlight: {
       fr: '194 tests documentés · sonde publique datée',
