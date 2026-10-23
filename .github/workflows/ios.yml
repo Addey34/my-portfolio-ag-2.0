@@ -37,8 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Parcours sur appareils réels
         run: |
-          printf '%s
-' "$BROWSERSTACK_ENV" > .env
+          echo "$BROWSERSTACK_ENV" > .env
           pnpm test:ios
         env:
           IOS_BASE_URL: ${{ inputs.url }}
