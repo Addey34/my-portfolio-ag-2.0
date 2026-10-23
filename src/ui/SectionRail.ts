@@ -124,6 +124,7 @@ export class SectionRail {
   private build(): HTMLElement {
     const nav = document.createElement('nav');
     nav.className = 'rail';
+    nav.style.setProperty('--rail-count', String(this.items.length));
     nav.setAttribute('aria-label', t('rail.aria'));
 
     this.items.forEach((item) => {
@@ -201,6 +202,10 @@ export class SectionRail {
       );
     });
     this.nav.dataset.focus = id;
+    this.nav.style.setProperty(
+      '--rail-progress',
+      (focusIndex / Math.max(1, this.items.length - 1)).toFixed(4)
+    );
   }
 
   private navigate(item: RailItem): void {
@@ -281,6 +286,19 @@ export class SectionRail {
     drag.lastY = coordinate;
     drag.accumulatedY += incrementalDelta;
 
+    if (drag.axis === 'y') {
+      // Desktop : le chapitre suit le point sous le pointeur (limité aux extrémités,
+      // même si la souris sort de la barre). Aucun décalage visuel ni répétition :
+      // le curseur reste aligné avec le chapitre courant.
+      if (Math.abs(displacement) < 7 && !drag.moved) return;
+      event.preventDefault();
+      drag.moved = true;
+      this.nav.classList.add('is-dragging');
+      const target = this.nearestIndex(event.clientY, 'y');
+      if (target !== drag.previewIndex) this.goToPreview(target);
+      return;
+    }
+
     const direction: -1 | 0 | 1 =
       displacement > 12 ? 1 : displacement < -12 ? -1 : 0;
     if (direction !== drag.direction) {
@@ -328,14 +346,20 @@ export class SectionRail {
     );
     drag.lastStepAt = performance.now();
     if (nextIndex === drag.previewIndex) return false;
-    drag.previewIndex = nextIndex;
-    const item = this.items[nextIndex];
+    this.goToPreview(nextIndex);
+    return true;
+  }
+
+  private goToPreview(index: number): void {
+    const drag = this.drag;
+    if (!drag) return;
+    drag.previewIndex = index;
+    const item = this.items[index];
     this.renderFocus(item.id);
     this.scroll.scrollTo(item.id === 'top' ? 0 : `#${item.id}`, 0, {
       duration: 0.18,
     });
     this.updateHash(item);
-    return true;
   }
 
   private finishDrag(event: PointerEvent, commit: boolean): void {

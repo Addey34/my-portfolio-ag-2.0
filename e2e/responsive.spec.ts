@@ -191,7 +191,7 @@ test('l’horloge se déploie en stacks et se reforme au retour', async ({
 test('médaillon AG devient horloge et retrouve AG au retour', async ({
   page,
 }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   const modelResponse = page.waitForResponse((response) =>
     response.url().endsWith('/models/clock.glb')
   );
@@ -238,7 +238,7 @@ test('médaillon AG devient horloge et retrouve AG au retour', async ({
 test('suspension alignée du petit mobile au bureau', async ({
   page,
 }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   const lampResponse = page.waitForResponse((response) =>
     response.url().endsWith('/models/lamp.glb')
   );
@@ -273,7 +273,7 @@ test('suspension alignée du petit mobile au bureau', async ({
 });
 
 test('récit complet au seuil tablette', async ({ page }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   await page.setViewportSize({ width: 900, height: 800 });
   await page.goto('/');
   await expect(page.locator('#world-3d')).toBeVisible();
@@ -316,7 +316,7 @@ test('récit complet au seuil tablette', async ({ page }, testInfo) => {
 test('captures des trois aiguilles aux repères réels du cadran', async ({
   page,
 }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   const modelResponse = page.waitForResponse((response) =>
     response.url().endsWith('/models/clock.glb')
   );

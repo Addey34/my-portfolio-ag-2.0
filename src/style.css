@@ -6190,3 +6190,84 @@ button:focus-visible {
     opacity: 0.5;
   }
 }
+
+/* Rail desktop : plus lisible, fil de progression titane/laiton, poignée évidente. */
+@media (min-width: 861px) {
+  .rail {
+    cursor: grab;
+    padding: 0.55rem 0.4rem;
+  }
+
+  .rail.is-pressed {
+    cursor: grabbing;
+  }
+
+  .rail__dot {
+    height: 2.3rem;
+    cursor: inherit;
+  }
+
+  .rail__marker {
+    width: 11px;
+    height: 11px;
+    border-width: 1.5px;
+    border-color: color-mix(in srgb, var(--titanium) 70%, transparent);
+  }
+
+  .rail__marker {
+    opacity: max(
+      0.55,
+      calc(0.12 + var(--rail-depth) * 0.6 + var(--rail-proximity) * 0.12)
+    );
+  }
+
+  .rail__label {
+    font-size: 0.8rem;
+    opacity: max(
+      0.6,
+      calc(0.05 + var(--rail-depth) * 0.82 + var(--rail-proximity) * 0.1)
+    );
+  }
+
+  /* Fil vertical derrière les repères : gris titane, rempli en laiton jusqu'au chapitre courant. */
+  .rail::before,
+  .rail::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: calc(0.55rem + 1.15rem);
+    left: calc(0.4rem + 0.42rem + 5.5px - 1px);
+    width: 2px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .rail::before {
+    height: calc((var(--rail-count, 10) - 1) * 2.38rem);
+    background: color-mix(in srgb, var(--titanium-deep) 55%, transparent);
+  }
+
+  .rail::after {
+    height: calc(
+      (var(--rail-count, 10) - 1) * 2.38rem * var(--rail-progress, 0)
+    );
+    background: linear-gradient(to bottom, var(--brass-soft), var(--brass));
+    box-shadow: 0 0 10px color-mix(in srgb, var(--brass) 45%, transparent);
+    transition: height 0.25s var(--ease-out);
+  }
+
+  .rail.is-dragging .rail__marker {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brass) 18%, transparent);
+  }
+
+  .rail.is-dragging .rail__dot {
+    transform: scale(
+      calc(0.9 + var(--rail-depth) * 0.1 + var(--rail-proximity) * 0.04)
+    );
+  }
+
+  .rail.is-dragging .rail__dot.is-current {
+    transform: scale(1.07);
+  }
+}
