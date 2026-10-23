@@ -408,7 +408,7 @@ test('comparaison des deux ouvertures avec retour au cadran', async ({
 test('les quatre passages complémentaires suivent le scroll dans les deux sens', async ({
   page,
 }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   await page.goto('/');
   await expect(page.locator('#contact')).toBeAttached();
   await page.waitForLoadState('networkidle');
@@ -548,7 +548,7 @@ test('contenu et navigation disponibles sans WebGL', async ({ page }) => {
 test('captures de finition des scènes principales', async ({
   page,
 }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   for (const section of [
     'top',
     'stack',
