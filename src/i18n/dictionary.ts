@@ -194,12 +194,12 @@ const en: Dict = {
   'projects.threshold.kicker': 'Current selection',
   'projects.threshold.title': 'Products chosen for their systems.',
   'projects.threshold.lead':
-    'Three terrains are in focus here — 3D, real-time systems and full-stack product work. More projects will join the selection later.',
+    'Three areas are in focus here — 3D, real-time systems and full-stack product work. More projects will join the selection later.',
   'projects.threshold.aria': 'Explore the products',
   'contact.kicker': 'Let’s build something useful',
   'contact.title': 'A product to launch?',
   'contact.lead':
-    'Tell me about the use case, the problem and the current stage. I’ll help find the next right brick.',
+    'Tell me about the use case, the problem and the current stage. I’ll help you find the next right brick.',
   'contact.cta': 'Write to Adrian',
   'contact.form.open': 'Open the contact form',
   'contact.form.close': 'Close the contact form',
