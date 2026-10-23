@@ -43,3 +43,8 @@ docs/private/
 # Python
 __pycache__/
 *.blend1
+
+# Sorties des tests iPhone réels (BrowserStack)
+log/
+e2e-ios/test-results/
+e2e-ios/playwright-report/

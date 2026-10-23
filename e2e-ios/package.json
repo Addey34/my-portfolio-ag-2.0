@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-ag-ios",
+  "private": true,
+  "type": "module",
+  "description": "Parcours sur iPhone réels (BrowserStack). Projet isolé : BrowserStack n'accepte pas encore le Playwright du dépôt (1.64).",
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "browserstack-node-sdk": "1.74.0"
+  }
+}

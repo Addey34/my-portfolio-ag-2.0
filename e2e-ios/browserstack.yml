@@ -1,0 +1,13 @@
+# Appareils réels BrowserStack Automate pour `pnpm test:ios`.
+# Les identifiants viennent de .env (BROWSERSTACK_USERNAME / BROWSERSTACK_ACCESS_KEY), jamais de ce fichier.
+projectName: Portfolio 2.0
+buildName: iphone-reels
+platforms:
+  - browserName: safari
+    osVersion: 16
+    deviceName: iPhone 14 Pro Max
+  - browserName: safari
+    osVersion: 17
+    deviceName: iPhone 15 Pro Max
+browserstackAutomation: true
+testObservability: false
