@@ -74,7 +74,7 @@ const fr: Dict = {
   'contact.kicker': 'Construisons quelque chose d’utile',
   'contact.title': 'Un produit à lancer ?',
   'contact.lead':
-    'Parlez-moi de l’usage, du problème et du niveau d’avancement. Je vous aiderai à trouver la prochaine bonne brique.',
+    'Parlez-moi de l’usage, du problème et du niveau d’avancement. Je vous dirai honnêtement par où je commencerais.',
   'contact.cta': 'Écrire à Adrian',
   'contact.form.open': 'Déplier le formulaire',
   'contact.form.close': 'Replier le formulaire',
@@ -199,7 +199,7 @@ const en: Dict = {
   'contact.kicker': 'Let’s build something useful',
   'contact.title': 'A product to launch?',
   'contact.lead':
-    'Tell me about the use case, the problem and the current stage. I’ll help you find the next right brick.',
+    'Tell me about the use case, the problem and the current stage. I’ll tell you honestly where I would start.',
   'contact.cta': 'Write to Adrian',
   'contact.form.open': 'Open the contact form',
   'contact.form.close': 'Close the contact form',
