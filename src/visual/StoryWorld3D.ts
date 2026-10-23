@@ -1976,6 +1976,19 @@ export class StoryWorld3D {
     }
     this.programsReady = true;
     this.render(0);
+    // Les GLB sont à double face et transparents : sans cela, chaque pièce est dessinée
+    // deux fois (faces arrière puis avant). Une seule passe suffit pour ces objets pleins.
+    this.scene.traverse((object) => {
+      if (!(object instanceof Mesh)) return;
+      const list = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+      list.forEach((material) => {
+        if (material.transparent && material.side === DoubleSide) {
+          material.forceSinglePass = true;
+        }
+      });
+    });
     const textures = new Set<Texture>();
     this.scene.traverse((object) => {
       if (!(object instanceof Mesh)) return;
@@ -3136,14 +3149,31 @@ export class StoryWorld3D {
           object.receiveShadow = false;
           const glass = object.material;
           if (glass instanceof MeshPhysicalMaterial) {
-            glass.transmission = 0.94;
+            // Pas de transmission : elle redessine toute la scène opaque à chaque image.
+            // Un verre transparent à vernis (clearcoat) donne le même aspect pour une ampoule.
+            glass.transmission = 0;
             glass.ior = 1.45;
-            glass.thickness = 0.015;
+            glass.thickness = 0;
             glass.roughness = 0.045;
-            glass.transparent = false;
-            glass.opacity = 1;
+            glass.clearcoat = 0.2;
+            glass.clearcoatRoughness = 0.03;
+            glass.transparent = true;
+            glass.opacity = 0.1;
             glass.depthWrite = false;
           }
+        }
+        // Autres verres de l'ampoule (tige) : même traitement, sans passe de transmission.
+        if (
+          object.name !== 'Bulb / clear glass envelope' &&
+          object.material instanceof MeshPhysicalMaterial &&
+          object.material.transmission > 0
+        ) {
+          const glass = object.material;
+          glass.transmission = 0;
+          glass.thickness = 0;
+          glass.transparent = true;
+          glass.opacity = 0.15;
+          glass.depthWrite = false;
         }
         if (object.name === 'Filament / glowing coil') {
           const filament = object.material;
