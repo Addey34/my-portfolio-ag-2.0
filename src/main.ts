@@ -92,6 +92,29 @@ function whenIdle(task: () => void): void {
   }
 }
 
+/**
+ * Écran d'attente : retiré quand la scène 3D est entièrement installée (événement `world-settled`),
+ * ou au plus tard après 12 s, ou tout de suite si la 3D est indisponible.
+ */
+function initBootLoader(hasWorld: boolean): () => void {
+  const loader = document.getElementById('boot-loader');
+  if (!loader) return () => {};
+  const dismiss = (): void => {
+    if (loader.classList.contains('is-done')) return;
+    loader.classList.add('is-done');
+    window.setTimeout(() => loader.remove(), 700);
+  };
+  if (!hasWorld) {
+    dismiss();
+    return dismiss;
+  }
+  // On attend la fin du chargement de fond (objets analysés, shaders et pièces
+  // amorcés) : c'est lui qui faisait saccader les premières secondes de défilement.
+  window.addEventListener('world-settled', dismiss, { once: true });
+  window.setTimeout(dismiss, 12000);
+  return dismiss;
+}
+
 function createFpsProbe(): FPSCounter {
   const el = document.createElement('div');
   el.className = 'fps';
@@ -158,6 +181,7 @@ function boot(): void {
   // Le contenu, les ancres et les contrôles démarrent avant le téléchargement
   // de Three.js. Le monde rejoint ensuite l'état visuel courant, même si le
   // visiteur a déjà navigué ou modifié ses préférences.
+  const dismissLoader = initBootLoader(Boolean(canvas));
   if (canvas) {
     const loadWorld = () => {
       void import('@/visual/StoryWorld3D')
@@ -167,6 +191,7 @@ function boot(): void {
         .catch(() => {
           // Une erreur de chargement laisse le récit HTML utilisable.
           canvas.hidden = true;
+          dismissLoader();
         });
     };
     const scheduleWorld = () => {

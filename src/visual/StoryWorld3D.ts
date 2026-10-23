@@ -306,6 +306,13 @@ export class StoryWorld3D {
   private loadQueueStarted = false;
   private programsReady = false;
   private primed = false;
+
+  /** Rendu autorisé ; prévient l'interface (écran d'attente) une seule fois. */
+  private markReady(): void {
+    const first = !this.programsReady;
+    this.programsReady = true;
+    if (first) window.dispatchEvent(new Event('world-ready'));
+  }
   private safetyTimer = 0;
   private readonly liquidUniforms = {
     flow: { value: 0 },
@@ -432,9 +439,7 @@ export class StoryWorld3D {
     this.loadStudiesArtifacts();
     this.loadContactLetter();
     // Filet de sécurité : le rendu reprend quoi qu'il arrive après 8 s.
-    this.safetyTimer = window.setTimeout(() => {
-      this.programsReady = true;
-    }, 8000);
+    this.safetyTimer = window.setTimeout(() => this.markReady(), 8000);
     window.addEventListener('resize', this.onResize, { passive: true });
     this.contactDisclosure?.addEventListener('toggle', this.onContactToggle);
     if (!this.reduced) this.setInteractive(true);
@@ -2004,7 +2009,7 @@ export class StoryWorld3D {
     } catch {
       // Sans compilation asynchrone, on laisse le rendu compiler à la demande.
     }
-    this.programsReady = true;
+    this.markReady();
     this.render(0);
     // Les GLB sont à double face et transparents : sans cela, chaque pièce est dessinée
     // deux fois (faces arrière puis avant). Une seule passe suffit pour ces objets pleins.
@@ -2095,6 +2100,7 @@ export class StoryWorld3D {
       this.render(0);
       await new Promise<void>((resolve) => window.setTimeout(resolve, 60));
     }
+    window.dispatchEvent(new Event('world-settled'));
   }
 
   private loadCraftedFeature(
