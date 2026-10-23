@@ -15,11 +15,7 @@ if (
 
 const options = { stdio: 'inherit', shell: true, env: process.env };
 if (!existsSync('e2e-ios/node_modules')) {
-  const install = spawnSync(
-    'pnpm',
-    ['--dir', 'e2e-ios', 'install', '--ignore-workspace'],
-    options
-  );
+  const install = spawnSync('pnpm', ['--dir', 'e2e-ios', 'install'], options);
   if (install.status !== 0) process.exit(install.status ?? 1);
 }
 const run = spawnSync(
