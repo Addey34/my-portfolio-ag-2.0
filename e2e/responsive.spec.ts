@@ -1,4 +1,22 @@
-import { expect, test } from '@playwright/test';
+import { expect, test as base } from '@playwright/test';
+
+/**
+ * Les parcours mesurent des positions 3D : l'écran d'attente, qui couvre la page
+ * quelques secondes, est retiré dès son apparition (sauf pour son propre test).
+ */
+const test = base.extend<{ keepLoader: boolean }>({
+  keepLoader: [false, { option: true }],
+  page: async ({ page, keepLoader }, use) => {
+    if (!keepLoader) {
+      await page.addInitScript(() => {
+        new MutationObserver(() => {
+          document.getElementById('boot-loader')?.remove();
+        }).observe(document, { childList: true, subtree: true });
+      });
+    }
+    await use(page);
+  },
+});
 
 const sections = [
   'top',
@@ -327,7 +345,7 @@ test('captures des trois aiguilles aux repères réels du cadran', async ({
 test('atelier 3D local : repères précis et retour', async ({
   page,
 }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   await page.goto('/?scene-lab=1');
   const lab = page.locator('.scene-lab');
   await expect(lab).toBeVisible();
@@ -579,4 +597,20 @@ test('captures de finition des scènes principales', async ({
       });
     }
   }
+});
+
+test.describe('écran d’attente', () => {
+  test.use({ keepLoader: true });
+
+  test('couvre la page puis disparaît quand la 3D est installée', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await page.goto('/');
+    await expect(page.locator('#boot-loader')).toBeAttached();
+    await expect(page.locator('#boot-loader')).toHaveCount(0, {
+      timeout: 60_000,
+    });
+    await expect(page.locator('#world-3d')).toBeVisible();
+  });
 });
