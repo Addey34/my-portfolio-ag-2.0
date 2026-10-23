@@ -19,6 +19,7 @@ import {
   IcosahedronGeometry,
   Line,
   LineBasicMaterial,
+  LoadingManager,
   Mesh,
   MeshBasicMaterial,
   MeshPhysicalMaterial,
@@ -42,12 +43,13 @@ import {
   SRGBColorSpace,
   SphereGeometry,
   SpotLight,
+  Texture,
   TubeGeometry,
   Vector3,
   WebGLRenderTarget,
   WebGLRenderer,
 } from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { prefersReducedMotion } from '@/core/motion';
 import { clockHandAngles } from '@/visual/clockHands';
 import type { VisualScene, VisualState } from '@/visual/types';
@@ -294,6 +296,16 @@ export class StoryWorld3D {
   private clockReady = false;
   private lampReady = false;
   private destroyed = false;
+  // Tous les GLB passent par ce gestionnaire : quand la file est vide, on précompile.
+  private readonly loadingManager = new LoadingManager(() =>
+    this.queueWarmup()
+  );
+  private warmupTimers: number[] = [];
+  private readonly loadQueue: Array<() => Promise<void>> = [];
+  private loadQueueBusy = false;
+  private loadQueueStarted = false;
+  private programsReady = false;
+  private safetyTimer = 0;
   private readonly liquidUniforms = {
     flow: { value: 0 },
     melt: { value: 0 },
@@ -361,6 +373,10 @@ export class StoryWorld3D {
       return;
     }
 
+    // Lire le journal de compilation est synchrone : chaque nouveau programme gèle alors
+    // le fil principal le temps que le GPU compile. En production on s'en passe (les
+    // erreurs de shader restent visibles en développement).
+    renderer.debug.checkShaderErrors = import.meta.env.DEV;
     renderer.setClearColor('#000000', 0);
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.shadowMap.enabled = true;
@@ -414,6 +430,10 @@ export class StoryWorld3D {
     this.loadMagnotesGrimoire();
     this.loadStudiesArtifacts();
     this.loadContactLetter();
+    // Filet de sécurité : le rendu reprend quoi qu'il arrive après 8 s.
+    this.safetyTimer = window.setTimeout(() => {
+      this.programsReady = true;
+    }, 8000);
     window.addEventListener('resize', this.onResize, { passive: true });
     this.contactDisclosure?.addEventListener('toggle', this.onContactToggle);
     if (!this.reduced) this.setInteractive(true);
@@ -1010,6 +1030,9 @@ export class StoryWorld3D {
         this.clock.quaternion.copy(this.world.quaternion).invert();
     }
     this.world.visible = !(scene === 'contact' && this.contactDisclosure?.open);
+    // Tant que les shaders ne sont pas prêts, on ne dessine pas : la première utilisation
+    // d'un programme non compilé bloque la page jusqu'à la fin de la compilation.
+    if (!this.programsReady) return;
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -1069,6 +1092,8 @@ export class StoryWorld3D {
 
   destroy(): void {
     this.destroyed = true;
+    window.clearTimeout(this.safetyTimer);
+    this.warmupTimers.forEach((timer) => window.clearTimeout(timer));
     window.removeEventListener('resize', this.onResize);
     this.contactDisclosure?.removeEventListener('toggle', this.onContactToggle);
     this.setInteractive(false);
@@ -1761,7 +1786,7 @@ export class StoryWorld3D {
   }
 
   private loadClockBreakup(): void {
-    new GLTFLoader().load('/models/clock_breakup.glb', (asset) => {
+    this.enqueueGlb('/models/clock_breakup.glb', (asset) => {
       if (this.destroyed) return;
       const pivots: Object3D[] = [];
       let mechanism: Object3D | null = null;
@@ -1809,7 +1834,7 @@ export class StoryWorld3D {
   }
 
   private loadSolutionsMonolith(): void {
-    new GLTFLoader().load('/models/solutions_monolith.glb', (asset) => {
+    this.enqueueGlb('/models/solutions_monolith.glb', (asset) => {
       if (this.destroyed) return;
       const pivots: Object3D[] = [];
       const materials = new Set<MeshStandardMaterial>();
@@ -1880,13 +1905,104 @@ export class StoryWorld3D {
   }
 
   /** Charge un objet Blender fini et remplace la forme procédurale de la scène. */
+  /**
+   * Chargement des objets hors héros : les fichiers se téléchargent tous tout de
+   * suite (en parallèle), mais leur analyse se fait un par un, après l'apparition du
+   * héros, avec une pause entre chaque pour laisser les images respirer.
+   */
+  private enqueueGlb(url: string, onLoad: (asset: GLTF) => void): void {
+    const bytes = fetch(url)
+      .then((response) =>
+        response.ok ? response.arrayBuffer() : Promise.reject(new Error(url))
+      )
+      .catch(() => null);
+    this.loadQueue.push(async () => {
+      const buffer = await bytes;
+      if (!buffer || this.destroyed) return;
+      await new Promise<void>((resolve) => {
+        new GLTFLoader().parse(
+          buffer,
+          `${window.location.origin}/models/`,
+          (asset) => {
+            if (!this.destroyed) onLoad(asset);
+            resolve();
+          },
+          () => resolve()
+        );
+      });
+    });
+    if (!this.loadQueueStarted) {
+      this.loadQueueStarted = true;
+      // Le héros (lampe, pendentif, horloge) passe avant tout le reste.
+      window.setTimeout(() => this.pumpLoadQueue(), 1500);
+    }
+  }
+
+  private pumpLoadQueue(): void {
+    if (this.loadQueueBusy || this.destroyed) return;
+    const next = this.loadQueue.shift();
+    if (!next) {
+      this.queueWarmup();
+      return;
+    }
+    this.loadQueueBusy = true;
+    void next().finally(() => {
+      this.loadQueueBusy = false;
+      window.setTimeout(() => this.pumpLoadQueue(), 160);
+    });
+  }
+
+  /**
+   * Précompilation : les objets cachés ne compilent leurs shaders et n'envoient leurs
+   * textures au GPU qu'à leur première apparition, ce qui gèle l'image plusieurs
+   * centaines de millisecondes. On le fait ici, au repos, après le chargement.
+   * Deux passes : l'analyse des GLB peut finir après la fin du chargement réseau.
+   */
+  private queueWarmup(): void {
+    if (!this.renderer || this.destroyed) return;
+    this.warmupTimers.forEach((timer) => window.clearTimeout(timer));
+    this.warmupTimers = [700, 3200].map((delay) =>
+      window.setTimeout(() => void this.warmup(), delay)
+    );
+  }
+
+  private async warmup(): Promise<void> {
+    const renderer = this.renderer;
+    if (!renderer || this.destroyed) return;
+    try {
+      await renderer.compileAsync(this.scene, this.camera);
+    } catch {
+      // Sans compilation asynchrone, on laisse le rendu compiler à la demande.
+    }
+    this.programsReady = true;
+    this.render(0);
+    const textures = new Set<Texture>();
+    this.scene.traverse((object) => {
+      if (!(object instanceof Mesh)) return;
+      const materials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+      materials.forEach((material) => {
+        Object.values(material).forEach((value) => {
+          if (value instanceof Texture) textures.add(value);
+        });
+      });
+    });
+    // Une texture par tranche de temps, pour ne jamais bloquer l'image.
+    for (const texture of textures) {
+      if (this.destroyed) return;
+      renderer.initTexture(texture);
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 24));
+    }
+  }
+
   private loadCraftedFeature(
     url: string,
     scene: VisualScene,
     collect: (object: Object3D) => void,
     ready: (root: Object3D) => void
   ): void {
-    new GLTFLoader().load(url, (asset) => {
+    this.enqueueGlb(url, (asset) => {
       if (this.destroyed) return;
       const materials = new Set<MeshStandardMaterial>();
       asset.scene.traverse((object) => {
@@ -2483,7 +2599,7 @@ export class StoryWorld3D {
   }
 
   private loadStackCube(): void {
-    new GLTFLoader().load('/models/stack_cube.glb', (asset) => {
+    this.enqueueGlb('/models/stack_cube.glb', (asset) => {
       if (this.destroyed) return;
       const pivots: Object3D[] = [];
       asset.scene.traverse((object) => {
@@ -3004,7 +3120,7 @@ export class StoryWorld3D {
     this.filamentGlow.scale.set(1.05, 1.05, 1);
     this.filamentGlow.layers.set(1);
     this.lampSwing.add(this.filamentGlow);
-    new GLTFLoader().load('/models/lamp.glb', (asset) => {
+    new GLTFLoader(this.loadingManager).load('/models/lamp.glb', (asset) => {
       if (this.destroyed) return;
       const materials = new Set<MeshStandardMaterial>();
       asset.scene.traverse((object) => {
@@ -3052,7 +3168,7 @@ export class StoryWorld3D {
       this.lampSwing.visible = true;
       this.render(0);
     });
-    new GLTFLoader().load('/models/clock.glb', (asset) => {
+    new GLTFLoader(this.loadingManager).load('/models/clock.glb', (asset) => {
       if (this.destroyed) return;
       asset.scene.traverse((object) => object.layers.set(2));
       const hands = ['HAND_HOUR', 'HAND_MINUTE', 'HAND_SECOND'].map((name) =>
@@ -3160,7 +3276,7 @@ export class StoryWorld3D {
       this.clockReady = true;
       this.render(0);
     });
-    new GLTFLoader().load('/models/pendant.glb', (asset) => {
+    new GLTFLoader(this.loadingManager).load('/models/pendant.glb', (asset) => {
       if (this.destroyed) return;
       const materials = new Set<MeshStandardMaterial>();
       asset.scene.traverse((object) => {
