@@ -6075,3 +6075,14 @@ button:focus-visible {
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
+
+/* Mobile : le nom du chapitre courant garde une plaque graphite pour rester
+   lisible quand il passe sur du texte. */
+@media (max-width: 860px) {
+  .rail__dot.is-current .rail__label {
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(10, 16, 25, 0.88);
+    border: 1px solid rgba(201, 164, 92, 0.3);
+  }
+}
