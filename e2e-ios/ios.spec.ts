@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const SITE = process.env.IOS_BASE_URL ?? 'https://portfolioag-3288c.web.app/';
+const SITE = process.env.IOS_BASE_URL ?? 'https://adrianguichard.dev/';
 
 interface FrameStats {
   device: string;
