@@ -149,8 +149,8 @@ export const PROJECTS: Project[] = [
       { label: showcase, href: 'https://github.com/Addey34/ludora-showcase' },
     ],
     linkNote: {
-      fr: 'Backend privé ; frontend public et architecture présentés ici.',
-      en: 'Private backend; public frontend and architecture presented here.',
+      fr: 'Code client et serveur privés ; vitrine technique publique, architecture présentée ici.',
+      en: 'Client and server code are private; public technical overview, architecture presented here.',
     },
     accent: '#7dd3fc',
     chapter: 'ludora',
