@@ -1,0 +1,3 @@
+# Projet isolé : le script d'installation de protobufjs (dépendance du SDK BrowserStack) est inutile ici.
+allowBuilds:
+  protobufjs: false
