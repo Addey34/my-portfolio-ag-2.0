@@ -42,6 +42,7 @@ interface FrameStats {
   p99ms: string;
   sup50ms: number;
   hitches: string[];
+  smoothHitches: string[];
   errors: string[];
 }
 
@@ -153,10 +154,37 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
     }
   }
 
-  const hitchRaw = await page.evaluate(
+  const hitchRaw = await page.evaluate(() => [
+    ...(window as unknown as { __hitches: Array<[number, number]> }).__hitches,
+  ]);
+  // Second passage : défilement continu et progressif (comme un geste), du haut vers le bas.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(1500);
+  await page.evaluate(() => {
+    (window as unknown as { __hitches: unknown[] }).__hitches.length = 0;
+  });
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        const total =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const duration = 24000;
+        const start = performance.now();
+        const step = (now: number): void => {
+          const t = Math.min(1, (now - start) / duration);
+          window.scrollTo(0, total * t);
+          if (t < 1) requestAnimationFrame(step);
+          else resolve();
+        };
+        requestAnimationFrame(step);
+      })
+  );
+  const smoothRaw = await page.evaluate(
     () =>
       (window as unknown as { __hitches: Array<[number, number]> }).__hitches
   );
+  const smoothHitches = smoothRaw.map(([ms, y]) => `${y}px:${ms}ms`);
+
   const tops = await page.evaluate(() =>
     [...document.querySelectorAll('section[id]')].map((node) => [
       node.id,
@@ -200,6 +228,7 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
     p99ms: at(0.99),
     sup50ms: frames.filter((v) => v > 50).length,
     hitches,
+    smoothHitches,
     errors: siteErrors.slice(0, 5),
   };
   console.log(`RESULT ${JSON.stringify(stats)}`);
