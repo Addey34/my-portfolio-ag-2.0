@@ -301,8 +301,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       en: 'Windows runtime downloads verified · CUDA compute tested',
     },
     problem: {
-      fr: 'Générer des images par IA avec la puissance de son propre ordinateur, plutôt que de dépendre d’un serveur GPU hébergé.',
-      en: 'Generate AI images with the power of your own computer instead of depending on a hosted GPU server.',
+      fr: 'Générer des images par IA sur son propre ordinateur, sans dépendre d’un serveur GPU hébergé.',
+      en: 'Generate AI images on your own computer, without depending on a hosted GPU server.',
     },
     role: {
       fr: 'Conception de l’application et de l’orchestration autour de modèles existants : tâches, agents, mémoire, installation.',
@@ -313,8 +313,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       en: 'A small launcher downloads the runtime suited to the hardware, without forcing the CUDA package onto every machine.',
     },
     evidence: {
-      fr: 'Runtimes Windows CUDA, CPU et DirectML validés au téléchargement, avec signatures et empreintes ; calcul CUDA vérifié sur RTX 5070 Ti (WSL2). Aucun benchmark de génération publié.',
-      en: 'Windows CUDA, CPU and DirectML runtimes validated on download, with signatures and checksums; CUDA compute verified on an RTX 5070 Ti (WSL2). No generation benchmark published.',
+      fr: 'Runtimes Windows CUDA, CPU et DirectML validés au téléchargement (signatures, empreintes) ; calcul CUDA vérifié sur RTX 5070 Ti (WSL2). Aucun benchmark publié.',
+      en: 'Windows CUDA, CPU and DirectML runtimes validated on download (signatures, checksums); CUDA compute verified on an RTX 5070 Ti (WSL2). No benchmark published.',
     },
     limit: {
       fr: 'Modèles tiers (non créés ici) ; génération non certifiée sur toutes les architectures GPU ; usage réel inconnu.',
