@@ -1,7 +1,7 @@
-# Appareils réels BrowserStack Automate pour `pnpm test:ios`.
+# Appareils réels (iPhone et Android) BrowserStack Automate pour `pnpm test:ios`.
 # Les identifiants viennent de .env (BROWSERSTACK_USERNAME / BROWSERSTACK_ACCESS_KEY), jamais de ce fichier.
 projectName: Portfolio 2.0
-buildName: iphone-reels
+buildName: appareils-reels
 platforms:
   - browserName: safari
     osVersion: 16
@@ -9,5 +9,11 @@ platforms:
   - browserName: safari
     osVersion: 17
     deviceName: iPhone 15 Pro Max
+  - browserName: chrome
+    osVersion: '13.0'
+    deviceName: Samsung Galaxy S23
+  - browserName: chrome
+    osVersion: '14.0'
+    deviceName: Google Pixel 8
 browserstackAutomation: true
 testObservability: false

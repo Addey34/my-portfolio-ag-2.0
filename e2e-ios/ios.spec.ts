@@ -4,6 +4,7 @@ const SITE = process.env.IOS_BASE_URL ?? 'https://portfolioag-3288c.web.app/';
 
 interface FrameStats {
   device: string;
+  baselineFps: string;
   renderer: string;
   dpr: number;
   sections: number;
@@ -25,6 +26,22 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text());
   });
+
+  // Cadence maximale de l'appareil : page vide, pour distinguer un plafond matériel d'une surcharge du site.
+  await page.goto('about:blank');
+  const baselineFps = await page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        let count = 0;
+        const start = performance.now();
+        const tick = (time: number): void => {
+          count += 1;
+          if (time - start >= 1500) resolve((count * 1000) / (time - start));
+          else requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      })
+  );
 
   await page.goto(SITE, { waitUntil: 'load' });
   await page.waitForTimeout(4000);
@@ -108,6 +125,7 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
   );
   const stats: FrameStats = {
     device: testInfo.project.name,
+    baselineFps: baselineFps.toFixed(1),
     renderer: gl.renderer,
     dpr: gl.dpr,
     sections: ids.length,
@@ -126,5 +144,6 @@ test('parcours complet sur iPhone réel : WebGL, débordement, fluidité', async
   expect(ids.length).toBeGreaterThanOrEqual(7);
   expect(maxOverflow).toBeLessThanOrEqual(1);
   expect(siteErrors).toEqual([]);
-  expect(Number(stats.fpsMoy)).toBeGreaterThan(30);
+  // Au moins 70 % de la cadence maximale mesurée sur l'appareil (page vide).
+  expect(Number(stats.fpsMoy)).toBeGreaterThan(baselineFps * 0.7);
 });
