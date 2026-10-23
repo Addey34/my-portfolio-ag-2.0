@@ -1939,6 +1939,33 @@ export class StoryWorld3D {
     }
   }
 
+  /**
+   * Cède la place au défilement : l'analyse d'un GLB bloque 100 à 400 ms sur mobile.
+   * On attend que la page se soit arrêtée (lecture ponctuelle, sans écouteur scroll),
+   * mais jamais plus de 4 s pour que les objets finissent par arriver.
+   */
+  private whenScrollIdle(): Promise<void> {
+    return new Promise((resolve) => {
+      const started = performance.now();
+      let lastY = window.scrollY;
+      let calmSince = started;
+      const check = (): void => {
+        const now = performance.now();
+        const y = window.scrollY;
+        if (Math.abs(y - lastY) > 1) {
+          lastY = y;
+          calmSince = now;
+        }
+        if (this.destroyed || now - calmSince > 250 || now - started > 4000) {
+          resolve();
+          return;
+        }
+        window.setTimeout(check, 100);
+      };
+      window.setTimeout(check, 100);
+    });
+  }
+
   private pumpLoadQueue(): void {
     if (this.loadQueueBusy || this.destroyed) return;
     const next = this.loadQueue.shift();
@@ -1947,10 +1974,12 @@ export class StoryWorld3D {
       return;
     }
     this.loadQueueBusy = true;
-    void next().finally(() => {
-      this.loadQueueBusy = false;
-      window.setTimeout(() => this.pumpLoadQueue(), 160);
-    });
+    void this.whenScrollIdle()
+      .then(next)
+      .finally(() => {
+        this.loadQueueBusy = false;
+        window.setTimeout(() => this.pumpLoadQueue(), 160);
+      });
   }
 
   /**
