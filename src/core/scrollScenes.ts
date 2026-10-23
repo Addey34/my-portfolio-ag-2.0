@@ -7,16 +7,17 @@ gsap.registerPlugin(ScrollTrigger);
 const CONFIG = {
   heroParallax: 20,
   heroFade: 0.18,
-  copyDrift: 4,
 };
 
 /**
  * Montage global du scroll : progression lisible, profondeur douce et sorties
- * nettes. Les chapitres conservent leur moteur dédié dans ChapterManager.
+ * nettes. Le monde 3D actif reçoit sa progression depuis VisualDirector.
  */
 export function initScrollScenes(): void {
+  initScrollProgress();
   initWordmarkReveal();
   initStoryProgress();
+  initIntroExit();
 
   if (prefersReducedMotion()) return;
 
@@ -34,60 +35,31 @@ export function initScrollScenes(): void {
       },
     });
   }
+  // Entrées et sorties des autres actes : voir SectionTransitions.
+}
 
-  gsap.utils
-    .toArray<HTMLElement>('.section--offers .section-copy')
-    .forEach((copy) => {
-      gsap.to(copy, {
-        yPercent: -CONFIG.copyDrift,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: copy.closest('.section'),
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.4,
-        },
-      });
-    });
-
-  const stackParts = document.querySelectorAll<HTMLElement>(
-    '#stack .stack__copy, #stack .stack-viz'
-  );
-  if (stackParts.length > 0) {
-    gsap.to(stackParts, {
-      opacity: 0,
-      yPercent: -2,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '#stack',
-        start: 'bottom 45%',
-        end: 'bottom 15%',
-        scrub: true,
-      },
-    });
-  }
-
-  gsap.utils.toArray<HTMLElement>('.chapter__panel-shell').forEach((shell) => {
-    const chapter = shell.closest<HTMLElement>('.chapter');
-    if (!chapter) return;
-    gsap.to(shell, {
-      opacity: 0,
-      yPercent: -3,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: chapter,
-        start: 'bottom 72%',
-        end: 'bottom 42%',
-        scrub: true,
-      },
-    });
+/** Le texte de l'introduction libère le médaillon pendant son second pivot. */
+function initIntroExit(): void {
+  const intro = document.querySelector<HTMLElement>('#intro');
+  if (!intro) return;
+  const reduced = prefersReducedMotion();
+  ScrollTrigger.create({
+    trigger: '#stack',
+    start: 'top 82%',
+    end: 'top 55%',
+    onUpdate: (self) => {
+      const opacity = reduced ? Number(self.progress < 0.5) : 1 - self.progress;
+      intro.style.setProperty('--intro-exit-opacity', opacity.toFixed(3));
+    },
+    onLeaveBack: () => intro.style.setProperty('--intro-exit-opacity', '1'),
+    onLeave: () => intro.style.setProperty('--intro-exit-opacity', '0'),
   });
 }
 
 /** Une micro-ligne près du kicker rend la progression de chaque acte tangible. */
 function initStoryProgress(): void {
   const sections = gsap.utils.toArray<HTMLElement>(
-    '#intro, #stack, #freelance, #projects-intro, .chapter, #contact'
+    '#intro, #stack, #freelance, #projects-intro, .chapter, #studies, #contact'
   );
   const reduced = prefersReducedMotion();
 
@@ -119,5 +91,19 @@ function initWordmarkReveal(): void {
     start: 'bottom 60%',
     onEnter: () => wordmark.classList.add('is-visible'),
     onLeaveBack: () => wordmark.classList.remove('is-visible'),
+  });
+}
+
+/** Barre de progression du bas de page : `transform` seul, piloté par ScrollTrigger. */
+function initScrollProgress(): void {
+  const bar = document.querySelector<HTMLElement>('.scroll-progress__bar');
+  if (!bar) return;
+  ScrollTrigger.create({
+    trigger: '#scroll-root',
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: (self) => {
+      bar.style.transform = `scaleX(${self.progress.toFixed(4)})`;
+    },
   });
 }

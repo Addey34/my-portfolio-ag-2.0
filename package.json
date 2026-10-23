@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "pnpm@11.24.0",
-  "description": "Portfolio d'Adrian Guichard - scrollytelling Canvas, Vite + TypeScript strict.",
+  "packageManager": "pnpm@11.17.0",
+  "description": "Portfolio d'Adrian Guichard - scrollytelling 3D, Vite + TypeScript strict.",
   "author": "Addey34",
   "license": "PolyForm-Noncommercial-1.0.0",
   "scripts": {
@@ -18,16 +18,20 @@
     "format:check": "prettier --check \"src/**/*.{ts,css}\"",
     "verify": "pnpm test && prettier --check \"src/**/*.{ts,css}\" && eslint . && tsc --noEmit && vite build",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest"
   },
   "dependencies": {
     "gsap": "^3.13.0",
-    "lenis": "^1.1.20"
+    "lenis": "^1.1.20",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.64.0",
     "@types/node": "^25.9.1",
+    "@types/three": "^0.186.0",
     "eslint": "^10.5.0",
     "prettier": "^3.9.5",
     "typescript": "^6.0.3",
@@ -35,7 +39,6 @@
     "vite": "^6.3.1",
     "vitest": "^4.1.10"
   },
-  "packageManager": "pnpm@11.17.0",
   "engines": {
     "node": ">=22"
   }

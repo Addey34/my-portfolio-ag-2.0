@@ -129,9 +129,9 @@ const NODE_COPY: Record<string, LocalizedText> = {
     fr: 'Valide les données des collecteurs et modèles avant leur traitement par les services.',
     en: 'Validates collector and model data before it reaches the services.',
   },
-  'Upstash Redis': {
-    fr: 'Fournit cache, quotas et états courts aux prototypes sans imposer une infrastructure persistante.',
-    en: 'Provides caching, quotas and short-lived state without imposing persistent infrastructure.',
+  PostgreSQL: {
+    fr: 'Base relationnelle pour les données qui exigent transactions, contraintes et requêtes fiables.',
+    en: 'Relational database for data that needs transactions, constraints and reliable queries.',
   },
   'Docker / Oracle Cloud': {
     fr: 'Reproduit les services et organise leur déploiement sur une infrastructure distante maîtrisée.',
@@ -145,17 +145,17 @@ const NODE_COPY: Record<string, LocalizedText> = {
     fr: 'Assemble les pipelines d’image en séparant modèles, mémoire GPU et paramètres d’inférence.',
     en: 'Assembles image pipelines while separating models, GPU memory and inference parameters.',
   },
-  'Playwright / Cheerio': {
-    fr: 'Automatise les parcours critiques et transforme les pages collectées en données comparables pour Comparator.',
-    en: 'Automates critical journeys and turns collected pages into comparable Comparator data.',
+  'GitHub Actions / CI': {
+    fr: 'Rejoue formatage, lint, types, tests et build à chaque changement pour garder les dépôts livrables.',
+    en: 'Replays formatting, lint, types, tests and build on every change to keep repositories shippable.',
   },
-  'Discord.js / voice': {
-    fr: 'Explore les interactions vocales temps réel et la gestion de sessions hors du navigateur.',
-    en: 'Explores real-time voice interactions and session management outside the browser.',
+  'Firebase Hosting': {
+    fr: 'Sert les interfaces statiques de Galaxy et MagNotes avec headers de sécurité et cache maîtrisés.',
+    en: 'Serves the static Galaxy and MagNotes frontends with controlled security headers and caching.',
   },
-  'FFmpeg / yt-dlp': {
-    fr: 'Prépare et normalise les médias avant traitement, stockage ou intégration dans un flux produit.',
-    en: 'Prepares and normalizes media before processing, storage or product integration.',
+  'Vitest / Playwright': {
+    fr: 'Vérifie la logique par des tests unitaires et les parcours critiques par des tests de bout en bout.',
+    en: 'Checks logic with unit tests and critical journeys with end-to-end tests.',
   },
 };
 
@@ -188,8 +188,7 @@ const NODES: NodeDef[] = [
     color: COLORS.interface,
     layer: 'interface',
     mark: [0.23, 0.35],
-    projects: ['Prototypes R&D'],
-    primary: true,
+    projects: ['Autres projets'],
   },
   {
     label: 'Vite',
@@ -204,7 +203,7 @@ const NODES: NodeDef[] = [
     color: COLORS.interface,
     layer: 'interface',
     mark: [0.33, 0.35],
-    projects: ['MagNotes', 'Prototypes R&D'],
+    projects: ['MagNotes', 'Autres projets'],
   },
   {
     label: 'HTML / CSS',
@@ -278,43 +277,42 @@ const NODES: NodeDef[] = [
     color: COLORS.data,
     layer: 'data',
     mark: [0.6, 0.32],
-    projects: ['Prototypes R&D'],
+    projects: ['Autres projets'],
   },
   {
     label: 'Python / Pydantic',
     color: COLORS.data,
     layer: 'data',
     mark: [0.56, 0.49],
-    projects: ['Comparateur', 'Prototypes R&D'],
+    projects: ['Autres projets'],
   },
   {
-    label: 'Upstash Redis',
+    label: 'PostgreSQL',
     color: COLORS.data,
     layer: 'data',
     mark: [0.59, 0.68],
-    projects: ['Prototypes R&D'],
+    projects: ['Autres projets'],
   },
   {
     label: 'PyTorch / CUDA / PEFT',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.7, 0.82],
-    projects: ['Génération locale'],
-    primary: true,
+    projects: ['Autres projets'],
   },
   {
     label: 'Diffusers / Transformers',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.83, 0.84],
-    projects: ['Génération locale'],
+    projects: ['Autres projets'],
   },
   {
-    label: 'Playwright / Cheerio',
+    label: 'GitHub Actions / CI',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.92, 0.72],
-    projects: ['Galaxy', 'Ludora', 'Comparateur'],
+    projects: ['Ludora', 'Portfolio AG'],
   },
   {
     label: 'Docker / Oracle Cloud',
@@ -322,51 +320,80 @@ const NODES: NodeDef[] = [
     layer: 'deploy',
     mark: [0.92, 0.58],
     projects: ['MagNotes', 'Infrastructure'],
+    primary: true,
   },
   {
-    label: 'Discord.js / voice',
+    label: 'Firebase Hosting',
     color: COLORS.deploy,
     layer: 'deploy',
     mark: [0.79, 0.55],
-    projects: ['Prototypes R&D'],
+    projects: ['Galaxy', 'MagNotes', 'Portfolio AG'],
+    primary: true,
   },
   {
-    label: 'FFmpeg / yt-dlp',
-    color: COLORS.realtime,
-    layer: 'realtime',
+    label: 'Vitest / Playwright',
+    color: COLORS.deploy,
+    layer: 'deploy',
     mark: [0.89, 0.55],
-    projects: ['Prototypes R&D'],
+    projects: ['MagNotes', 'Portfolio AG'],
+    primary: true,
   },
 ];
 
 const TAU = Math.PI * 2;
 
-const AG_MARKS: [number, number][] = [
-  [0.04, 0.86],
-  [0.09, 0.66],
-  [0.15, 0.44],
-  [0.22, 0.22],
-  [0.29, 0.08],
-  [0.36, 0.22],
-  [0.43, 0.44],
-  [0.49, 0.66],
-  [0.54, 0.86],
-  [0.13, 0.56],
-  [0.29, 0.56],
-  [0.45, 0.56],
-  [0.93, 0.24],
-  [0.85, 0.12],
-  [0.72, 0.08],
-  [0.61, 0.18],
-  [0.57, 0.38],
-  [0.59, 0.62],
-  [0.68, 0.8],
-  [0.82, 0.86],
-  [0.93, 0.74],
-  [0.94, 0.54],
-  [0.8, 0.54],
-  [0.69, 0.54],
-];
+/**
+ * Monogramme AG géométrique, en unités de dessin (hauteur des lettres = 140).
+ * Le A est un triangle isocèle avec une barre ; le G est un arc de cercle
+ * parfait (rayon 70) fermé par une barre centrale. Les 24 points suivent
+ * l'ordre historique : 0-8 jambes du A, 9-11 barre du A, 12-21 arc du G,
+ * 22-23 barre du G.
+ */
+const AG_HEIGHT = 140;
+const AG_WIDTH = 290;
+const AG_UNITS: [number, number][] = (() => {
+  const points: [number, number][] = [];
+  const apexX = 65;
+  for (let k = 0; k <= 4; k += 1) {
+    const t = k / 4;
+    points.push([apexX * t, AG_HEIGHT - AG_HEIGHT * t]);
+  }
+  for (let k = 1; k <= 4; k += 1) {
+    const u = k / 4;
+    points.push([apexX + apexX * u, AG_HEIGHT * u]);
+  }
+  const barY = AG_HEIGHT * 0.64;
+  const barT = (AG_HEIGHT - barY) / AG_HEIGHT;
+  points.push([apexX * barT, barY], [apexX, barY], [130 - apexX * barT, barY]);
+  const cx = 220;
+  const cy = AG_HEIGHT / 2;
+  const radius = AG_HEIGHT / 2;
+  for (let k = 0; k <= 9; k += 1) {
+    const angle = ((40 + (320 / 9) * k) * Math.PI) / 180;
+    points.push([cx + Math.cos(angle) * radius, cy - Math.sin(angle) * radius]);
+  }
+  points.push([cx + radius * 0.5, cy], [cx, cy]);
+  return points;
+})();
+
+/** Cadre du monogramme : échelle uniforme, centré dans les limites de la scène. */
+function agFrame(
+  left: number,
+  top: number,
+  width: number,
+  height: number
+): { left: number; top: number; scale: number; width: number; height: number } {
+  const scale = Math.min(width / AG_WIDTH, height / AG_HEIGHT);
+  const frameWidth = AG_WIDTH * scale;
+  const frameHeight = AG_HEIGHT * scale;
+  return {
+    left: left + (width - frameWidth) / 2,
+    top: top + (height - frameHeight) / 2,
+    scale,
+    width: frameWidth,
+    height: frameHeight,
+  };
+}
 
 interface PlanetDef {
   orbit: number;
@@ -668,7 +695,9 @@ export class PortfolioStoryScene implements ChapterScene {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     this.ctx.clearRect(0, 0, this.w, this.h);
     this.placeNodes(form, delta, compact, time, transfer);
-    this.drawTransitionStreams(this.ctx, transfer, compact);
+    if (this.activeScene !== 'ludora') {
+      this.drawTransitionStreams(this.ctx, transfer, compact);
+    }
 
     const clockOpacity =
       this.activeScene === 'identity'
@@ -756,8 +785,14 @@ export class PortfolioStoryScene implements ChapterScene {
           this.scenePoint(this.previousScene, index, compact, false, time)
         );
       }
+      const assignmentOrigins =
+        this.activeScene === 'ludora'
+          ? NODES.map((_, index) =>
+              this.scenePoint('galaxy', index, compact, false, time)
+            )
+          : this.transitionOrigins;
       this.targetOriginMap = this.optimalPointAssignment(
-        this.transitionOrigins,
+        assignmentOrigins,
         targets
       );
       this.transitionMapDirty = false;
@@ -767,13 +802,16 @@ export class PortfolioStoryScene implements ChapterScene {
       const originIndex = this.targetOriginMap[index] ?? index;
       const origin = this.transitionOrigins[originIndex] ?? targets[index];
       const target = targets[index];
-      const [targetX, targetY] = this.hourglassPoint(
-        origin,
-        target,
-        transition,
-        index,
-        compact
-      );
+      const bridge = this.visualState?.galaxyLudoraProgress ?? 1;
+      const [targetX, targetY] =
+        this.activeScene === 'ludora' && !this.reduced
+          ? this.orbitGridPoint(
+              this.scenePoint('galaxy', originIndex, compact, false, time),
+              target,
+              bridge,
+              compact
+            )
+          : this.hourglassPoint(origin, target, transition, index, compact);
       const pos = this.positions[index];
       pos.baseX = targetX;
       pos.baseY = targetY;
@@ -930,6 +968,41 @@ export class PortfolioStoryScene implements ChapterScene {
     ];
   }
 
+  /** Le point quitte sa tangente orbitale et rejoint sa place dans la grille. */
+  private orbitGridPoint(
+    origin: [number, number],
+    target: [number, number],
+    progress: number,
+    compact: boolean
+  ): [number, number] {
+    const t = clamp01(progress);
+    if (t <= 0) return origin;
+    if (t >= 1) return target;
+    const center = this.scenePoint('galaxy', 0, compact, true);
+    const radialX = origin[0] - center[0];
+    const radialY = origin[1] - center[1];
+    const tangent = compact ? 0.16 : 0.22;
+    const control1: [number, number] = [
+      origin[0] - radialY * tangent,
+      origin[1] + radialX * tangent,
+    ];
+    const control2: [number, number] = [
+      target[0] - (target[0] - origin[0]) * 0.18,
+      target[1],
+    ];
+    const inverse = 1 - t;
+    return [
+      inverse ** 3 * origin[0] +
+        3 * inverse ** 2 * t * control1[0] +
+        3 * inverse * t ** 2 * control2[0] +
+        t ** 3 * target[0],
+      inverse ** 3 * origin[1] +
+        3 * inverse ** 2 * t * control1[1] +
+        3 * inverse * t ** 2 * control2[1] +
+        t ** 3 * target[1],
+    ];
+  }
+
   /** Les traînées verticales donnent à la matière une chute nette et continue. */
   private drawTransitionStreams(
     ctx: CanvasRenderingContext2D,
@@ -990,9 +1063,10 @@ export class PortfolioStoryScene implements ChapterScene {
       return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
     }
     if (scene === 'stack') {
+      const frame = agFrame(left, top, width, height);
       return [
-        left + AG_MARKS[index][0] * width,
-        top + AG_MARKS[index][1] * height,
+        frame.left + AG_UNITS[index][0] * frame.scale,
+        frame.top + AG_UNITS[index][1] * frame.scale,
       ];
     }
     if (scene === 'solutions') {
@@ -1068,7 +1142,7 @@ export class PortfolioStoryScene implements ChapterScene {
         5 * Math.cos(2 * heartAngle) -
         2 * Math.cos(3 * heartAngle) -
         Math.cos(4 * heartAngle);
-      const heart: [number, number] = [0.5 + heartX / 38, 0.49 - heartY / 34];
+      const heart: [number, number] = [0.5 + heartX / 42, 0.4 - heartY / 38];
       const cycle = this.reduced ? 0 : (time % 12000) / 12000;
       const phase =
         cycle < 0.35
@@ -1187,9 +1261,11 @@ export class PortfolioStoryScene implements ChapterScene {
           height: usableHeight * 0.2,
         };
       }
-      const width = Math.min(this.w * 0.4, 620);
+      // Zone réservée à la matière de points : jamais sous les colonnes de texte
+      // (voir --copy-left et les largeurs de texte dans style.css).
+      const width = Math.min(this.w * 0.36, 620);
       return {
-        left: this.w * 0.53,
+        left: this.w * 0.6,
         top: this.topInset + usableHeight * 0.1,
         width,
         height: Math.min(usableHeight * 0.78, width * 1.45),
@@ -1328,6 +1404,12 @@ export class PortfolioStoryScene implements ChapterScene {
 
     if (this.activeScene === 'galaxy') {
       this.drawGalaxySystem(ctx, form * transitionOpacity, compact, time);
+    } else if (this.activeScene === 'ludora') {
+      this.drawGalaxyLudoraBridge(
+        ctx,
+        this.reduced ? 1 : (this.visualState?.galaxyLudoraProgress ?? 1),
+        compact
+      );
     } else if (this.activeScene === 'magnotes') {
       this.drawMagNotesContent(ctx, form * transitionOpacity, time);
     } else if (this.activeScene === 'contact') {
@@ -1390,6 +1472,62 @@ export class PortfolioStoryScene implements ChapterScene {
             : center[1];
         ctx.fillText(label, center[0], labelY);
       }
+    }
+    ctx.restore();
+  }
+
+  /** Sept orbites se déplient en cadre et lignes de grille sans coupure. */
+  private drawGalaxyLudoraBridge(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    compact: boolean
+  ): void {
+    const bounds = this.sceneBounds('ludora', compact);
+    const centerX = bounds.left + bounds.width * 0.5;
+    const centerY = bounds.top + bounds.height * 0.5;
+    const p = clamp01(progress);
+    const eased = p * p * (3 - 2 * p);
+    const samples = compact ? 40 : 64;
+
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([1.5, compact ? 5 : 7]);
+    for (let ring = 0; ring < 7; ring += 1) {
+      const planet = PLANETS[ring + 1];
+      if (!planet) continue;
+      ctx.beginPath();
+      for (let sample = 0; sample <= samples; sample += 1) {
+        const angle = (sample / samples) * TAU;
+        const cosine = Math.cos(angle);
+        const sine = Math.sin(angle);
+        const orbitX = centerX + cosine * bounds.width * planet.orbit * 0.82;
+        const orbitY = centerY + sine * bounds.height * planet.orbit * 0.62;
+        let gridX: number;
+        let gridY: number;
+        if (ring === 6) {
+          gridX =
+            centerX +
+            Math.sign(cosine) * Math.abs(cosine) ** 0.25 * bounds.width * 0.44;
+          gridY =
+            centerY +
+            Math.sign(sine) * Math.abs(sine) ** 0.25 * bounds.height * 0.4;
+        } else if (ring < 3) {
+          gridX = bounds.left + bounds.width * (0.28 + ring * 0.22);
+          gridY = bounds.top + bounds.height * (0.5 + sine * 0.4);
+        } else {
+          gridX = bounds.left + bounds.width * (0.5 + cosine * 0.44);
+          gridY = bounds.top + bounds.height * (0.3 + (ring - 3) * 0.2);
+        }
+        const x = orbitX + (gridX - orbitX) * eased;
+        const y = orbitY + (gridY - orbitY) * eased;
+        if (sample === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.globalAlpha = (ring === 6 ? 0.44 : 0.32) * (1 - p * 0.18);
+      ctx.strokeStyle = planet.color;
+      ctx.lineWidth = ring === 6 ? 0.95 : 0.72;
+      ctx.stroke();
     }
     ctx.restore();
   }
@@ -1740,6 +1878,25 @@ export class PortfolioStoryScene implements ChapterScene {
     ctx.beginPath();
     ctx.arc(center[0], center[1], compact ? 2.4 : 3.4, 0, TAU);
     ctx.fill();
+
+    // Légende : l'horloge affiche l'heure du visiteur, il faut le dire.
+    // Sur mobile, la place manque sous l'horloge : pas de légende.
+    if (!compact) {
+      const pad = (value: number): string => String(value).padStart(2, '0');
+      const caption = `${
+        getLocale() === 'fr' ? 'VOTRE HEURE LOCALE' : 'YOUR LOCAL TIME'
+      } · ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      ctx.globalAlpha = clamp01((clockAlpha - 0.5) / 0.5) * 0.85;
+      ctx.fillStyle = COLORS.interface;
+      ctx.font = `${compact ? 10 : 12}px ui-monospace, monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(
+        caption,
+        center[0],
+        center[1] + radius * 1.22 + (compact ? 10 : 16)
+      );
+    }
     ctx.restore();
   }
 
@@ -1769,8 +1926,10 @@ export class PortfolioStoryScene implements ChapterScene {
         const current = points[i];
         const segmentReveal = Math.min(previous.reveal, current.reveal);
         if (segmentReveal <= 0.01) continue;
-        const midX = (previous.x + current.x) * 0.5;
-        const midY = (previous.y + current.y) * 0.5;
+        // Spline de Catmull-Rom : le G reste un arc lisse, les jambes du A
+        // (points alignés) restent droites.
+        const before = points[i - 2] ?? previous;
+        const after = points[i + 1] ?? current;
         const railMagnet = Math.max(previous.magnet, current.magnet);
         ctx.globalAlpha =
           alpha * segmentReveal * (0.22 + motion + railMagnet * 0.36);
@@ -1780,8 +1939,14 @@ export class PortfolioStoryScene implements ChapterScene {
         ctx.lineWidth = railIndex === 2 ? 0.9 : 1.1;
         ctx.beginPath();
         ctx.moveTo(previous.x, previous.y);
-        ctx.quadraticCurveTo(previous.x, previous.y, midX, midY);
-        ctx.quadraticCurveTo(current.x, current.y, current.x, current.y);
+        ctx.bezierCurveTo(
+          previous.x + (current.x - before.x) / 6,
+          previous.y + (current.y - before.y) / 6,
+          current.x - (after.x - previous.x) / 6,
+          current.y - (after.y - previous.y) / 6,
+          current.x,
+          current.y
+        );
         ctx.stroke();
       }
     });
@@ -1794,20 +1959,21 @@ export class PortfolioStoryScene implements ChapterScene {
     compact: boolean
   ): void {
     const bounds = this.sceneBounds('stack', compact);
+    const frame = agFrame(bounds.left, bounds.top, bounds.width, bounds.height);
     const alpha = easeOut(clamp01((opacity - 0.35) / 0.55));
     if (alpha <= 0.01) return;
     ctx.save();
-    ctx.globalAlpha = alpha * 0.7;
+    ctx.globalAlpha = alpha * 0.85;
     ctx.fillStyle = COLORS.interface;
-    ctx.font = `${compact ? 7 : 10}px ui-monospace, monospace`;
+    ctx.font = `${compact ? 9 : 12}px ui-monospace, monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(
       compact
         ? 'AG / DIGITAL SYSTEMS'
         : 'AG / ADRIAN GUICHARD — DIGITAL SYSTEMS',
-      bounds.left + bounds.width * 0.5,
-      bounds.top + bounds.height + (compact ? 10 : 20)
+      frame.left + frame.width * 0.5,
+      frame.top + frame.height + (compact ? 22 : 34)
     );
     ctx.restore();
   }

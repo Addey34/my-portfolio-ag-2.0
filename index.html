@@ -3,38 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Adrian Guichard — Product Builder Full-Stack</title>
+    <title>Adrian Guichard — Développeur full-stack TypeScript</title>
     <meta
       name="description"
-      content="Adrian Guichard transforme des idées complexes en produits web clairs, robustes et déployés : full-stack TypeScript, temps réel, WebGL et infrastructure."
+      content="Adrian Guichard, développeur full-stack TypeScript et expériences interactives : produits web complets, temps réel, WebGL et déploiement."
     />
     <meta name="theme-color" content="#03050a" />
     <meta name="robots" content="index,follow" />
     <meta property="og:type" content="website" />
     <meta
       property="og:title"
-      content="Adrian Guichard — Product Builder Full-Stack"
+      content="Adrian Guichard — Développeur full-stack TypeScript"
     />
     <meta
       property="og:description"
-      content="Produits web complets, systèmes temps réel, WebGL et infrastructure."
+      content="Développeur full-stack TypeScript & expériences interactives : Galaxy, Ludora, MagNotes."
     />
     <meta name="twitter:card" content="summary" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      id="font-stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-      media="not all"
-    />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Adrian Guichard",
-        "jobTitle": "Full Stack Product Developer",
+        "jobTitle": "Développeur full-stack TypeScript",
         "sameAs": [
           "https://github.com/Addey34",
           "https://www.linkedin.com/in/adrianguichard/"
@@ -55,42 +48,37 @@
     >
     <!-- Fond topographique du hero/contact ; les chapitres passent au-dessus. -->
     <div id="story-background" class="story-background" aria-hidden="true">
-      <canvas id="signal-field"></canvas>
-      <div id="story-stage" class="story-stage"></div>
+      <canvas id="world-3d" aria-hidden="true"></canvas>
       <div class="story-vignette"></div>
     </div>
 
-    <!-- Compteur FPS dev uniquement, masque en prod. -->
-    <div id="fps" class="fps" aria-hidden="true"></div>
+    <!-- Progression du scroll : ligne horizontale en bas de page. -->
+    <div class="scroll-progress" aria-hidden="true">
+      <span class="scroll-progress__bar"></span>
+    </div>
 
     <!-- Wordmark fixe haut-gauche, retour en haut. -->
-    <a class="wordmark" href="#top" data-magnetic aria-label="Retour en haut"
-      >AG</a
-    >
+    <a class="wordmark" href="#top" aria-label="Retour en haut">AG</a>
 
     <!-- HUD fixe : reglages visuels, langue et palette. -->
     <div class="hud">
+      <a class="hud__btn hud__btn--link" href="#contact" data-i18n="nav.contact"
+        >Contact</a
+      >
       <button
         id="controls-open"
         class="hud__btn hud__btn--icon"
         type="button"
-        data-magnetic
         data-i18n-aria="controls.aria"
         aria-label="Réglages visuels"
       >
         &#9881;
       </button>
-      <button
-        id="lang-toggle"
-        class="hud__btn"
-        type="button"
-        data-magnetic
-      ></button>
+      <button id="lang-toggle" class="hud__btn" type="button"></button>
       <button
         id="palette-open"
         class="hud__btn hud__btn--cmd"
         type="button"
-        data-magnetic
         data-i18n-aria="palette.aria"
         aria-label="Ouvrir la palette de commandes"
       >
@@ -120,13 +108,10 @@
           <!-- Badges identite animes par heroAnim.ts -->
           <div class="hero__tags">
             <span class="hero__tag" data-i18n="hero.tag.1"
-              >Product builder</span
-            >
-            <span class="hero__tag" data-i18n="hero.tag.2"
               >Full-stack TypeScript</span
             >
-            <span class="hero__tag" data-i18n="hero.tag.3"
-              >WebGL &amp; temps réel</span
+            <span class="hero__tag" data-i18n="hero.tag.2"
+              >Expériences interactives</span
             >
           </div>
 
@@ -137,29 +122,30 @@
           </h1>
 
           <p class="hero__lead" data-i18n="hero.lead">
-            Je transforme des idées complexes en produits web clairs, robustes
-            et déployés — de l’interface aux données, au temps réel et à
-            l’infrastructure.
+            Je conçois des produits web complets, de l’interface aux données, au
+            temps réel et au déploiement.
           </p>
 
           <!-- CTAs smoothscroll via heroAnim.ts + effet magnetique -->
           <div class="hero__ctas">
-            <a
-              href="#projects"
-              class="hero__cta hero__cta--primary"
-              data-magnetic
-            >
+            <a href="#projects" class="hero__cta hero__cta--primary">
               <span data-i18n="hero.cta.projects">Explorer les produits</span>
               <span class="hero__cta-icon" aria-hidden="true">&darr;</span>
             </a>
             <a
               href="#contact"
               class="hero__cta hero__cta--ghost"
-              data-magnetic
               data-i18n="hero.cta.contact"
               >Parler d’un projet</a
             >
           </div>
+          <nav id="hero-projects" class="hero__projects"></nav>
+          <p class="hero__status">
+            <span class="hero__status-dot" aria-hidden="true"></span>
+            <span data-i18n="contact.availability"
+              >Ouvert aux opportunités · Montpellier, France</span
+            >
+          </p>
         </div>
       </section>
 
@@ -175,34 +161,28 @@
         </h2>
       </section>
 
-      <!-- STACK : la board identitaire se recompose en systeme technique. -->
+      <!-- STACKS : les pièces de l'horloge se séparent en quatre familles. -->
       <section id="stack" class="section section--stack" data-scene="stack">
         <div class="stack__copy">
           <p class="intro__kicker" data-reveal data-i18n="stack.kicker">
-            La méthode derrière le produit
+            Stacks en pratique
           </p>
           <h2 class="stack__title" data-reveal data-i18n="stack.title">
-            Une architecture qui sert l’usage avant la technologie.
+            Du navigateur au déploiement.
           </h2>
           <p class="stack__lead" data-reveal data-i18n="stack.lead">
-            Je relie interface, logique métier, données, temps réel et
-            déploiement pour livrer des produits cohérents, testables et
-            capables d’évoluer.
+            L’horloge se brise en quatre modules : chacun porte une famille de
+            compétences mises en pratique dans mes projets.
           </p>
         </div>
 
-        <!-- La topologie AG est dessinee dans le fond Canvas. Cette liste reste
-             accessible aux lecteurs d'ecran et documente ses 24 noeuds principaux et plus de 35 technologies. -->
-        <div class="stack-viz" data-reveal>
+        <!-- Les quatre familles restent lisibles sans WebGL et au clavier. -->
+        <div class="stack-viz">
           <ul
-            class="stack-graph stack-graph--offloaded"
-            data-stack-graph
+            class="stack-graph"
             data-i18n-aria="stack.techs"
             aria-label="Technologies utilisées"
           >
-            <li class="stack-node" data-layer="interface">
-              JavaScript / ESBuild
-            </li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
               TypeScript
             </li>
@@ -210,64 +190,64 @@
               React
             </li>
             <li class="stack-node" data-layer="interface" data-weight="primary">
-              Next.js
-            </li>
-            <li class="stack-node" data-layer="interface" data-weight="primary">
               Vite
             </li>
-            <li class="stack-node" data-layer="interface">
-              Tailwind / Radix UI
-            </li>
             <li class="stack-node" data-layer="interface">HTML / CSS</li>
-            <li class="stack-node" data-layer="interface">WebGL</li>
-            <li class="stack-node" data-layer="interface">Canvas 2D</li>
+            <li class="stack-node" data-layer="interface">GSAP</li>
+            <li class="stack-node" data-layer="interface">i18n</li>
             <li class="stack-node" data-layer="realtime" data-weight="primary">
               Three.js
             </li>
-            <li class="stack-node" data-layer="realtime">GSAP / Lenis</li>
-            <li class="stack-node" data-layer="realtime" data-weight="primary">
-              Nakama
-            </li>
+            <li class="stack-node" data-layer="realtime">WebGL</li>
+            <li class="stack-node" data-layer="realtime">WebXR</li>
+            <li class="stack-node" data-layer="realtime">GLSL</li>
+            <li class="stack-node" data-layer="realtime">Canvas 2D</li>
+            <li class="stack-node" data-layer="realtime">astronomy-engine</li>
             <li class="stack-node" data-layer="data" data-weight="primary">
               Node.js
             </li>
-            <li class="stack-node" data-layer="data" data-weight="primary">
-              Express
-            </li>
-            <li class="stack-node" data-layer="data">MongoDB / Mongoose</li>
-            <li class="stack-node" data-layer="data">FastAPI / Uvicorn</li>
-            <li class="stack-node" data-layer="data">Python / Pydantic</li>
-            <li class="stack-node" data-layer="data">Upstash Redis</li>
+            <li class="stack-node" data-layer="data">MongoDB</li>
+            <li class="stack-node" data-layer="data">Nakama</li>
+            <li class="stack-node" data-layer="data">Express</li>
+            <li class="stack-node" data-layer="data">PostgreSQL</li>
+            <li class="stack-node" data-layer="data">Python</li>
             <li class="stack-node" data-layer="deploy" data-weight="primary">
-              PyTorch / CUDA
+              Docker
             </li>
-            <li class="stack-node" data-layer="deploy">
-              Diffusers / Transformers
-            </li>
-            <li class="stack-node" data-layer="deploy">Playwright / Cheerio</li>
-            <li class="stack-node" data-layer="deploy">
-              Docker / Oracle Cloud
-            </li>
-            <li class="stack-node" data-layer="deploy">Discord.js / voice</li>
-            <li class="stack-node" data-layer="realtime">FFmpeg / yt-dlp</li>
+            <li class="stack-node" data-layer="deploy">Playwright</li>
+            <li class="stack-node" data-layer="deploy">GitHub Actions</li>
+            <li class="stack-node" data-layer="deploy">Vitest</li>
+            <li class="stack-node" data-layer="deploy">ESLint</li>
+            <li class="stack-node" data-layer="deploy">pnpm</li>
           </ul>
 
           <ul class="stack-legend">
             <li data-layer="interface">
-              <span data-i18n="arch.interface">Interface</span>
+              <span data-i18n="stack.part.interface">Module · Interface</span>
             </li>
             <li data-layer="realtime">
-              <span data-i18n="arch.realtime">Temps réel</span>
+              <span data-i18n="stack.part.realtime"
+                >Module · 3D &amp; interaction</span
+              >
             </li>
             <li data-layer="data">
-              <span data-i18n="arch.data">Données</span>
+              <span data-i18n="stack.part.data"
+                >Module · Services &amp; données</span
+              >
             </li>
             <li data-layer="deploy">
-              <span data-i18n="arch.deploy">Déploiement</span>
+              <span data-i18n="stack.part.deploy"
+                >Module · Livraison &amp; qualité</span
+              >
             </li>
           </ul>
-          <p class="stack-hover-note" data-i18n="arch.hover">
-            Points secondaires : survoler pour explorer
+          <p class="stack-proof">
+            <span data-i18n="stack.proof">Voir ces stacks en action :</span>
+            <a href="#galaxy">Galaxy</a>, <a href="#ludora">Ludora</a>,
+            <a href="#magnotes">MagNotes</a>,
+            <a href="#studies" data-i18n="stack.studies"
+              >études complémentaires</a
+            >.
           </p>
         </div>
       </section>
@@ -291,52 +271,52 @@
         <div class="offer-grid">
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>01</span>
-            <h3 data-i18n="freelance.card.product.title">Produit sur mesure</h3>
+            <h3 data-i18n="freelance.card.product.title">
+              Interfaces &amp; sites web
+            </h3>
             <p data-i18n="freelance.card.product.text">
-              SaaS, dashboard, outil métier, espace client ou MVP complet, du
-              parcours utilisateur jusqu'à la logique applicative.
+              Sites vitrines, refontes et interfaces rapides, responsives et
+              accessibles.
             </p>
             <p class="story-note" data-i18n="freelance.card.product.note">
-              Du cadrage au déploiement.
+              Contenu, design, mise en ligne.
             </p>
           </article>
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>02</span>
             <h3 data-i18n="freelance.card.system.title">
-              Architecture complète
+              Applications &amp; outils métiers
             </h3>
             <p data-i18n="freelance.card.system.text">
-              Frontend TypeScript, API, base de données, authentification,
-              automatisation, déploiement VPS et maintenance évolutive.
+              Dashboards, espaces clients, MVP SaaS et automatisations.
             </p>
             <p class="story-note" data-i18n="freelance.card.system.note">
-              Front, API, données et infrastructure.
+              Besoin, interface, API, données.
             </p>
           </article>
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>03</span>
             <h3 data-i18n="freelance.card.automation.title">
-              Automatisation et données
+              Expériences 3D &amp; interactives
             </h3>
             <p data-i18n="freelance.card.automation.text">
-              Scraping, comparaison de prix, orchestration d'API, extraction,
-              nettoyage et interfaces de pilotage.
+              Visualisations WebGL, configurateurs, expériences immersives et
+              mini-jeux.
             </p>
             <p class="story-note" data-i18n="freelance.card.automation.note">
-              Collecter, nettoyer, décider.
+              Données, scène, interaction.
             </p>
           </article>
           <article class="offer-card" tabindex="0" data-story-focus data-reveal>
             <span>04</span>
             <h3 data-i18n="freelance.card.delivery.title">
-              Livraison augmentée
+              APIs, intégration &amp; déploiement
             </h3>
             <p data-i18n="freelance.card.delivery.text">
-              IA comme accélérateur de conception, revue et production, avec
-              validation humaine sur l'architecture, la sécurité et la qualité.
+              Connexion de services, persistance, CI et mise en production.
             </p>
             <p class="story-note" data-i18n="freelance.card.delivery.note">
-              Accélérer sans sacrifier la qualité.
+              Service, test, production.
             </p>
           </article>
         </div>
@@ -344,6 +324,21 @@
 
       <!-- PROJETS : chapitres immersifs injectes depuis src/content/projects.ts. -->
       <section id="projects" class="chapters"></section>
+
+      <!-- ETUDES COMPLEMENTAIRES : hors chapitres, avant la conclusion. -->
+      <section id="studies" class="section section--studies">
+        <p class="contact__kicker" data-i18n="studies.kicker">
+          Études complémentaires
+        </p>
+        <h2 class="studies__title" data-i18n="studies.title">
+          Deux autres systèmes, deux problèmes concrets.
+        </h2>
+        <p class="studies__lead" data-i18n="studies.lead">
+          Des projets au code privé, présentés par leurs décisions, leurs
+          preuves datées et leurs limites connues.
+        </p>
+        <div id="studies-list" class="studies__list"></div>
+      </section>
 
       <!-- CONTACT -->
       <section id="contact" class="section section--contact">
@@ -413,7 +408,6 @@
               <button
                 class="contact__cta"
                 type="submit"
-                data-magnetic
                 data-i18n="contact.form.submit"
               >
                 Préparer le message
@@ -425,18 +419,25 @@
           </div>
         </details>
         <div class="contact__links" data-reveal>
-          <a
-            href="https://github.com/Addey34"
-            rel="noopener"
-            target="_blank"
-            data-magnetic
+          <p class="contact__availability" data-i18n="contact.availability">
+            Ouvert aux opportunités · Montpellier, France
+          </p>
+          <a href="mailto:" data-contact-email></a>
+          <button
+            type="button"
+            class="contact__copy"
+            data-copy-email
+            data-i18n="contact.copy"
+          >
+            Copier l’adresse
+          </button>
+          <a href="https://github.com/Addey34" rel="noopener" target="_blank"
             >GitHub</a
           >
           <a
             href="https://www.linkedin.com/in/adrianguichard/"
             rel="noopener"
             target="_blank"
-            data-magnetic
             >LinkedIn</a
           >
         </div>

@@ -1,7 +1,6 @@
 # Portfolio — Adrian Guichard (v2)
 
-Portfolio scrollytelling **Vite + TypeScript strict**, animations de scroll immersives Canvas/DOM.
-Refonte complète, 100 % custom (aucun template), calquée sur les conventions de Galaxy / Ludora.
+Portfolio scrollytelling **Vite + TypeScript strict**. Une scène Three.js persistante fait traverser au même médaillon l'horloge, les initiales AG, les stacks et les projets, sous une lampe fixe.
 
 **🌐 Démo :** _à déployer_
 
@@ -12,8 +11,7 @@ vient de deux erreurs qu'on évite ici par construction :
 
 1. **On ne lie jamais une animation à l'événement `scroll`** (irrégulier, en retard, deltas
    énormes). À la place : **Lenis** lisse le scroll (lerp), et **une seule horloge — le ticker
-   GSAP** — pilote _tout_ : Lenis, ScrollTrigger et les rendus Canvas. Un seul `requestAnimationFrame`
-   pour scroll + animations + 3D ⇒ aucune contention, aucune désynchro.
+   GSAP** — pilote Lenis, ScrollTrigger et le monde 3D. Aucun ticker de rendu concurrent.
 2. **On n'anime que `transform` et `opacity`** (composité GPU, zéro reflow). `will-change` est posé
    puis _retiré_ après l'animation.
 
@@ -25,47 +23,51 @@ Voir [`src/core/SmoothScroll.ts`](src/core/SmoothScroll.ts) — c'est la pièce 
 | -------------------- | ------------------------------------------------------- |
 | Vite                 | Bundler + dev server                                    |
 | TypeScript           | Typage strict (`noUnusedLocals` / `noUnusedParameters`) |
-| Canvas 2D maison     | Signal topographique + topologie technique AG           |
-| Canvas 2D + DOM      | Chapitres projet : décors fidèles à chaque app          |
+| Three.js             | Un seul monde WebGL et des formes dans le médaillon      |
+| `VisualDirector`     | État visuel commun piloté par les sections et le scroll |
 | GSAP + ScrollTrigger | Scrub des chapitres, reveals batchés, ticker maître     |
 | Lenis                | Smooth-scroll normalisé (anti-jank)                     |
 | View Transitions API | Cross-fade du contenu au changement de langue           |
 
-> **Zéro dépendance visuelle.** Le champ topographique du héros et les chapitres
-> sont rendus en Canvas 2D/DOM pur — pas de bibliothèque de rendu. Tout passe par
-> l'horloge unique.
+Le contenu HTML, les liens et la navigation restent accessibles si WebGL n'est pas disponible. Le monde 3D respecte `prefers-reduced-motion` et les réglages de l'utilisateur.
 
-## Le cœur du design : les chapitres
+## Le cœur du design : un médaillon qui change de sens
 
-Chaque projet est un **chapitre plein écran qui reconstitue l'univers réel de
-l'app** — ses couleurs, ses composants, ses codes, extraits de ses sources :
+La scène garde la même lampe et le même contour. Le médaillon tourne au passage des sections ; son intérieur évolue avec le récit. Les formes de projet évoquent une idée sans recopier leurs interfaces :
 
-- **Galaxy** — espace noir, champ d'étoiles, soleil + orbites + planètes, et la
-  vraie barre de navigation planètes (pilules à halo coloré). Le scroll dessine
-  les orbites et plonge la caméra.
-- **Ludora** — le « portail » navy aux aurores cyan/indigo et la grille de tuiles
-  de jeux, chacune dans SA couleur du design system, badge ⚡ spotlight. Le
-  scroll remplit le catalogue en cascade.
-- **MagNotes** — le board sombre à grille de points, des post-it reliés,
-  éparpillés… qui s'organisent en colonnes Kanban au fil du scroll. Le chaos →
-  la clarté : l'histoire du produit en une animation.
+- **Galaxy** — noyau lumineux et orbites spatiales.
+- **Ludora** — grille de pièces de jeu en volume.
+- **MagNotes** — cartes reliées qui passent de la dispersion à l'organisation.
 
-Le texte vit sur un panneau translucide au **contraste garanti** — la lisibilité
-ne dépend jamais du décor.
+Le héros ouvre sur le médaillon AG. Son boîtier tourne et laisse apparaître l'horloge GLB éditable dans Blender. À la troisième section, le verre, les aiguilles, le cadran avec ses rouages et le boîtier de cette horloge se séparent en quatre familles liées à 24 technologies visibles dans le HTML et aux projets. Le texte reste sémantique et lisible indépendamment du décor.
+
+### Direction des prochaines itérations
+
+- Varier le geste du scroll selon chaque passage ; éviter un morphing identique répété partout.
+- Donner un sens visuel aux quatre familles de stacks à l'intérieur du médaillon.
+- Travailler le trajet inverse, la lumière, la taille mobile et le coût GPU sur de vrais appareils.
+- Préserver la reconnaissance des projets sans faux raccord ni reproduction factice de leurs UI.
 
 ## Commandes
 
 ```bash
 pnpm install
-pnpm dev            # serveur de dev (http://localhost:5173)
+pnpm dev            # serveur de dev ; ouvrir l'URL imprimée par Vite
 pnpm build          # tsc --noEmit puis build de production → dist/
 pnpm preview        # servir le build localement
 pnpm typecheck      # vérification de types seule
 pnpm test           # tests unitaires Vitest
+pnpm exec playwright install chromium webkit  # une fois sur le poste
+pnpm test:e2e       # parcours responsive desktop, Android et iPhone émulés
 pnpm lint           # ESLint (flat config) ; lint:fix pour corriger
 pnpm format         # Prettier
-pnpm verify         # format:check + lint + typecheck + build (gate avant « fini »)
+pnpm verify         # tests + format:check + lint + typecheck + build
 ```
+
+`src/chapters/`, `src/visual/SignalField.ts` et `src/ui/MagneticCursor.ts` conservent les prototypes Canvas et curseur. Ils ne sont pas chargés par le parcours public actuel.
+
+Pour contrôler une prévisualisation publiée, définir `E2E_BASE_URL` avec son URL
+avant `pnpm test:e2e` ; Playwright utilise alors cette adresse sans lancer Vite.
 
 ## Architecture
 
@@ -81,22 +83,14 @@ src/
 ├── i18n/
 │   ├── dictionary.ts        # Dictionnaire FR/EN — SOURCE UNIQUE des textes d'UI
 │   └── index.ts             # t()/tl(), toggle, registre dynamique, View Transition
-├── chapters/                # LE CŒUR : un décor immersif fidèle par projet
-│   ├── types.ts             # Contrat ChapterScene + helpers (clamp/ease/window)
-│   ├── ChapterManager.ts    # Lazy-import + IntersectionObserver + scrub + pause
-│   ├── PortfolioStoryScene.ts # Topologie pieuvre : 24 nœuds composent A et G
-│   ├── GalaxyChapter.ts     # Système solaire + nav planètes à halo (Canvas 2D)
-│   ├── LudoraChapter.ts     # Portail navy + grille de tuiles de jeux (DOM)
-│   ├── MagNotesChapter.ts   # Post-it éparpillés → Kanban (DOM + SVG)
-│   └── GenericChapter.ts    # Fallback évolutif : décor auto depuis l'accent
 ├── visual/
 │   ├── VisualDirector.ts    # État artistique global + transitions entre univers
-│   ├── SignalField.ts       # Signal persistant : courbes, grille, orbites, connexions
+│   ├── StoryWorld3D.ts      # Renderer WebGL unique, géométries et formes projet
 │   └── types.ts             # Contrat VisualState partagé par tous les rendus
 ├── ui/
 │   ├── CommandPalette.ts    # Palette Ctrl/⌘+K : navigation, langue, liens
-│   ├── ControlPanel.ts      # Réglages ⚙ : fond, souris, chapitres (persistés)
-│   └── MagneticCursor.ts    # Curseur custom aimanté (pointeur fin uniquement)
+│   ├── ControlPanel.ts      # Réglages ⚙ : décor, pointeur, mouvement (persistés)
+│   └── SectionRail.ts       # Navigation et progression entre les sections
 ├── content/
 │   ├── projects.ts          # Catalogue des projets — SOURCE UNIQUE
 │   └── renderProjects.ts    # Construit le DOM des chapitres depuis la source unique
@@ -111,51 +105,29 @@ et tout le contenu localisé `{ fr, en }` de `projects.ts` suivent automatiqueme
 
 ### Ajouter un projet (le chemin évolutif)
 
-1. **Une entrée dans `PROJECTS`** (`src/content/projects.ts`) — c'est tout ce qui
-   est obligatoire. Section, étude de cas, tags, liens, navigation et palette se
-   génèrent ; sans chapitre dédié, le `GenericChapter` fabrique un décor propre
-   à partir de l'accent. Publiable en 2 minutes.
-2. **(Plus tard) Un chapitre sur mesure** : un fichier dans `src/chapters/` qui
-   implémente `ChapterScene` (reconstituer l'univers de l'app : ses couleurs,
-   ses composants, son histoire au scroll) + 1 ligne dans
-   `ChapterManager.LOADERS`. Les trois chapitres existants sont les références.
+1. Ajouter une entrée dans `PROJECTS` (`src/content/projects.ts`) : contenu, liens, navigation et palette en dérivent.
+2. Ajouter sa signature abstraite dans `StoryWorld3D` et sa cible dans `VisualDirector`, puis vérifier les transitions aller et retour.
 
 ## Budget performance (les garde-fous « œil aguerri »)
 
-- **LCP < 2.5 s · CLS = 0 · INP < 200 ms · 60 fps** constants.
-- Chapitres **lazy-chargés** (import() à l'approche), **en pause hors écran**
-  (IntersectionObserver), animés en transform/opacity uniquement, zéro
-  allocation par frame — et scrubés par ScrollTrigger, jamais l'événement scroll.
-- Champ du héros limité à **30 fps** et DPR 1.5 → coût faible et stable, même sur mobile.
-- `prefers-reduced-motion` : Lenis désactivé, reveals instantanés, chapitres
-  posés en état statique complet, champ topographique figé.
-- Sonde FPS visible en dev pour repérer toute chute pendant le scrollytelling.
+- Le renderer plafonne le DPR à 1,5, la cadence à 45 fps (20 fps en mode léger) et partage un seul canvas.
+- `prefers-reduced-motion` : Lenis désactivé, reveals instantanés et une composition fixe par scène.
+- Le build sépare Three.js du code applicatif ; le chunk Three.js reste au-dessus de 500 kB minifié. Les mesures GPU sur appareil physique restent à faire.
+- Sonde FPS visible en dev avec `?fps` pour repérer les chutes du ticker JS.
 
 ## Fonctionnalités
 
-- **Chapitres immersifs par projet** — chaque app est reconstituée dans son
-  propre univers (voir « Le cœur du design ») et racontée par le scroll. On
-  change de monde à chaque section, dans la même page.
+- **Un monde 3D continu** — lampe et médaillon persistent à travers le récit.
 - **i18n FR/EN** — bascule instantanée (HUD ou palette), persistée, sans framework
   ; le contenu se cross-fade via la View Transitions API.
-- **Panneau de réglages ⚙** — l'utilisateur coupe/relance le fond animé, la
-  réactivité à la souris et l'animation des chapitres ; choix persistés.
-- **Champ topographique interactif (héros)** — des lignes de signal dérivent avec
-  le scroll et se courbent doucement autour du pointeur. Discret, jamais sous les chapitres.
-- **Direction visuelle unifiée** — le même signal devient réseau dans la stack,
-  orbites dans Galaxy, grille dans Ludora, connexions dans MagNotes puis converge
-  vers le CTA final. Accent, pulsation, énergie et pointeur sont partagés.
+- **Panneau de réglages ⚙** — visibilité du décor, réaction au pointeur et mouvement 3D persistés.
+- **Direction visuelle unifiée** — l'horloge devient un pendentif AG, puis accueille les formes des sections et des projets.
 - **Command palette Ctrl/⌘+K** — navigation vers sections/projets, changement de
   langue, liens externes ; filtrage et navigation clavier, focus restauré (a11y).
-- **Curseur magnétique** — point + anneau lissés, aimantation des éléments
-  `[data-magnetic]`. Actif uniquement sur pointeur fin, jamais en reduced-motion.
-- **CI Lighthouse** — `.github/workflows/lighthouse.yml` + `lighthouserc.json` :
-  build et audit à chaque push/PR, CLS et accessibilité bloquants.
 
 ## Pistes suivantes
 
-- Enrichir chaque chapitre (Galaxy : mode explo « voyage » ; Ludora : partie de
-  Snake auto-jouée dans une tuile ; MagNotes : bascule Kanban → Timeline).
+- Affiner les formes, matériaux et mouvements propres à chaque chapitre ; mesurer les performances sur mobile.
 - Persistance du thème clair-sombre.
 - Préchargement (`link rel=modulepreload`) du premier chapitre.
 

@@ -6,6 +6,7 @@ export type VisualScene =
   | 'galaxy'
   | 'ludora'
   | 'magnotes'
+  | 'studies'
   | 'contact';
 
 export interface VisualState {
@@ -16,6 +17,28 @@ export interface VisualState {
   sceneProgress: number;
   /** Progression amortie depuis le dernier changement d'univers. */
   transition: number;
+  /** Déploiement de l'AG vers le système, lié directement au scroll. */
+  identityStackProgress: number;
+  /** Transformation des repères de l'horloge en monogramme AG. */
+  clockAgProgress: number;
+  /** Variante de comparaison réservée à l'atelier local. */
+  openingVariant: 'medallion' | 'ag' | 'direct';
+  /** Parcours entier de l'horloge au système. */
+  openingProgress: number;
+  /** Les trois voies du système deviennent des solutions. */
+  stackSolutionsProgress: number;
+  /** Les solutions s'ouvrent en trois choix de projets. */
+  solutionsSelectionProgress: number;
+  /** Déploiement des trois choix en orbites Galaxy. */
+  selectionGalaxyProgress: number;
+  /** Morphing orbital vers la grille, piloté par la frontière Galaxy/Ludora. */
+  galaxyLudoraProgress: number;
+  /** Dispersion de la grille en cartes, pilotée par la frontière Ludora/MagNotes. */
+  ludoraMagnotesProgress: number;
+  /** Les cartes se rassemblent en deux traces d'étude. */
+  magnotesStudiesProgress: number;
+  /** Les deux traces convergent vers la boucle de contact. */
+  studiesContactProgress: number;
   /** Pulsation commune, toujours douce, dans l'intervalle 0..1. */
   pulse: number;
   /** Intensité générale du signal. */

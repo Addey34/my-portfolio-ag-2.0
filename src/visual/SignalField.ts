@@ -70,6 +70,14 @@ const PROFILES: Record<VisualScene, SignalProfile> = {
     convergence: 0,
     flow: 0.42,
   },
+  studies: {
+    curve: 0.45,
+    grid: 0.12,
+    orbit: 0.2,
+    links: 0.35,
+    convergence: 0.18,
+    flow: 0.12,
+  },
   contact: {
     curve: 0.5,
     grid: 0,

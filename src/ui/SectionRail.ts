@@ -3,22 +3,40 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROJECTS } from '@/content/projects';
 import { t, onLocaleChange } from '@/i18n';
 import type { SmoothScroll } from '@/core/SmoothScroll';
+import type { VisualDirector } from '@/visual/VisualDirector';
+import type { VisualScene } from '@/visual/types';
 
 /**
  * Navigation persistante par chapitres.
  *
  * Le point et son titre forment une seule cible. Le chapitre courant constitue
- * le foyer d'une molette verticale ; les voisins décroissent avec la distance.
- * Un appui-glissé fait défiler les chapitres en direct. Maintenir le geste vers
- * le haut ou le bas répète le déplacement comme une molette de date.
+ * le foyer d'une molette ; les voisins décroissent avec la distance. Sur
+ * desktop la molette est verticale (à gauche), sur mobile horizontale (en bas,
+ * glisser vers la gauche avance). Un appui-glissé fait défiler les chapitres en
+ * direct ; maintenir le geste répète le déplacement comme une molette de date.
  */
 interface RailItem {
   id: string;
   label: () => string;
 }
 
+type RailAxis = 'x' | 'y';
+
+const SCENE_TO_RAIL: Record<VisualScene, string> = {
+  identity: 'top',
+  stack: 'stack',
+  solutions: 'freelance',
+  selection: 'projects-intro',
+  galaxy: 'galaxy',
+  ludora: 'ludora',
+  magnotes: 'magnotes',
+  studies: 'studies',
+  contact: 'contact',
+};
+
 interface RailDrag {
   pointerId: number;
+  axis: RailAxis;
   startY: number;
   lastY: number;
   previewIndex: number;
@@ -33,11 +51,15 @@ interface RailDrag {
 export class SectionRail {
   private readonly nav: HTMLElement;
   private readonly links = new Map<string, HTMLAnchorElement>();
-  private readonly triggers: ScrollTrigger[] = [];
+  private readonly unsubscribeScene: () => void;
+  private readonly introTrigger: ScrollTrigger;
+  private scene: VisualScene = 'identity';
+  private introVisible = false;
   private readonly items: RailItem[];
   private activeId = 'top';
   private drag: RailDrag | null = null;
   private suppressClick = false;
+  private readonly horizontalQuery = window.matchMedia('(max-width: 860px)');
   private readonly onPointerMove = (event: PointerEvent) => {
     this.updateProximity(event);
     this.updateDrag(event);
@@ -52,20 +74,39 @@ export class SectionRail {
     if (!this.drag) this.clearProximity();
   };
   private readonly onHoldTick = () => this.updateHold();
+  private readonly onLayoutChange = () => this.renderFocus(this.activeId);
 
-  constructor(private readonly scroll: SmoothScroll) {
+  constructor(
+    private readonly scroll: SmoothScroll,
+    visual: VisualDirector
+  ) {
     this.items = [
       { id: 'top', label: () => t('nav.hero') },
+      { id: 'intro', label: () => t('nav.intro') },
       { id: 'stack', label: () => t('rail.stack') },
       { id: 'freelance', label: () => t('nav.freelance') },
       { id: 'projects-intro', label: () => t('nav.projects') },
       ...PROJECTS.map((p) => ({ id: p.id, label: () => p.name })),
+      { id: 'studies', label: () => t('studies.kicker') },
       { id: 'contact', label: () => t('nav.contact') },
     ];
     this.nav = this.build();
     document.body.appendChild(this.nav);
-    this.setActive('top');
-    this.bindScroll();
+    // Le directeur partage les mêmes seuils de section avec le rail.
+    this.unsubscribeScene = visual.onSceneChange((scene) => {
+      this.scene = scene;
+      this.syncActive();
+    });
+    // L'introduction partage la scène du héros : son étape suit sa propre position.
+    this.introTrigger = ScrollTrigger.create({
+      trigger: '#intro',
+      start: 'top 62%',
+      end: 'bottom 38%',
+      onToggle: (self) => {
+        this.introVisible = self.isActive;
+        this.syncActive();
+      },
+    });
     this.nav.addEventListener('pointermove', this.onPointerMove, {
       passive: false,
     });
@@ -77,6 +118,7 @@ export class SectionRail {
     });
     gsap.ticker.add(this.onHoldTick);
     onLocaleChange(() => this.syncLabels());
+    this.horizontalQuery.addEventListener('change', this.onLayoutChange);
   }
 
   private build(): HTMLElement {
@@ -116,21 +158,12 @@ export class SectionRail {
     return nav;
   }
 
-  private bindScroll(): void {
-    // onEnter / onEnterBack keeps one active section without dead zones.
-    this.items.forEach((item) => {
-      const target = document.getElementById(item.id);
-      if (!target) return;
-      this.triggers.push(
-        ScrollTrigger.create({
-          trigger: target,
-          start: 'top center',
-          end: 'bottom center',
-          onEnter: () => this.setActive(item.id),
-          onEnterBack: () => this.setActive(item.id),
-        })
-      );
-    });
+  private syncActive(): void {
+    this.setActive(
+      this.scene === 'identity' && this.introVisible
+        ? 'intro'
+        : SCENE_TO_RAIL[this.scene]
+    );
   }
 
   private setActive(id: string): void {
@@ -158,6 +191,8 @@ export class SectionRail {
       const distance = Math.abs(index - focusIndex);
       const depth = Math.pow(0.4, distance);
       link.classList.toggle('is-current', key === id);
+      // Molette horizontale : les points hors écran ne reçoivent pas le focus.
+      link.tabIndex = this.horizontalQuery.matches && distance > 4 ? -1 : 0;
       link.style.setProperty('--rail-distance', String(distance));
       link.style.setProperty('--rail-depth', depth.toFixed(3));
       link.style.setProperty(
@@ -182,14 +217,16 @@ export class SectionRail {
   }
 
   /** Démarre la molette sans perturber les clics courts. */
-  private nearestIndex(clientY: number): number {
+  private nearestIndex(coordinate: number, axis: RailAxis): number {
     let nearest = 0;
     let nearestDistance = Number.POSITIVE_INFINITY;
     this.items.forEach((item, index) => {
       const link = this.links.get(item.id);
       if (!link) return;
       const rect = link.getBoundingClientRect();
-      const distance = Math.abs(clientY - (rect.top + rect.height / 2));
+      const center =
+        axis === 'x' ? rect.left + rect.width / 2 : rect.top + rect.height / 2;
+      const distance = Math.abs(coordinate - center);
       if (distance < nearestDistance) {
         nearest = index;
         nearestDistance = distance;
@@ -201,6 +238,7 @@ export class SectionRail {
   private startDrag(event: PointerEvent): void {
     if (event.button !== 0) return;
     this.suppressClick = false;
+    const axis: RailAxis = this.horizontalQuery.matches ? 'x' : 'y';
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>(
       '.rail__dot'
     );
@@ -210,13 +248,15 @@ export class SectionRail {
           0,
           this.items.findIndex((item) => item.id === targetId)
         )
-      : this.nearestIndex(event.clientY);
+      : this.nearestIndex(axis === 'x' ? event.clientX : event.clientY, axis);
     this.navigate(this.items[startIndex]);
     const now = performance.now();
+    const coordinate = axis === 'x' ? -event.clientX : event.clientY;
     this.drag = {
       pointerId: event.pointerId,
-      startY: event.clientY,
-      lastY: event.clientY,
+      axis,
+      startY: coordinate,
+      lastY: coordinate,
       previewIndex: startIndex,
       originWasSurface: !target,
       moved: false,
@@ -233,9 +273,12 @@ export class SectionRail {
   private updateDrag(event: PointerEvent): void {
     if (!this.drag || event.pointerId !== this.drag.pointerId) return;
     const drag = this.drag;
-    const displacement = event.clientY - drag.startY;
-    const incrementalDelta = event.clientY - drag.lastY;
-    drag.lastY = event.clientY;
+    // Sur l'axe horizontal, glisser vers la gauche avance : on inverse X pour
+    // que « positif » signifie toujours « chapitre suivant ».
+    const coordinate = drag.axis === 'x' ? -event.clientX : event.clientY;
+    const displacement = coordinate - drag.startY;
+    const incrementalDelta = coordinate - drag.lastY;
+    drag.lastY = coordinate;
     drag.accumulatedY += incrementalDelta;
 
     const direction: -1 | 0 | 1 =
@@ -262,10 +305,8 @@ export class SectionRail {
       }
       drag.accumulatedY -= stepDirection * 36;
     }
-    this.nav.style.setProperty(
-      '--rail-drag-shift',
-      `${drag.accumulatedY.toFixed(2)}px`
-    );
+    const shift = drag.axis === 'x' ? -drag.accumulatedY : drag.accumulatedY;
+    this.nav.style.setProperty('--rail-drag-shift', `${shift.toFixed(2)}px`);
   }
 
   /** Répète le pas lorsque le pointeur reste maintenu dans une direction. */
@@ -356,13 +397,15 @@ export class SectionRail {
   }
 
   destroy(): void {
-    this.triggers.forEach((trigger) => trigger.kill());
+    this.unsubscribeScene();
+    this.introTrigger.kill();
     this.nav.removeEventListener('pointermove', this.onPointerMove);
     this.nav.removeEventListener('pointerdown', this.onPointerDown);
     this.nav.removeEventListener('pointerup', this.onPointerUp);
     this.nav.removeEventListener('pointercancel', this.onPointerCancel);
     this.nav.removeEventListener('pointerleave', this.onPointerLeave);
     gsap.ticker.remove(this.onHoldTick);
+    this.horizontalQuery.removeEventListener('change', this.onLayoutChange);
     this.nav.remove();
   }
 }

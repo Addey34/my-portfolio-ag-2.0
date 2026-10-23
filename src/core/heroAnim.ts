@@ -1,6 +1,9 @@
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '@/core/motion';
 import type { SmoothScroll } from '@/core/SmoothScroll';
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Animation inaugurale du héros.
@@ -17,13 +20,18 @@ import type { SmoothScroll } from '@/core/SmoothScroll';
  * En reduced-motion : tout visible immédiatement, zéro animation.
  */
 export function initHero(scroll: SmoothScroll): void {
-  // Les CTAs ancres + le wordmark utilisent scrollTo de Lenis pour un défilement lissé.
+  // Les CTAs ancres, le lien Contact du HUD + le wordmark utilisent scrollTo de Lenis pour un défilement lissé.
   document
-    .querySelectorAll<HTMLAnchorElement>('.hero__cta[href^="#"]')
+    .querySelectorAll<HTMLAnchorElement>(
+      '.hero__cta[href^="#"], .hero__projects a[href^="#"], .hud__btn--link[href^="#"]'
+    )
     .forEach((a) => {
       a.addEventListener('click', (e) => {
         e.preventDefault();
         scroll.scrollTo(a.getAttribute('href')!);
+        if (a.closest('.hero__projects')) {
+          window.history.replaceState(null, '', a.hash);
+        }
       });
     });
 
@@ -35,9 +43,33 @@ export function initHero(scroll: SmoothScroll): void {
     });
   }
 
+  const hero = document.querySelector<HTMLElement>('.hero__inner');
+  if (hero) {
+    gsap.matchMedia().add('(max-width: 980px)', () => {
+      const reduced = prefersReducedMotion();
+      const exit = ScrollTrigger.create({
+        trigger: '#top',
+        start: 'top top',
+        end: () => `+=${Math.max(40, Math.min(64, innerHeight * 0.05))}`,
+        onUpdate: ({ progress }) => {
+          // Le texte quitte l'axe avant de croiser le cadran fixe.
+          gsap.set(hero, {
+            autoAlpha: reduced ? Number(progress < 0.5) : 1 - progress,
+          });
+        },
+      });
+      return () => {
+        exit.kill();
+        gsap.set(hero, { clearProps: 'opacity,visibility' });
+      };
+    });
+  }
+
   if (prefersReducedMotion()) {
     document
-      .querySelectorAll<HTMLElement>('.hero__tag, .hero__lead, .hero__ctas')
+      .querySelectorAll<HTMLElement>(
+        '.hero__tag, .hero__lead, .hero__ctas, .hero__projects, .hero__status'
+      )
       .forEach((el) => {
         el.style.opacity = '1';
         el.style.transform = 'none';
@@ -79,7 +111,10 @@ export function initHero(scroll: SmoothScroll): void {
   // --- Références aux autres éléments ---
   const tags = gsap.utils.toArray<HTMLElement>('.hero__tag');
   const lead = document.querySelector<HTMLElement>('.hero__lead');
+  const mobile = window.matchMedia('(max-width: 860px)').matches;
   const ctas = document.querySelector<HTMLElement>('.hero__ctas');
+  const projects = document.querySelector<HTMLElement>('.hero__projects');
+  const status = document.querySelector<HTMLElement>('.hero__status');
 
   // --- Timeline principale ---
   const tl = gsap.timeline({ delay: 0.1 });
@@ -110,7 +145,7 @@ export function initHero(scroll: SmoothScroll): void {
   }
 
   // 4. Lead — fade up
-  if (lead) {
+  if (lead && !mobile) {
     tl.fromTo(
       lead,
       { opacity: 0, y: 22 },
@@ -126,6 +161,26 @@ export function initHero(scroll: SmoothScroll): void {
       { opacity: 0, y: 18 },
       { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
       '-=0.5'
+    );
+  }
+
+  // 6. Accès direct aux projets, puis statut de disponibilité.
+  if (projects) {
+    tl.fromTo(
+      projects,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.44, ease: 'power2.out' },
+      '-=0.3'
+    );
+  }
+
+  // 7. Statut (disponibilité) — dernier à apparaître, sans voler la vedette
+  if (status) {
+    tl.fromTo(
+      status,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+      '-=0.25'
     );
   }
 }

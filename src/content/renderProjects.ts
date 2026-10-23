@@ -1,4 +1,4 @@
-import { PROJECTS, type Project } from '@/content/projects';
+import { CASE_STUDIES, PROJECTS, type Project } from '@/content/projects';
 import { registerDynamic, t, tl } from '@/i18n';
 
 /**
@@ -13,6 +13,24 @@ export function renderProjects(mount: HTMLElement): void {
   frag.appendChild(buildThreshold());
   PROJECTS.forEach((project, i) => frag.appendChild(buildChapter(project, i)));
   mount.appendChild(frag);
+}
+
+/** Accès immédiat aux chapitres depuis le héros, dérivé du même catalogue. */
+export function renderHeroProjects(mount: HTMLElement): void {
+  mount.dataset.i18nAria = 'hero.projects';
+  mount.setAttribute('aria-label', t('hero.projects'));
+
+  const label = el('span', 'hero__projects-label', t('hero.projects'));
+  label.dataset.i18n = 'hero.projects';
+  const list = document.createElement('ul');
+  PROJECTS.forEach((project) => {
+    const item = document.createElement('li');
+    const link = el('a', '', project.name) as HTMLAnchorElement;
+    link.href = `#${project.id}`;
+    item.appendChild(link);
+    list.appendChild(item);
+  });
+  mount.append(label, list);
 }
 
 function buildThreshold(): HTMLElement {
@@ -45,7 +63,6 @@ function buildThreshold(): HTMLElement {
     const item = document.createElement('li');
     const link = document.createElement('a');
     link.href = `#${project.id}`;
-    link.setAttribute('data-magnetic', '');
     link.setAttribute('data-story-focus', '');
     link.setAttribute('data-reveal', '');
 
@@ -102,14 +119,34 @@ function buildChapter(project: Project, index: number): HTMLElement {
   const tagline = el('p', 'chapter__tagline', '');
   registerDynamic(tagline, () => tl(project.tagline));
 
-  const proofEntries = [
+  // Hiérarchie : contexte et contribution, puis résultat ; le défi, le choix
+  // technique et les preuves vérifiées sont à un clic (détail dépliable).
+  const contextProof = buildProof([
     ['problem', project.proof.problem],
     ['role', project.proof.role],
-    ['challenge', project.proof.challenge],
-    ['result', project.proof.result],
-  ] as const;
-  const contextProof = buildProof(proofEntries.slice(0, 2));
-  const outcomeProof = buildProof(proofEntries.slice(2));
+  ]);
+  const outcomeProof = buildProof([['result', project.proof.result]]);
+  const highlights = document.createElement('ul');
+  highlights.className = 'chapter__highlights';
+  project.highlights.forEach((highlight) => {
+    const item = el('li', '', '');
+    registerDynamic(item, () => tl(highlight));
+    highlights.appendChild(item);
+  });
+  const more = document.createElement('details');
+  more.className = 'chapter__more';
+  const summary = document.createElement('summary');
+  summary.className = 'chapter__more-toggle';
+  summary.dataset.i18n = 'project.more';
+  summary.textContent = t('project.more');
+  more.append(
+    summary,
+    buildProof([
+      ['challenge', project.proof.challenge],
+      ['decision', project.proof.decision],
+      ['evidence', project.proof.evidence],
+    ])
+  );
 
   const stack = document.createElement('ul');
   stack.className = 'chapter__stack';
@@ -117,12 +154,12 @@ function buildChapter(project: Project, index: number): HTMLElement {
 
   const links = document.createElement('div');
   links.className = 'chapter__links';
-  project.links.forEach(({ label, href }) => {
+  project.links.forEach(({ label, href }, index) => {
     const a = document.createElement('a');
+    if (index === 0) a.className = 'chapter__link--primary';
     a.href = href;
     a.rel = 'noopener';
     if (href.startsWith('http')) a.target = '_blank';
-    a.setAttribute('data-magnetic', '');
     registerDynamic(a, () => tl(label));
     links.appendChild(a);
   });
@@ -137,7 +174,6 @@ function buildChapter(project: Project, index: number): HTMLElement {
   share.className = 'chapter__share';
   share.dataset.i18n = 'action.share';
   share.textContent = t('action.share');
-  share.setAttribute('data-magnetic', '');
   share.addEventListener('click', async () => {
     const url = new URL('#' + project.id, window.location.href).href;
     try {
@@ -155,7 +191,7 @@ function buildChapter(project: Project, index: number): HTMLElement {
   links.appendChild(share);
 
   context.append(meta, thesis, name, tagline, contextProof);
-  outcome.append(outcomeProof, stack, links);
+  outcome.append(outcomeProof, highlights, more, stack, links);
   panel.append(context, outcome);
   shell.appendChild(panel);
   inner.appendChild(shell);
@@ -166,7 +202,7 @@ function buildChapter(project: Project, index: number): HTMLElement {
 function buildProof(
   entries: ReadonlyArray<
     readonly [
-      'problem' | 'role' | 'challenge' | 'result',
+      'problem' | 'role' | 'challenge' | 'result' | 'decision' | 'evidence',
       Project['proof'][keyof Project['proof']],
     ]
   >
@@ -195,4 +231,64 @@ function el(tag: string, className: string, text: string): HTMLElement {
   if (className) node.className = className;
   node.textContent = text;
   return node;
+}
+
+/** Etudes de cas complementaires, rendues hors du parcours des chapitres. */
+export function renderStudies(mount: HTMLElement): void {
+  const frag = document.createDocumentFragment();
+  CASE_STUDIES.forEach((study) => {
+    const article = document.createElement('article');
+    article.className = 'study';
+    article.id = study.id;
+    article.style.setProperty('--study-accent', study.accent);
+
+    const head = el('header', 'study__head', '');
+    const name = el('h3', 'study__name', study.name);
+    const status = el('span', 'study__status', '');
+    registerDynamic(status, () => tl(study.status));
+    head.append(name, status);
+
+    const summary = el('p', 'study__summary', '');
+    registerDynamic(summary, () => tl(study.summary));
+    const highlight = el('p', 'study__highlight', '');
+    registerDynamic(highlight, () => tl(study.highlight));
+
+    const details = document.createElement('details');
+    details.className = 'study__details';
+    const toggle = el('summary', 'study__toggle', t('studies.more'));
+    toggle.dataset.i18n = 'studies.more';
+
+    const rows = document.createElement('dl');
+    rows.className = 'study__rows';
+    (
+      [
+        ['problem', study.problem],
+        ['role', study.role],
+        ['decision', study.decision],
+        ['evidence', study.evidence],
+        ['limit', study.limit],
+      ] as const
+    ).forEach(([key, value]) => {
+      const row = document.createElement('div');
+      row.className = 'study__row';
+      const term = el('dt', 'study__label', t(`project.${key}`));
+      term.dataset.i18n = `project.${key}`;
+      const description = el('dd', 'study__value', '');
+      registerDynamic(description, () => tl(value));
+      row.append(term, description);
+      rows.appendChild(row);
+    });
+
+    const stack = document.createElement('ul');
+    stack.className = 'chapter__stack';
+    study.stack.forEach((tech) => stack.appendChild(el('li', '', tech)));
+
+    const note = el('p', 'chapter__link-note', '');
+    registerDynamic(note, () => tl(study.note));
+
+    details.append(toggle, rows, stack, note);
+    article.append(head, summary, highlight, details);
+    frag.appendChild(article);
+  });
+  mount.appendChild(frag);
 }

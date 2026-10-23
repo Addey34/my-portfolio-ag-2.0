@@ -1,11 +1,15 @@
 import { t } from '@/i18n';
 import type { VisualDirector } from '@/visual/VisualDirector';
-import type { ChapterManager } from '@/chapters/ChapterManager';
+import {
+  TRANSITION_MODES,
+  type SectionTransitions,
+  type TransitionMode,
+} from '@/core/sectionTransitions';
 
 /**
  * Panneau de réglages visuels (bouton ⚙ du HUD). Laisse l'utilisateur reprendre
- * la main sur le décor : couper/relancer le fond animé du héros, la réactivité
- * à la souris, et l'animation des chapitres projet. L'état est persisté
+ * la main sur le décor : afficher le monde 3D, régler sa réactivité
+ * à la souris et son mouvement. L'état est persisté
  * (localStorage) et réappliqué au chargement.
  *
  * Les libellés portent `data-i18n` → ils suivent la langue automatiquement
@@ -13,7 +17,8 @@ import type { ChapterManager } from '@/chapters/ChapterManager';
  */
 interface Deps {
   hero: VisualDirector;
-  chapters: ChapterManager;
+  chapters: Pick<VisualDirector, 'setAnimated'>;
+  transitions: SectionTransitions;
 }
 
 interface Toggle {
@@ -125,7 +130,38 @@ export class ControlPanel {
       row.append(label, sw);
       root.appendChild(row);
     }
+    root.appendChild(this.buildTransitionRow());
     return root;
+  }
+
+  /** Choix du style de transition de scroll (aléatoire par défaut). */
+  private buildTransitionRow(): HTMLDivElement {
+    const row = document.createElement('div');
+    row.className = 'controls__row controls__row--select';
+
+    const id = 'controls-transition';
+    const label = document.createElement('label');
+    label.htmlFor = id;
+    label.dataset.i18n = 'controls.transition';
+    label.textContent = t('controls.transition');
+
+    const select = document.createElement('select');
+    select.id = id;
+    select.className = 'controls__select';
+    for (const mode of TRANSITION_MODES) {
+      const option = document.createElement('option');
+      option.value = mode;
+      option.dataset.i18n = `controls.transition.${mode}`;
+      option.textContent = t(`controls.transition.${mode}`);
+      select.appendChild(option);
+    }
+    select.value = this.deps.transitions.getMode();
+    select.addEventListener('change', () => {
+      this.deps.transitions.setMode(select.value as TransitionMode);
+    });
+
+    row.append(label, select);
+    return row;
   }
 
   private applyAll(): void {
