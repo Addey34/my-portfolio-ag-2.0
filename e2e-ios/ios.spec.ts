@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { PNG } from 'pngjs';
 
-const SITE = process.env.IOS_BASE_URL ?? 'https://adrianguichard.dev/';
+const SITE = process.env.IOS_BASE_URL ?? 'https://www.adrianguichard.dev/';
 
 /** Nombre de pixels clairs du monde 3D seul (HTML masqué) : prouve que le canvas n'est pas vide. */
 async function visibleWorldPixels(page: Page, path: string): Promise<number> {
