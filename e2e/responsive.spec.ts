@@ -31,6 +31,53 @@ const sections = [
   'contact',
 ];
 
+test('activité GitHub traduite, y compris depuis le cache et en cas d’échec', async ({
+  page,
+}) => {
+  await page.route('https://api.github.com/**', async (route) => {
+    const isRepos = route.request().url().includes('/repos?');
+    await route.fulfill({
+      json: isRepos
+        ? [
+            {
+              name: 'projet',
+              html_url: 'https://github.com/Addey34/projet',
+              pushed_at: '2026-10-05T12:00:00Z',
+              fork: false,
+              archived: false,
+            },
+          ]
+        : {
+            public_repos: 1,
+            followers: 2,
+            html_url: 'https://github.com/Addey34',
+          },
+    });
+  });
+  await page.goto('/');
+  const profile = page.locator('[data-github-profile]');
+  const summary = page.locator('[data-github-summary]');
+  const latest = page.locator('[data-github-latest]');
+  await expect(profile).toHaveAttribute('data-github-state', 'ready');
+  await expect(summary).toHaveText('1 dépôt public · 2 abonnés');
+  await expect(latest).toContainText('Dernière activité : projet');
+  await page.locator('#lang-toggle').click();
+  await expect(summary).toHaveText('1 public repo · 2 followers');
+  await expect(latest).toContainText('Latest activity : projet');
+  await page.reload();
+  await expect(summary).toHaveText('1 public repo · 2 followers');
+  await page.locator('#lang-toggle').click();
+  await expect(summary).toHaveText('1 dépôt public · 2 abonnés');
+  await page.evaluate(() => sessionStorage.clear());
+  await page.unrouteAll();
+  await page.route('https://api.github.com/**', (route) => route.abort());
+  await page.reload();
+  await expect(profile).toHaveAttribute('data-github-state', 'fallback');
+  await expect(summary).toHaveText('Voir le profil GitHub');
+  await page.locator('#lang-toggle').click();
+  await expect(summary).toHaveText('View GitHub profile');
+});
+
 test('stacks visibles et reliées aux projets en FR et EN', async ({
   page,
 }, testInfo) => {

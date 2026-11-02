@@ -74,8 +74,9 @@ export function clearDynamic(): void {
 }
 
 /** S'abonner aux changements de langue (ex. re-render d'un composant). */
-export function onLocaleChange(cb: (locale: Locale) => void): void {
+export function onLocaleChange(cb: (locale: Locale) => void): () => void {
   subscribers.add(cb);
+  return () => subscribers.delete(cb);
 }
 
 /** Applique la langue courante à tout le DOM statique + dynamique. */

@@ -16,6 +16,13 @@ export type Localized = Record<Locale, string>;
 type Dict = Record<string, string>;
 
 const fr: Dict = {
+  'github.loading': 'GitHub · chargement…',
+  'github.fallback': 'Voir le profil GitHub',
+  'github.repo.one': 'dépôt public',
+  'github.repo.other': 'dépôts publics',
+  'github.follower.one': 'abonné',
+  'github.follower.other': 'abonnés',
+  'github.latest': 'Dernière activité',
   'hero.tag.1': 'Full-stack TypeScript',
   'hero.tag.2': 'Expériences interactives',
   'hero.cta.projects': 'Explorer les produits',
@@ -141,6 +148,13 @@ const fr: Dict = {
 };
 
 const en: Dict = {
+  'github.loading': 'GitHub · loading…',
+  'github.fallback': 'View GitHub profile',
+  'github.repo.one': 'public repo',
+  'github.repo.other': 'public repos',
+  'github.follower.one': 'follower',
+  'github.follower.other': 'followers',
+  'github.latest': 'Latest activity',
   'hero.tag.1': 'Full-stack TypeScript',
   'hero.tag.2': 'Interactive experiences',
   'hero.cta.projects': 'Explore the products',

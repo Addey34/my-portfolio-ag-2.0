@@ -1,3 +1,5 @@
+import { onLocaleChange, t } from '@/i18n';
+
 const GITHUB_API = 'https://api.github.com';
 const USERNAME = 'Addey34';
 const CACHE_KEY = 'portfolio:github-profile:v1';
@@ -50,7 +52,7 @@ function cacheSnapshot(snapshot: GitHubSnapshot): void {
   try {
     sessionStorage.setItem(CACHE_KEY, JSON.stringify(snapshot));
   } catch {
-    // Storage can be unavailable in strict/private browsing modes.
+    // Le stockage peut être indisponible en navigation privée.
   }
 }
 
@@ -112,17 +114,21 @@ function renderSnapshot(root: HTMLElement, snapshot: GitHubSnapshot): void {
   const latest = root.querySelector<HTMLAnchorElement>('[data-github-latest]');
 
   if (summary) {
-    const repoLabel = snapshot.publicRepos > 1 ? 'repos' : 'repo';
-    const followerLabel = snapshot.followers > 1 ? 'followers' : 'follower';
-    summary.textContent = `${snapshot.publicRepos} public ${repoLabel} · ${snapshot.followers} ${followerLabel}`;
+    const repoLabel = t(
+      `github.repo.${snapshot.publicRepos > 1 ? 'other' : 'one'}`
+    );
+    const followerLabel = t(
+      `github.follower.${snapshot.followers > 1 ? 'other' : 'one'}`
+    );
+    summary.textContent = `${snapshot.publicRepos} ${repoLabel} · ${snapshot.followers} ${followerLabel}`;
   }
 
   if (latest && snapshot.latestRepo) {
     const date = formatDate(snapshot.latestRepo.pushedAt);
     latest.href = snapshot.latestRepo.url;
     latest.textContent = date
-      ? `Latest activity: ${snapshot.latestRepo.name} · ${date}`
-      : `Latest activity: ${snapshot.latestRepo.name}`;
+      ? `${t('github.latest')} : ${snapshot.latestRepo.name} · ${date}`
+      : `${t('github.latest')} : ${snapshot.latestRepo.name}`;
     latest.hidden = false;
   }
 
@@ -133,23 +139,42 @@ export function initGitHubProfile(): () => void {
   const root = document.querySelector<HTMLElement>('[data-github-profile]');
   if (!root) return () => undefined;
 
-  const cached = getCachedSnapshot();
-  if (cached) {
-    renderSnapshot(root, cached);
-    return () => undefined;
-  }
+  let snapshot = getCachedSnapshot();
+  const render = (): void => {
+    if (snapshot) {
+      renderSnapshot(root, snapshot);
+    } else {
+      const summary = root.querySelector<HTMLElement>('[data-github-summary]');
+      if (summary) {
+        summary.textContent = t(
+          root.dataset.githubState === 'fallback'
+            ? 'github.fallback'
+            : 'github.loading'
+        );
+      }
+    }
+  };
+  const unsubscribe = onLocaleChange(render);
+  render();
 
   const controller = new AbortController();
+  if (!snapshot) {
+    fetchSnapshot(controller.signal)
+      .then((result) => {
+        snapshot = result;
+        cacheSnapshot(result);
+        render();
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError')
+          return;
+        root.dataset.githubState = 'fallback';
+        render();
+      });
+  }
 
-  fetchSnapshot(controller.signal)
-    .then((snapshot) => {
-      cacheSnapshot(snapshot);
-      renderSnapshot(root, snapshot);
-    })
-    .catch((error: unknown) => {
-      if (error instanceof DOMException && error.name === 'AbortError') return;
-      root.dataset.githubState = 'fallback';
-    });
-
-  return () => controller.abort();
+  return () => {
+    controller.abort();
+    unsubscribe();
+  };
 }
