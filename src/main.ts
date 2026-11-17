@@ -33,6 +33,18 @@ function initContactForm(): void {
   const form = document.getElementById('contact-form');
   if (!(form instanceof HTMLFormElement)) return;
 
+  const fields = form.querySelector('fieldset');
+  const nameInput = form.querySelector('#contact-name');
+  const emailInput = form.querySelector('#contact-email');
+  const messageInput = form.querySelector('#contact-message');
+  if (
+    !(fields instanceof HTMLFieldSetElement) ||
+    !(nameInput instanceof HTMLInputElement) ||
+    !(emailInput instanceof HTMLInputElement) ||
+    !(messageInput instanceof HTMLTextAreaElement)
+  )
+    return;
+
   const disclosure = form.closest('details');
   disclosure?.addEventListener('toggle', () => {
     // Le dépliage change la hauteur du document : les ancres restent exactes.
@@ -42,17 +54,23 @@ function initContactForm(): void {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const data = new FormData(form);
-    const name = String(data.get('name') ?? '').trim();
-    const email = String(data.get('email') ?? '').trim();
-    const message = String(data.get('message') ?? '').trim();
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const message = messageInput.value.trim();
+    if (!name || !message) {
+      (name ? messageInput : nameInput).focus();
+      return;
+    }
     const subject = encodeURIComponent(`Projet — ${name}`);
     const body = encodeURIComponent(
       `Nom : ${name}\nEmail : ${email}\n\n${message}`
     );
 
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    const link = document.createElement('a');
+    link.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    link.click();
   });
+  fields.disabled = false;
 }
 
 /** Adresse visible et copiable : le formulaire mailto ne suffit pas en webmail. */
@@ -276,4 +294,9 @@ function boot(): void {
 // La classe .no-js est retirée dès que ce module s'exécute : les [data-reveal]
 // ne sont masqués (donc animables) que si le JS a bien démarré. SEO/no-JS safe.
 document.documentElement.classList.replace('no-js', 'js');
-boot();
+try {
+  boot();
+} catch (error) {
+  document.documentElement.classList.replace('js', 'no-js');
+  throw error;
+}
