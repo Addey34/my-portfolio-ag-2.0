@@ -1,4 +1,4 @@
-﻿import type { Localized } from '@/i18n/dictionary';
+import type { Localized } from '@/i18n/dictionary';
 
 /**
  * Catalogue des projets - SOURCE UNIQUE.
@@ -28,7 +28,8 @@ export interface Project {
   /** Trois faits vérifiés, affichés en puces sous le résultat. */
   highlights: Localized[];
   stack: string[];
-  links: { label: Localized; href: string }[];
+  links: { label: Localized; href: string; kind?: 'demo' }[];
+  preview: { src: string; height: number; alt: Localized };
   /** Precision honnete lorsque le code ou une demo ne sont pas publics. */
   linkNote?: Localized;
   accent: string;
@@ -75,25 +76,40 @@ export const PROJECTS: Project[] = [
         en: 'A progressive solar-system journey, from the overview down to planetary surfaces.',
       },
       decision: {
-        fr: 'Échelle vraie pour explorer, mode pédagogique pour comprendre, sans fausser les distances.',
-        en: 'True scale to explore, an educational mode to understand, without distorting distances.',
+        fr: 'Échelle réelle en exploration ; distances compressées en mode pédagogique pour garder les corps visibles.',
+        en: 'True scale in exploration; compressed distances in educational mode keep bodies visible.',
       },
       evidence: {
-        fr: 'Données NASA/JPL Horizons, voyage temporel, sources documentées. Pas de mesure FPS publiée.',
-        en: 'NASA/JPL Horizons data, time travel, documented sources. No FPS measurement published.',
+        fr: 'NASA/JPL Horizons, astronomy-engine et éléments orbitaux : sources et précision comparée à Horizons documentées. Pas de mesure FPS publiée.',
+        en: 'NASA/JPL Horizons, astronomy-engine and orbital elements: sources and accuracy compared with Horizons are documented. No FPS measurement published.',
       },
     },
     highlights: [
-      { fr: 'Données NASA/JPL Horizons', en: 'NASA/JPL Horizons data' },
+      {
+        fr: 'Sources astronomiques documentées',
+        en: 'Documented astronomical sources',
+      },
       { fr: 'Voyage temporel', en: 'Time travel' },
       { fr: 'Code source public', en: 'Public source code' },
     ],
     stack: ['TypeScript', 'Three.js', 'astronomy-engine', 'Playwright', 'Vite'],
     links: [
-      { label: demo, href: 'https://galaxy.adrianguichard.dev/' },
+      { kind: 'demo', label: demo, href: 'https://galaxy.adrianguichard.dev/' },
       { label: code, href: 'https://github.com/Addey34/galaxy-3d' },
+      {
+        label: { fr: 'Méthodologie', en: 'Methodology' },
+        href: 'https://galaxy.adrianguichard.dev/methodology/',
+      },
     ],
     accent: '#e7b95c',
+    preview: {
+      src: '/galaxy-preview.jpg',
+      height: 800,
+      alt: {
+        fr: 'Vue du système solaire interactif Galaxy.',
+        en: 'View of the interactive Galaxy solar system.',
+      },
+    },
     chapter: 'galaxy',
   },
   {
@@ -106,8 +122,8 @@ export const PROJECTS: Project[] = [
       en: 'Making variety work as one system.',
     },
     tagline: {
-      fr: '144 jeux catalogués dans une même application, avec moteurs partagés, multijoueur et progression commune.',
-      en: '144 games catalogued in one application, with shared engines, multiplayer and common progression.',
+      fr: 'Un catalogue de jeux en évolution, avec moteurs partagés, multijoueur et progression commune.',
+      en: 'An evolving game catalogue with shared engines, multiplayer and common progression.',
     },
     proof: {
       problem: {
@@ -131,21 +147,21 @@ export const PROJECTS: Project[] = [
         en: 'One game = one isolated page; profiles, scores and progression through a shared layer.',
       },
       evidence: {
-        fr: '144 jeux et 144 pages présents (config du 14/10/2026) ; création et lancement de salon testés sur les 144 (audit du 05/10). Parties complètes validées sur un échantillon. Pas de chiffres d’usage.',
-        en: '144 games and 144 game pages present (config of 14 Oct 2026); room creation and launch tested on all 144 (audit of 5 Oct). Full matches validated on a sample. No usage figures.',
+        fr: 'Création et lancement de salons testés ; parties complètes validées sur un échantillon. Pas de chiffres d’usage.',
+        en: 'Room creation and launch tested; full matches validated on a sample. No usage figures.',
       },
     },
     highlights: [
-      { fr: '144 jeux catalogués', en: '144 games catalogued' },
+      { fr: 'Catalogue en évolution', en: 'Evolving catalogue' },
       {
-        fr: 'Salons testés sur les 144 (05/10)',
-        en: 'Rooms tested on all 144 (5 Oct)',
+        fr: 'Création et lancement de salons testés',
+        en: 'Room creation and launch tested',
       },
       { fr: 'Vitrine technique publique', en: 'Public technical overview' },
     ],
     stack: ['TypeScript', 'Vite MPA', 'Nakama', 'Canvas', 'PWA'],
     links: [
-      { label: demo, href: 'https://ludora.adrianguichard.dev/' },
+      { kind: 'demo', label: demo, href: 'https://ludora.adrianguichard.dev/' },
       { label: showcase, href: 'https://github.com/Addey34/ludora-showcase' },
     ],
     linkNote: {
@@ -153,6 +169,11 @@ export const PROJECTS: Project[] = [
       en: 'Client and server code are private; public technical overview, architecture presented here.',
     },
     accent: '#7dd3fc',
+    preview: {
+      src: '/ludora-preview.jpg',
+      height: 800,
+      alt: { fr: 'Catalogue de jeux de Ludora.', en: 'Ludora game catalogue.' },
+    },
     chapter: 'ludora',
   },
   {
@@ -207,7 +228,11 @@ export const PROJECTS: Project[] = [
     ],
     stack: ['React', 'TypeScript', 'MongoDB', 'Docker', 'Node'],
     links: [
-      { label: demo, href: 'https://magnotes.adrianguichard.dev/' },
+      {
+        kind: 'demo',
+        label: demo,
+        href: 'https://magnotes.adrianguichard.dev/',
+      },
       { label: code, href: 'https://github.com/Addey34/magnotes-frontend' },
     ],
     linkNote: {
@@ -215,6 +240,14 @@ export const PROJECTS: Project[] = [
       en: 'Private backend; public frontend and architecture detailed here.',
     },
     accent: '#f0a6d8',
+    preview: {
+      src: '/magnotes-preview.jpg',
+      height: 704,
+      alt: {
+        fr: 'Tableau de notes dans la vue canvas de MagNotes.',
+        en: 'A notes board in the MagNotes canvas view.',
+      },
+    },
     chapter: 'magnotes',
   },
 ];

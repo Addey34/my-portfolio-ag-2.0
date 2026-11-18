@@ -31,6 +31,172 @@ const sections = [
   'contact',
 ];
 
+test('le contenu essentiel reste disponible sans JavaScript', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto(baseURL!);
+  for (const name of ['Galaxy', 'Ludora', 'MagNotes']) {
+    await expect(
+      page.getByRole('heading', { name, exact: true })
+    ).toBeVisible();
+  }
+  await expect(
+    page.getByRole('link', { name: 'contact@adrianguichard.dev' })
+  ).toHaveAttribute('href', 'mailto:contact@adrianguichard.dev');
+  await expect(
+    page.locator('.no-js-content a[href="https://galaxy.adrianguichard.dev/"]')
+  ).toBeVisible();
+  await context.close();
+});
+
+test('le contenu essentiel reste disponible si le module principal ne charge pas', async ({
+  page,
+}) => {
+  await page.route('**/src/main.ts', (route) => route.abort());
+  await page.goto('/');
+  await expect(page.locator('#galaxy')).toContainText('Galaxy');
+  await expect(page.locator('#ludora')).toContainText('Ludora');
+  await expect(page.locator('#magnotes')).toContainText('MagNotes');
+  await expect(page.locator('[data-contact-email]')).toHaveAttribute(
+    'href',
+    'mailto:contact@adrianguichard.dev'
+  );
+});
+
+test('le contenu statique revient si le démarrage échoue', async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = Element.prototype.replaceChildren;
+    let fail = true;
+    Element.prototype.replaceChildren = function (...nodes: (Node | string)[]) {
+      if (fail && this.id === 'projects') {
+        fail = false;
+        throw new Error('Échec de démarrage simulé');
+      }
+      return original.apply(this, nodes);
+    };
+  });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveClass(/no-js/);
+  await expect(page.locator('#galaxy')).toContainText('Galaxy');
+  await expect(page.locator('[data-contact-email]')).toHaveAttribute(
+    'href',
+    'mailto:contact@adrianguichard.dev'
+  );
+});
+
+test('les réglages retiennent le focus et le rendent au bouton', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const trigger = page.locator('#controls-open');
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Réglages visuels' });
+  const first = dialog.getByRole('switch').first();
+  const last = dialog.locator('select');
+  await expect(first).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(last).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(first).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(trigger).toBeFocused();
+  await expect(
+    page.locator('.offer-card[tabindex], .chapter__proof-item[tabindex]')
+  ).toHaveCount(0);
+});
+
+test('Galaxy distingue ses échelles et donne accès à la méthodologie en FR et EN', async ({
+  page,
+}, testInfo) => {
+  await page.goto('/#galaxy');
+  const details = page.locator('#galaxy .chapter__more');
+  const toggle = details.locator('summary');
+  await toggle.scrollIntoViewIfNeeded();
+  if (testInfo.project.name === 'desktop-chromium') await toggle.click();
+  else await toggle.tap();
+  await expect(details).toHaveAttribute('open', '');
+  await expect(details).toContainText(
+    'distances compressées en mode pédagogique'
+  );
+  const methodology = page
+    .locator('#galaxy .chapter__links a')
+    .filter({ hasText: 'Méthodologie' });
+  await expect(methodology).toHaveAttribute(
+    'href',
+    'https://galaxy.adrianguichard.dev/methodology/'
+  );
+  await methodology.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1500);
+  await expect(methodology).toBeVisible();
+  await expect(methodology).toBeInViewport();
+  await expect
+    .poll(async () =>
+      Number(
+        await page
+          .locator('#galaxy .chapter__panel-shell')
+          .evaluate((element) => getComputedStyle(element).opacity)
+      )
+    )
+    .toBeGreaterThan(0.9);
+  await page.screenshot({
+    path: testInfo.outputPath('galaxy-methodologie-fr.png'),
+  });
+  await expect(methodology).toBeInViewport();
+  await page.locator('#lang-toggle').click();
+  await expect(details).toContainText(
+    'compressed distances in educational mode'
+  );
+  await expect(
+    page.locator('#galaxy .chapter__links a').filter({ hasText: 'Methodology' })
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth -
+        document.documentElement.clientWidth
+    )
+  ).toBeLessThanOrEqual(1);
+});
+
+test('les aperçus des produits sont accessibles et traduits', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(120_000);
+  await page.goto('/');
+  for (const id of ['galaxy', 'ludora', 'magnotes']) {
+    const preview = page.locator(`#${id} .chapter__preview`);
+    const summary = preview.locator('summary');
+    await summary.scrollIntoViewIfNeeded();
+    await summary.click();
+    const image = preview.locator('img');
+    await expect(image).toBeVisible();
+    await expect
+      .poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth))
+      .toBeGreaterThan(0);
+    await image.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath(`preview-${id}.png`) });
+    await summary.click();
+  }
+  await page.locator('#lang-toggle').click();
+  await expect(page.locator('#galaxy .chapter__preview img')).toHaveAttribute(
+    'alt',
+    'View of the interactive Galaxy solar system.'
+  );
+  await expect(page.locator('#galaxy .chapter__preview summary')).toHaveText(
+    'See a product preview'
+  );
+  expect(
+    await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth -
+        document.documentElement.clientWidth
+    )
+  ).toBeLessThanOrEqual(1);
+});
+
 test('activité GitHub traduite, y compris depuis le cache et en cas d’échec', async ({
   page,
 }) => {
@@ -175,6 +341,176 @@ test('parcours responsive complet et contrôles', async ({ page }, testInfo) => 
   await page.keyboard.press('Escape');
   await expect(page.locator('.controls')).toBeHidden();
   expect(errors).toEqual([]);
+});
+
+test('le rail attend la validation du clic avant de changer de chapitre', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('#boot-loader')).toBeHidden({ timeout: 30000 });
+  const target = page.locator('.rail__dot[data-rail="stack"]');
+  await expect(target).toBeVisible();
+  const rect = await target.boundingBox();
+  if (!rect) throw new Error('Chapitre Stacks inaccessible');
+  await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(350);
+  expect(new URL(page.url()).hash).toBe('');
+  await page.mouse.up();
+  await expect.poll(() => new URL(page.url()).hash).toBe('#stack');
+});
+
+test('le rail reste utilisable au toucher', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'Contrôle réservé aux profils tactiles.');
+  await page.goto('/');
+  await expect(page.locator('#boot-loader')).toBeHidden({ timeout: 30000 });
+  await page.locator('.rail__dot[data-rail="stack"]').tap();
+  await expect.poll(() => new URL(page.url()).hash).toBe('#stack');
+  await expect(page.locator('#stack')).toBeInViewport();
+});
+
+test('le rail marque les étapes traversées et suit le retour', async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await page.goto('/');
+  await expect(page.locator('#boot-loader')).toBeHidden({ timeout: 30000 });
+  const current = page.locator('.rail__dot[data-rail="freelance"]');
+  await expect(current).toBeAttached();
+  await current.evaluate((link: HTMLAnchorElement) => link.click());
+  await expect(page.locator('#freelance')).toBeInViewport({ timeout: 15000 });
+  await expect(current).toHaveClass(/is-current/);
+  await expect(page.locator('.rail__dot[data-rail="stack"]')).toHaveClass(
+    /is-complete/
+  );
+  await expect(page.locator('.rail__dot[data-rail="galaxy"]')).not.toHaveClass(
+    /is-complete/
+  );
+  const start = page.locator('.rail__dot[data-rail="top"]');
+  await start.evaluate((link: HTMLAnchorElement) => link.click());
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), { timeout: 20000 })
+    .toBeLessThan(20);
+  await expect(start).toHaveClass(/is-current/, { timeout: 10000 });
+  await expect(page.locator('.rail__dot.is-complete')).toHaveCount(0);
+});
+
+test('la lettre 3D reste visible lorsque le formulaire de contact est ouvert', async ({
+  page,
+  isMobile,
+}, testInfo) => {
+  test.setTimeout(60000);
+  const letter = page.waitForResponse((response) =>
+    response.url().endsWith('/models/contact_letter.glb')
+  );
+  await page.goto('/?capture=contact#contact');
+  expect((await letter).ok()).toBe(true);
+  await expect(page.locator('.contact__form-toggle')).toBeVisible();
+  await page.waitForTimeout(5000);
+  await page.locator('.contact__form-toggle').click();
+  await expect(page.locator('#contact-form')).toBeVisible();
+  await page.waitForTimeout(700);
+  const size = page.viewportSize();
+  if (!size) throw new Error('Taille du navigateur indisponible');
+  const clip = isMobile
+    ? {
+        x: Math.round(size.width * 0.64),
+        y: Math.round(size.height * 0.24),
+        width: Math.round(size.width * 0.36),
+        height: Math.round(size.height * 0.25),
+      }
+    : {
+        x: Math.round(size.width * 0.64),
+        y: Math.round(size.height * 0.32),
+        width: Math.round(size.width * 0.3),
+        height: Math.round(size.height * 0.42),
+      };
+  await page.screenshot({ path: testInfo.outputPath('contact-form-3d.png') });
+  const visible = await page.screenshot({ clip });
+  await page.locator('#world-3d').evaluate((canvas: HTMLElement) => {
+    canvas.style.visibility = 'hidden';
+  });
+  const hidden = await page.screenshot({ clip });
+  const changedPixels = await page.evaluate(
+    async ([first, second]) => {
+      const read = async (source: string) => {
+        const image = new Image();
+        image.src = `data:image/png;base64,${source}`;
+        await image.decode();
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas 2D indisponible');
+        ctx.drawImage(image, 0, 0);
+        return ctx.getImageData(0, 0, image.width, image.height).data;
+      };
+      const a = await read(first);
+      const b = await read(second);
+      let changed = 0;
+      for (let i = 0; i < a.length; i += 4) {
+        if (
+          Math.abs(a[i] - b[i]) +
+            Math.abs(a[i + 1] - b[i + 1]) +
+            Math.abs(a[i + 2] - b[i + 2]) >
+          40
+        )
+          changed += 1;
+      }
+      return changed;
+    },
+    [visible.toString('base64'), hidden.toString('base64')]
+  );
+  expect(changedPixels).toBeGreaterThan(100);
+});
+
+test('le fil de progression est centré sur les repères du rail', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Le fil vertical est réservé au bureau.');
+  await page.goto('/');
+  const rail = page.locator('.rail');
+  await expect(rail).toBeVisible();
+  const alignment = await rail.evaluate((element) => {
+    const railBounds = element.getBoundingClientRect();
+    const progress = getComputedStyle(element, '::after');
+    const x =
+      railBounds.left +
+      parseFloat(progress.left) +
+      parseFloat(progress.width) / 2;
+    const markers = [...element.querySelectorAll('.rail__marker')];
+    return {
+      background: getComputedStyle(element, '::before').display,
+      distances: markers.map((marker) => {
+        const rect = marker.getBoundingClientRect();
+        return Math.abs(rect.left + rect.width / 2 - x);
+      }),
+    };
+  });
+  expect(alignment.background).toBe('none');
+  expect(Math.max(...alignment.distances)).toBeLessThan(1);
+});
+
+test('le contenu reste lisible si un objet 3D ne charge pas', async ({
+  page,
+}, testInfo) => {
+  await page.route('**/models/galaxy_astrolabe.glb', (route) => route.abort());
+  await page.goto('/');
+  await expect(page.locator('#boot-loader')).toBeHidden({ timeout: 30000 });
+  await expect(page.locator('.rail__dot[data-rail="galaxy"]')).toBeAttached();
+  await page.evaluate(() => {
+    const link = document.querySelector<HTMLAnchorElement>(
+      '.rail__dot[data-rail="galaxy"]'
+    );
+    if (!link) throw new Error('Navigation Galaxy introuvable');
+    link.click();
+  });
+  await expect(page.locator('#galaxy')).toBeInViewport({ timeout: 15000 });
+  await page.waitForTimeout(1000);
+  await page.screenshot({
+    path: testInfo.outputPath('galaxy-sans-modele.png'),
+  });
 });
 
 test('passage Ludora vers MagNotes et retour', async ({ page }, testInfo) => {
@@ -610,6 +946,19 @@ test('contenu et navigation disponibles sans WebGL', async ({ page }) => {
   await expect(page.locator('#galaxy')).toBeInViewport();
 });
 
+test('le titre des études reste visible après navigation et stabilisation', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const rail = page.locator('.rail__dot[data-rail="studies"]');
+  await expect(rail).toBeAttached();
+  await rail.evaluate((link: HTMLElement) => link.click());
+  const title = page.locator('#studies .studies__title');
+  await expect(title).toBeInViewport({ ratio: 1, timeout: 15_000 });
+  await page.waitForTimeout(2000);
+  await expect(title).toBeInViewport({ ratio: 1 });
+});
+
 test('captures de finition des scènes principales', async ({
   page,
 }, testInfo) => {
@@ -646,18 +995,411 @@ test('captures de finition des scènes principales', async ({
   }
 });
 
+test('captures des projets après installation de la scène sur WebKit', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'iphone-webkit',
+    'Diagnostic WebKit isolé.'
+  );
+  test.setTimeout(180_000);
+  await page.addInitScript(() => {
+    window.addEventListener('world-settled', () => {
+      document.documentElement.dataset.worldSettled = 'true';
+    });
+  });
+  for (const section of ['galaxy', 'ludora', 'magnotes']) {
+    await page.goto(`/?capture=${section}#${section}`);
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-world-settled',
+      'true',
+      { timeout: 45_000 }
+    );
+    await page.waitForTimeout(2000);
+    await page.screenshot({
+      path: testInfo.outputPath(`webgl-${section}.png`),
+    });
+  }
+});
+
+test('prototype mobile compact : parcours et captures des projets', async ({
+  page,
+  isMobile,
+}, testInfo) => {
+  test.skip(
+    !process.env.RUN_STARTUP_EXPERIMENTS || !isMobile,
+    'Prototype mobile lancé à la demande.'
+  );
+  test.setTimeout(120_000);
+  await page.addInitScript(() =>
+    window.addEventListener(
+      'world-settled',
+      () => {
+        document.documentElement.dataset.worldSettled = 'true';
+      },
+      { once: true }
+    )
+  );
+  for (const id of ['galaxy', 'ludora', 'magnotes']) {
+    await page.goto(`/?compact-mobile&capture=${id}#${id}`);
+    await expect(page.locator('html')).toHaveClass(/compact-mobile/);
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-world-settled',
+      'true',
+      { timeout: 45_000 }
+    );
+    await expect(page.locator(`#${id} h3`)).toBeVisible();
+    expect(
+      await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth -
+          document.documentElement.clientWidth
+      )
+    ).toBeLessThanOrEqual(1);
+    await page.waitForTimeout(1200);
+    await page.screenshot({ path: testInfo.outputPath(`compact-${id}.png`) });
+    const preview = page.locator(`#${id} .chapter__preview summary`);
+    await preview.evaluate((node) =>
+      node.scrollIntoView({ block: 'center', behavior: 'instant' })
+    );
+    await page.waitForTimeout(1200);
+    await preview.tap();
+    await expect(page.locator(`#${id} .chapter__preview img`)).toBeVisible();
+  }
+});
+
 test.describe('écran d’attente', () => {
   test.use({ keepLoader: true });
+
+  test('capture de la première image du prototype anticipé', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      !process.env.RUN_STARTUP_EXPERIMENTS,
+      'Diagnostic lancé à la demande.'
+    );
+    await page.goto('/?early-boot');
+    await expect(page.locator('#boot-loader')).toHaveClass(/is-done/, {
+      timeout: 30_000,
+    });
+    await page.waitForTimeout(700);
+    await page.screenshot({ path: testInfo.outputPath('prototype-hero.png') });
+  });
+
+  test('profil CPU du premier défilement anticipé', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      !process.env.RUN_STARTUP_EXPERIMENTS,
+      'Diagnostic lancé à la demande.'
+    );
+    test.skip(
+      testInfo.project.name !== 'desktop-chromium',
+      'Profil CDP Chromium uniquement.'
+    );
+    test.setTimeout(60_000);
+    await page.goto('/?early-boot');
+    await expect(page.locator('#boot-loader')).toHaveClass(/is-done/, {
+      timeout: 30_000,
+    });
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Profiler.enable');
+    await cdp.send('Profiler.start');
+    await page.evaluate(async () => {
+      await new Promise<void>((resolve) => {
+        let start = 0;
+        const step = (now: number): void => {
+          if (!start) start = now;
+          const progress = Math.min((now - start) / 6000, 1);
+          window.scrollTo(0, progress * 1300);
+          if (progress < 1) requestAnimationFrame(step);
+          else resolve();
+        };
+        requestAnimationFrame(step);
+      });
+    });
+    const { profile } = await cdp.send('Profiler.stop');
+    await cdp.detach();
+    const nodes = new Map(profile.nodes.map((node) => [node.id, node]));
+    const totals = new Map<string, number>();
+    profile.samples?.forEach((id, index) => {
+      const node = nodes.get(id);
+      if (!node) return;
+      const label = `${node.callFrame.functionName || '(anonyme)'} ${node.callFrame.url.split('/').pop() || ''}`;
+      totals.set(
+        label,
+        (totals.get(label) ?? 0) + (profile.timeDeltas?.[index] ?? 0)
+      );
+    });
+    console.log(
+      'Profil CPU, temps propre estimé (ms) :',
+      [...totals]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 12)
+        .map(([name, time]) => ({ name, ms: Math.round(time / 1000) }))
+    );
+  });
+
+  test('la préparation différée reprend après le défilement', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      !process.env.RUN_STARTUP_EXPERIMENTS,
+      'Diagnostic lancé à la demande.'
+    );
+    test.setTimeout(120_000);
+    await page.addInitScript(() => {
+      window.addEventListener(
+        'world-settled',
+        () => {
+          document.documentElement.dataset.worldSettled = 'true';
+        },
+        { once: true }
+      );
+    });
+    await page.goto('/?early-boot&idle-warmup&no-shader-log');
+    await expect(page.locator('#boot-loader')).toHaveClass(/is-done/, {
+      timeout: 30_000,
+    });
+    await page.evaluate(async () => {
+      await new Promise<void>((resolve) => {
+        let start = 0;
+        const step = (now: number): void => {
+          if (!start) start = now;
+          const progress = Math.min((now - start) / 6000, 1);
+          window.scrollTo(0, progress * 1300);
+          if (progress < 1) requestAnimationFrame(step);
+          else resolve();
+        };
+        requestAnimationFrame(step);
+      });
+    });
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-world-settled',
+      'true',
+      { timeout: 60_000 }
+    );
+    for (const id of ['galaxy', 'ludora', 'magnotes']) {
+      await page
+        .locator(`.rail__dot[data-rail="${id}"]`)
+        .evaluate((link: HTMLElement) => link.click());
+      await expect(page.locator(`#${id}`)).toBeInViewport({ ratio: 0.01 });
+      await page.waitForTimeout(2000);
+      await page.screenshot({ path: testInfo.outputPath(`idle-${id}.png`) });
+    }
+  });
+
+  test('comparaison expérimentale du démarrage et du premier défilement', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      !process.env.RUN_STARTUP_EXPERIMENTS,
+      'Diagnostic lancé à la demande.'
+    );
+    test.setTimeout(240_000);
+    for (const mode of [
+      'baseline',
+      'early-boot&idle-warmup',
+      'early-boot&idle-warmup',
+      'baseline',
+    ]) {
+      const query =
+        mode === 'baseline' ? 'warmup-trace' : `${mode}&warmup-trace`;
+      await page.goto(`/?${query}`);
+      await page.waitForFunction(
+        () => {
+          const loader = document.getElementById('boot-loader');
+          return !loader || loader.classList.contains('is-done');
+        },
+        undefined,
+        { timeout: 30_000 }
+      );
+      const result = await page.evaluate(async () => {
+        const visibleAt = performance.now();
+        const gaps: number[] = [];
+        await new Promise<void>((resolve) => {
+          let start = 0;
+          let previous = 0;
+          const step = (now: number): void => {
+            if (!start) start = now;
+            if (previous) gaps.push(now - previous);
+            previous = now;
+            const progress = Math.min((now - start) / 6000, 1);
+            window.scrollTo(0, progress * 1300);
+            if (progress < 1) requestAnimationFrame(step);
+            else resolve();
+          };
+          requestAnimationFrame(step);
+        });
+        return {
+          visibleMs: Math.round(visibleAt),
+          frames: gaps.length,
+          over50: gaps.filter((gap) => gap > 50).length,
+          over100: gaps.filter((gap) => gap > 100).length,
+          maxMs: Math.round(Math.max(0, ...gaps)),
+          warmup: ['warmup-texture', 'warmup-draw'].map((name) => {
+            const entries = performance
+              .getEntriesByName(name)
+              .filter((entry) => entry.startTime >= visibleAt);
+            return {
+              name,
+              count: entries.length,
+              totalMs: Math.round(
+                entries.reduce((sum, entry) => sum + entry.duration, 0)
+              ),
+              maxMs: Math.round(
+                Math.max(0, ...entries.map((entry) => entry.duration))
+              ),
+            };
+          }),
+        };
+      });
+      console.log(`${testInfo.project.name} ${mode} ${JSON.stringify(result)}`);
+    }
+  });
+
+  test('prototype : défilement rapide, pauses et liens directs', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      !process.env.RUN_STARTUP_EXPERIMENTS,
+      'Diagnostic lancé à la demande.'
+    );
+    test.setTimeout(240_000);
+    await page.addInitScript(() =>
+      window.addEventListener(
+        'world-ready',
+        () => performance.mark('diagnostic-world-ready'),
+        { once: true }
+      )
+    );
+    for (const mode of ['baseline', 'early-boot&idle-warmup']) {
+      const query = mode === 'baseline' ? '' : `?${mode}`;
+      await page.goto(`/${query}`);
+      await page.waitForFunction(
+        () => {
+          const loader = document.getElementById('boot-loader');
+          return !loader || loader.classList.contains('is-done');
+        },
+        undefined,
+        { timeout: 30_000 }
+      );
+      const phases = await page.evaluate(async () => {
+        const measure = async (target: number | null, duration: number) => {
+          const gaps: number[] = [];
+          const from = scrollY;
+          await new Promise<void>((resolve) => {
+            let start = 0;
+            let previous = 0;
+            const step = (now: number): void => {
+              if (!start) start = now;
+              if (previous) gaps.push(now - previous);
+              previous = now;
+              const progress = Math.min((now - start) / duration, 1);
+              if (target !== null)
+                scrollTo(0, from + (target - from) * progress);
+              if (progress < 1) requestAnimationFrame(step);
+              else resolve();
+            };
+            requestAnimationFrame(step);
+          });
+          return {
+            frames: gaps.length,
+            over100: gaps.filter((gap) => gap > 100).length,
+            maxMs: Math.round(Math.max(0, ...gaps)),
+          };
+        };
+        return [
+          await measure(1400, 1000),
+          await measure(null, 2500),
+          await measure(4000, 1000),
+          await measure(null, 2500),
+        ];
+      });
+      console.log(
+        `${testInfo.project.name} ${mode} geste/pause/geste/pause ${JSON.stringify(phases)}`
+      );
+      for (const id of ['galaxy', 'ludora', 'magnotes']) {
+        const directQuery =
+          mode === 'baseline' ? `?capture=${id}` : `?${mode}&capture=${id}`;
+        await page.goto(`/${directQuery}#${id}`);
+        await page.waitForFunction(
+          (scene) =>
+            performance.getEntriesByName(`scene-loaded-${scene}`).length > 0,
+          id,
+          { timeout: 45_000 }
+        );
+        await page.waitForFunction(
+          () =>
+            performance.getEntriesByName('diagnostic-world-ready').length > 0,
+          undefined,
+          { timeout: 45_000 }
+        );
+        await page.waitForFunction(
+          () => {
+            const loader = document.getElementById('boot-loader');
+            return !loader || loader.classList.contains('is-done');
+          },
+          undefined,
+          { timeout: 30_000 }
+        );
+        const loaded = await page.evaluate(
+          (scene) => ({
+            modelMs: Math.round(
+              performance.getEntriesByName(`scene-loaded-${scene}`)[0].startTime
+            ),
+            renderReadyMs: Math.round(
+              performance.getEntriesByName('diagnostic-world-ready')[0]
+                .startTime
+            ),
+            contentReadyMs: Math.round(performance.now()),
+          }),
+          id
+        );
+        await page.waitForTimeout(2000);
+        await page.screenshot({
+          path: testInfo.outputPath(
+            `${mode === 'baseline' ? 'actuel' : 'differe'}-${id}.png`
+          ),
+        });
+        console.log(
+          `${testInfo.project.name} ${mode} ${id} ${JSON.stringify(loaded)} ms depuis navigation`
+        );
+      }
+    }
+  });
 
   test('couvre la page puis disparaît quand la 3D est installée', async ({
     page,
   }) => {
     test.setTimeout(120_000);
+    await page.addInitScript(() => {
+      for (const event of ['world-ready', 'world-settled']) {
+        window.addEventListener(
+          event,
+          () => {
+            document.documentElement.setAttribute(
+              `data-${event}-ms`,
+              String(Math.round(performance.now()))
+            );
+          },
+          { once: true }
+        );
+      }
+    });
     await page.goto('/');
     await expect(page.locator('#boot-loader')).toBeAttached();
     await expect(page.locator('#boot-loader')).toHaveCount(0, {
       timeout: 60_000,
     });
+    console.log(
+      `Chargeur retiré après ${Math.round(await page.evaluate(() => performance.now()))} ms depuis la navigation`
+    );
+    console.log(
+      'Étapes 3D :',
+      await page.locator('html').getAttribute('data-world-ready-ms'),
+      await page.locator('html').getAttribute('data-world-settled-ms')
+    );
     await expect(page.locator('#world-3d')).toBeVisible();
   });
 });

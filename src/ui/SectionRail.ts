@@ -1,4 +1,3 @@
-import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROJECTS } from '@/content/projects';
 import { t, onLocaleChange } from '@/i18n';
@@ -13,7 +12,7 @@ import type { VisualScene } from '@/visual/types';
  * le foyer d'une molette ; les voisins décroissent avec la distance. Sur
  * desktop la molette est verticale (à gauche), sur mobile horizontale (en bas,
  * glisser vers la gauche avance). Un appui-glissé fait défiler les chapitres en
- * direct ; maintenir le geste répète le déplacement comme une molette de date.
+ * direct ; chaque mouvement correspond à un déplacement explicite.
  */
 interface RailItem {
   id: string;
@@ -40,12 +39,8 @@ interface RailDrag {
   startY: number;
   lastY: number;
   previewIndex: number;
-  originWasSurface: boolean;
   moved: boolean;
   accumulatedY: number;
-  direction: -1 | 0 | 1;
-  holdStartedAt: number;
-  lastStepAt: number;
 }
 
 export class SectionRail {
@@ -73,7 +68,6 @@ export class SectionRail {
   private readonly onPointerLeave = () => {
     if (!this.drag) this.clearProximity();
   };
-  private readonly onHoldTick = () => this.updateHold();
   private readonly onLayoutChange = () => this.renderFocus(this.activeId);
 
   constructor(
@@ -116,7 +110,6 @@ export class SectionRail {
     this.nav.addEventListener('pointerleave', this.onPointerLeave, {
       passive: true,
     });
-    gsap.ticker.add(this.onHoldTick);
     onLocaleChange(() => this.syncLabels());
     this.horizontalQuery.addEventListener('change', this.onLayoutChange);
   }
@@ -192,6 +185,7 @@ export class SectionRail {
       const distance = Math.abs(index - focusIndex);
       const depth = Math.pow(0.4, distance);
       link.classList.toggle('is-current', key === id);
+      link.classList.toggle('is-complete', index < focusIndex);
       // Molette horizontale : les points hors écran ne reçoivent pas le focus.
       link.tabIndex = this.horizontalQuery.matches && distance > 4 ? -1 : 0;
       link.style.setProperty('--rail-distance', String(distance));
@@ -254,8 +248,6 @@ export class SectionRail {
           this.items.findIndex((item) => item.id === targetId)
         )
       : this.nearestIndex(axis === 'x' ? event.clientX : event.clientY, axis);
-    this.navigate(this.items[startIndex]);
-    const now = performance.now();
     const coordinate = axis === 'x' ? -event.clientX : event.clientY;
     this.drag = {
       pointerId: event.pointerId,
@@ -263,12 +255,8 @@ export class SectionRail {
       startY: coordinate,
       lastY: coordinate,
       previewIndex: startIndex,
-      originWasSurface: !target,
       moved: false,
       accumulatedY: 0,
-      direction: 0,
-      holdStartedAt: now,
-      lastStepAt: now,
     };
     this.nav.style.setProperty('--rail-drag-shift', '0px');
     this.nav.classList.add('is-pressed');
@@ -299,17 +287,6 @@ export class SectionRail {
       return;
     }
 
-    const direction: -1 | 0 | 1 =
-      displacement > 12 ? 1 : displacement < -12 ? -1 : 0;
-    if (direction !== drag.direction) {
-      const now = performance.now();
-      const hadDirection = drag.direction !== 0;
-      drag.direction = direction;
-      drag.holdStartedAt = now;
-      drag.lastStepAt = now;
-      if (hadDirection) drag.accumulatedY = 0;
-    }
-
     if (Math.abs(displacement) < 7 && !drag.moved) return;
     event.preventDefault();
     drag.moved = true;
@@ -327,15 +304,6 @@ export class SectionRail {
     this.nav.style.setProperty('--rail-drag-shift', `${shift.toFixed(2)}px`);
   }
 
-  /** Répète le pas lorsque le pointeur reste maintenu dans une direction. */
-  private updateHold(): void {
-    const drag = this.drag;
-    if (!drag?.moved || drag.direction === 0) return;
-    const now = performance.now();
-    if (now - drag.holdStartedAt < 420 || now - drag.lastStepAt < 230) return;
-    this.stepDrag(drag.direction);
-  }
-
   /** Change de chapitre et entraîne immédiatement le scroll et le Canvas. */
   private stepDrag(direction: -1 | 1): boolean {
     const drag = this.drag;
@@ -344,7 +312,6 @@ export class SectionRail {
       0,
       Math.min(this.items.length - 1, drag.previewIndex + direction)
     );
-    drag.lastStepAt = performance.now();
     if (nextIndex === drag.previewIndex) return false;
     this.goToPreview(nextIndex);
     return true;
@@ -377,6 +344,13 @@ export class SectionRail {
       window.setTimeout(() => {
         this.suppressClick = false;
       }, 1200);
+    } else if (commit) {
+      // La capture de pointeur peut rediriger le clic vers le rail lui-même.
+      this.suppressClick = true;
+      this.navigate(this.items[drag.previewIndex]);
+      window.setTimeout(() => {
+        this.suppressClick = false;
+      }, 0);
     } else {
       this.renderFocus(this.activeId);
     }
@@ -428,7 +402,6 @@ export class SectionRail {
     this.nav.removeEventListener('pointerup', this.onPointerUp);
     this.nav.removeEventListener('pointercancel', this.onPointerCancel);
     this.nav.removeEventListener('pointerleave', this.onPointerLeave);
-    gsap.ticker.remove(this.onHoldTick);
     this.horizontalQuery.removeEventListener('change', this.onLayoutChange);
     this.nav.remove();
   }
