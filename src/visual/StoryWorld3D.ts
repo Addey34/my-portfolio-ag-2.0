@@ -301,7 +301,10 @@ export class StoryWorld3D {
     this.queueWarmup()
   );
   private warmupTimers: number[] = [];
-  private readonly loadQueue: Array<() => Promise<void>> = [];
+  private readonly loadQueue: Array<{
+    url: string;
+    load: () => Promise<void>;
+  }> = [];
   private loadQueueBusy = false;
   private loadQueueStarted = false;
   private programsReady = false;
@@ -348,6 +351,7 @@ export class StoryWorld3D {
   private readonly contactDisclosure =
     document.querySelector<HTMLDetailsElement>('.contact__disclosure');
   private readonly onContactToggle = () => this.render(0);
+  private contactOffset = 0;
   private state: VisualState | null = null;
   private activeScene: VisualScene = 'identity';
   private previousScene: VisualScene = 'identity';
@@ -361,6 +365,7 @@ export class StoryWorld3D {
   private desktopFormCenterX = 0;
   private readonly lampLab = { x: 0, y: 0, power: 1 };
   private lastStaticScene: VisualScene | null = null;
+  private lastStaticClockPhase: boolean | null = null;
   private lastMagnotesProgress = 0.72;
 
   constructor(private readonly canvas: HTMLCanvasElement) {
@@ -384,7 +389,9 @@ export class StoryWorld3D {
     // Lire le journal de compilation est synchrone : chaque nouveau programme gèle alors
     // le fil principal le temps que le GPU compile. En production on s'en passe (les
     // erreurs de shader restent visibles en développement).
-    renderer.debug.checkShaderErrors = import.meta.env.DEV;
+    renderer.debug.checkShaderErrors =
+      import.meta.env.DEV &&
+      !new URLSearchParams(location.search).has('no-shader-log');
     renderer.setClearColor('#000000', 0);
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.shadowMap.enabled = true;
@@ -460,11 +467,18 @@ export class StoryWorld3D {
       this.activeScene = state.scene;
     }
     this.state = state;
+    // L'état est mutable : mémoriser la phase, pas la référence partagée.
+    const clockPhase =
+      state.scene === 'identity' && state.openingVariant === 'medallion'
+        ? state.clockAgProgress >= 0.5
+        : null;
     if (
       (this.reduced || !this.animated) &&
-      this.lastStaticScene !== state.scene
+      (this.lastStaticScene !== state.scene ||
+        this.lastStaticClockPhase !== clockPhase)
     ) {
       this.lastStaticScene = state.scene;
+      this.lastStaticClockPhase = clockPhase;
       this.render(0);
     }
   }
@@ -798,7 +812,20 @@ export class StoryWorld3D {
     } else {
       this.world.position.y = 0;
     }
-    this.world.position.y -= 0.8 * identityPresence;
+    // Sur bureau, l'axe de l'horloge reste l'axe des objets suivants.
+    this.world.position.y -=
+      0.8 * (this.compact || this.heroTablet ? identityPresence : 1);
+    if (this.compact) {
+      const targetOffset = Number(
+        scene === 'contact' && Boolean(this.contactDisclosure?.open)
+      );
+      this.contactOffset =
+        this.reduced || !this.animated
+          ? targetOffset
+          : this.contactOffset + (targetOffset - this.contactOffset) * 0.12;
+      this.world.position.x = this.contactOffset * 2.1;
+      this.world.position.y -= this.contactOffset;
+    }
     if (this.heroTablet) {
       const heroY = medallionOpening
         ? 3.3
@@ -1005,6 +1032,16 @@ export class StoryWorld3D {
       motionTime
     );
     this.applyMorph(crossing, crossingProgress);
+    // Ne pas montrer les prototypes procéduraux en attendant les objets finis.
+    for (const [chapter, feature] of this.features) {
+      const waiting =
+        chapter === 'stack'
+          ? this.clockBreakPivots.length === 0
+          : chapter === 'solutions'
+            ? this.solutionsMonolithPivots.length === 0
+            : chapter !== 'identity' && !this.craftedScenes.has(chapter);
+      if (waiting) feature.group.visible = false;
+    }
     if (!medallionOpening && !this.reduced && this.animated) {
       const floating = 1 - identityPresence;
       this.world.position.y += Math.sin(motionTime * 0.82) * 0.075 * floating;
@@ -1035,7 +1072,6 @@ export class StoryWorld3D {
       if (this.clock.visible)
         this.clock.quaternion.copy(this.world.quaternion).invert();
     }
-    this.world.visible = !(scene === 'contact' && this.contactDisclosure?.open);
     // Tant que les shaders ne sont pas prêts, on ne dessine pas : la première utilisation
     // d'un programme non compilé bloque la page jusqu'à la fin de la compilation.
     if (!this.programsReady) return;
@@ -1922,20 +1958,23 @@ export class StoryWorld3D {
         response.ok ? response.arrayBuffer() : Promise.reject(new Error(url))
       )
       .catch(() => null);
-    this.loadQueue.push(async () => {
-      const buffer = await bytes;
-      if (!buffer || this.destroyed) return;
-      await new Promise<void>((resolve) => {
-        new GLTFLoader().parse(
-          buffer,
-          `${window.location.origin}/models/`,
-          (asset) => {
-            if (!this.destroyed) onLoad(asset);
-            resolve();
-          },
-          () => resolve()
-        );
-      });
+    this.loadQueue.push({
+      url,
+      load: async () => {
+        const buffer = await bytes;
+        if (!buffer || this.destroyed) return;
+        await new Promise<void>((resolve) => {
+          new GLTFLoader().parse(
+            buffer,
+            `${window.location.origin}/models/`,
+            (asset) => {
+              if (!this.destroyed) onLoad(asset);
+              resolve();
+            },
+            () => resolve()
+          );
+        });
+      },
     });
     if (!this.loadQueueStarted) {
       this.loadQueueStarted = true;
@@ -1949,7 +1988,7 @@ export class StoryWorld3D {
    * On attend que la page se soit arrêtée (lecture ponctuelle, sans écouteur scroll),
    * mais jamais plus de 4 s pour que les objets finissent par arriver.
    */
-  private whenScrollIdle(): Promise<void> {
+  private whenScrollIdle(maxWaitMs = 4000): Promise<void> {
     return new Promise((resolve) => {
       const started = performance.now();
       let lastY = window.scrollY;
@@ -1961,7 +2000,11 @@ export class StoryWorld3D {
           lastY = y;
           calmSince = now;
         }
-        if (this.destroyed || now - calmSince > 250 || now - started > 4000) {
+        if (
+          this.destroyed ||
+          now - calmSince > 250 ||
+          now - started > maxWaitMs
+        ) {
           resolve();
           return;
         }
@@ -1973,14 +2016,20 @@ export class StoryWorld3D {
 
   private pumpLoadQueue(): void {
     if (this.loadQueueBusy || this.destroyed) return;
-    const next = this.loadQueue.shift();
+    const activeScene = this.state?.scene;
+    const activeIndex = activeScene
+      ? this.loadQueue.findIndex((entry) =>
+          entry.url.includes(`/${activeScene}_`)
+        )
+      : -1;
+    const [next] = this.loadQueue.splice(activeIndex < 0 ? 0 : activeIndex, 1);
     if (!next) {
       this.queueWarmup();
       return;
     }
     this.loadQueueBusy = true;
     void this.whenScrollIdle()
-      .then(next)
+      .then(next.load)
       .finally(() => {
         this.loadQueueBusy = false;
         window.setTimeout(() => this.pumpLoadQueue(), 160);
@@ -2039,7 +2088,27 @@ export class StoryWorld3D {
     // Une texture par tranche de temps, pour ne jamais bloquer l'image.
     for (const texture of textures) {
       if (this.destroyed) return;
+      if (
+        (import.meta.env.DEV ||
+          import.meta.env.MODE === 'startup-experiment') &&
+        new URLSearchParams(location.search).has('idle-warmup')
+      ) {
+        await this.whenScrollIdle(10000);
+      }
+      if (this.destroyed) return;
+      if (
+        (import.meta.env.DEV ||
+          import.meta.env.MODE === 'startup-experiment') &&
+        new URLSearchParams(location.search).has('warmup-trace')
+      )
+        performance.mark('warmup-texture-start');
       renderer.initTexture(texture);
+      if (
+        (import.meta.env.DEV ||
+          import.meta.env.MODE === 'startup-experiment') &&
+        new URLSearchParams(location.search).has('warmup-trace')
+      )
+        performance.measure('warmup-texture', 'warmup-texture-start');
       await new Promise<void>((resolve) => window.setTimeout(resolve, 24));
     }
     await this.primePipelines();
@@ -2062,6 +2131,14 @@ export class StoryWorld3D {
     });
     const BATCH = 36;
     for (let start = 0; start < meshes.length; start += BATCH) {
+      if (this.destroyed) return;
+      if (
+        (import.meta.env.DEV ||
+          import.meta.env.MODE === 'startup-experiment') &&
+        new URLSearchParams(location.search).has('idle-warmup')
+      ) {
+        await this.whenScrollIdle(10000);
+      }
       if (this.destroyed) return;
       const batch = meshes.slice(start, start + BATCH);
       const saved: Array<() => void> = [];
@@ -2089,9 +2166,21 @@ export class StoryWorld3D {
       });
       renderer.setScissorTest(true);
       renderer.setScissor(0, 0, 1, 1);
+      if (
+        (import.meta.env.DEV ||
+          import.meta.env.MODE === 'startup-experiment') &&
+        new URLSearchParams(location.search).has('warmup-trace')
+      )
+        performance.mark('warmup-draw-start');
       try {
         renderer.render(this.scene, this.camera);
       } finally {
+        if (
+          (import.meta.env.DEV ||
+            import.meta.env.MODE === 'startup-experiment') &&
+          new URLSearchParams(location.search).has('warmup-trace')
+        )
+          performance.measure('warmup-draw', 'warmup-draw-start');
         renderer.setScissorTest(false);
         // Restauration en ordre inverse : les parents après leurs enfants.
         for (let i = saved.length - 1; i >= 0; i -= 1) saved[i]();
@@ -2143,6 +2232,9 @@ export class StoryWorld3D {
       this.medallionContent.remove(asset.scene);
       this.medallion.add(asset.scene);
       ready(asset.scene);
+      if (import.meta.env.MODE === 'startup-experiment') {
+        performance.mark(`scene-loaded-${scene}`);
+      }
       this.render(0);
     });
   }
@@ -2371,7 +2463,7 @@ export class StoryWorld3D {
   private updateGalaxyAstrolabe(time: number, appear: number): void {
     const group = this.features.get('galaxy')?.group;
     if (!group || this.galaxyRingSpins.length === 0) return;
-    group.scale.setScalar((this.compact ? 0.8 : 0.92) * (0.6 + 0.4 * appear));
+    group.scale.setScalar((this.compact ? 1.02 : 0.92) * (0.6 + 0.4 * appear));
     group.rotation.set(-0.28, 0.5 + Math.sin(time * 0.25) * 0.2, 0);
     // Les anneaux tournent autour de leur axe, plus vite à l'apparition.
     this.galaxyRingSpins.forEach((spin, index) => {
@@ -2568,7 +2660,7 @@ export class StoryWorld3D {
     const die = this.craftedNodes.get('DICE__die_pivot');
     const board = this.craftedNodes.get('DICE__board_pivot');
     if (!group || !die || !board) return;
-    group.scale.setScalar((this.compact ? 0.78 : 0.95) * (0.7 + 0.3 * appear));
+    group.scale.setScalar((this.compact ? 0.98 : 0.95) * (0.7 + 0.3 * appear));
     group.rotation.set(0.32, -0.35, 0);
     // Le dé ancien roule en arrivant, puis se pose sur une lente rotation.
     const tumble = (1 - appear) * Math.PI * 2.5;
@@ -2603,7 +2695,7 @@ export class StoryWorld3D {
     const book = this.craftedNodes.get('BOOK__book_pivot');
     if (!group || !book) return;
     group.scale.setScalar(
-      (this.compact ? 0.72 : 0.88) * (0.75 + 0.25 * appear)
+      (this.compact ? 0.94 : 0.88) * (0.75 + 0.25 * appear)
     );
     group.rotation.set(0.42, 0.28, 0);
     book.position.y =
@@ -2689,8 +2781,10 @@ export class StoryWorld3D {
     const group = this.features.get('solutions')?.group;
     if (!group || this.solutionsMonolithPivots.length !== 4) return;
     group.scale.setScalar(
-      (this.compact ? 0.72 : 1.05) * (0.8 + 0.2 * visibility)
+      (this.compact ? 0.84 : 1.05) * (0.8 + 0.2 * visibility)
     );
+    // Dégager la pièce du texte sur téléphone et sous le texte sur tablette.
+    group.position.y = this.compact ? (innerWidth <= 600 ? 0.45 : -0.45) : 0;
     group.rotation.set(
       -0.08,
       0.5 + (this.reduced ? 0 : Math.sin(time * 0.4) * 0.18),

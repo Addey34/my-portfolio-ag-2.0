@@ -740,7 +740,7 @@ button:focus-visible {
 .chapter__proof-label {
   margin: 0;
   color: var(--chapter-accent, var(--accent));
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -782,7 +782,7 @@ button:focus-visible {
 .chapter__link-note {
   margin: 0;
   color: var(--fg-muted);
-  font-size: 0.76rem;
+  font-size: 0.875rem;
   font-style: italic;
 }
 
@@ -1253,6 +1253,15 @@ button:focus-visible {
   width: 1.35rem;
   height: 1px;
   background: currentColor;
+}
+
+.contact__fields {
+  display: grid;
+  min-width: 0;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 .contact__form-grid {
@@ -4244,7 +4253,7 @@ button:focus-visible {
 }
 
 .chapter__proof-value {
-  font-size: 0.74rem;
+  font-size: 0.875rem;
 }
 
 .project-threshold {
@@ -4392,7 +4401,7 @@ button:focus-visible {
 
   .section--intro {
     justify-content: flex-end;
-    padding-bottom: clamp(5rem, 11svh, 7rem);
+    padding-bottom: clamp(7rem, 17svh, 10rem);
   }
 
   .section--stack {
@@ -4432,7 +4441,7 @@ button:focus-visible {
   .section--offers .offer-grid {
     position: relative;
     z-index: 3;
-    margin-top: clamp(18rem, 42svh, 22rem);
+    margin-top: clamp(12rem, 28svh, 16rem);
   }
 
   .section--offers .offer-card {
@@ -4591,7 +4600,7 @@ button:focus-visible {
   border: 1px solid color-mix(in srgb, var(--fg-muted) 58%, transparent);
   border-radius: 50%;
   background: var(--bg);
-  opacity: calc(0.12 + var(--rail-depth) * 0.6 + var(--rail-proximity) * 0.12);
+  opacity: calc(0.48 + var(--rail-depth) * 0.38 + var(--rail-proximity) * 0.1);
   transform: scale(
     calc(0.82 + var(--rail-depth) * 0.3 + var(--rail-proximity) * 0.2)
   );
@@ -4606,6 +4615,7 @@ button:focus-visible {
 .rail__label {
   position: static;
   min-width: 0;
+  overflow: hidden;
   padding: 0;
   border: 0;
   color: var(--fg);
@@ -4613,7 +4623,9 @@ button:focus-visible {
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.025em;
-  opacity: calc(0.05 + var(--rail-depth) * 0.82 + var(--rail-proximity) * 0.1);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: calc(0.62 + var(--rail-depth) * 0.28 + var(--rail-proximity) * 0.1);
   pointer-events: none;
   transform: translateX(calc((1 - var(--rail-depth)) * -3px));
   backdrop-filter: none;
@@ -4632,8 +4644,8 @@ button:focus-visible {
 
 .rail__dot:not(.is-current):is(:hover, :focus-visible, .is-pointer)
   .rail__label {
-  opacity: calc(0.05 + var(--rail-depth) * 0.82 + var(--rail-proximity) * 0.1);
-  transform: translateX(calc((1 - var(--rail-depth)) * -3px));
+  opacity: 1;
+  transform: translateX(3px);
 }
 
 .rail__dot:hover .rail__marker,
@@ -4667,6 +4679,15 @@ button:focus-visible {
    chapitre courant reste au centre, son nom s'affiche au-dessus et un
    glissement du doigt vers la gauche ou la droite change de chapitre. */
 @media (max-width: 860px) {
+  /* Les textes restent lisibles lorsque la lettre fixe passe derrière eux. */
+  body:has(.contact__disclosure[open]) .contact__title,
+  body:has(.contact__disclosure[open]) .contact__lead {
+    text-shadow:
+      0 1px 3px #03050a,
+      0 0 0.5rem #03050a,
+      0 0 1rem #03050a;
+  }
+
   /* Le formulaire ouvert utilise toute la hauteur de lecture disponible. */
   body:has(.contact__disclosure[open]) .rail {
     visibility: hidden;
@@ -5019,6 +5040,11 @@ button:focus-visible {
   .contact__signals li:last-child {
     border-bottom: 1px solid var(--line);
   }
+
+  /* La lettre reste visible à droite sans recouvrir les étapes du contact. */
+  body:has(.contact__disclosure[open]) .contact__signals {
+    padding-right: 5.5rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5048,7 +5074,7 @@ button:focus-visible {
   }
 
   .chapter__proof-value {
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     line-height: 1.4;
   }
 }
@@ -5327,7 +5353,8 @@ button:focus-visible {
 }
 
 /* Détail technique dépliable : le panneau reste lisible sans défilement. */
-.chapter__more {
+.chapter__more,
+.chapter__preview {
   margin-top: 1rem;
   border-top: 1px solid var(--line);
   padding-top: 0.6rem;
@@ -5357,7 +5384,7 @@ button:focus-visible {
   line-height: 1;
 }
 
-.chapter__more[open] > .chapter__more-toggle::after {
+:is(.chapter__more, .chapter__preview)[open] > .chapter__more-toggle::after {
   content: '–';
 }
 
@@ -5372,13 +5399,33 @@ button:focus-visible {
   margin-top: 0.4rem;
 }
 
+.chapter__preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0.75rem 0 1rem;
+  border: 1px solid color-mix(in srgb, var(--chapter-accent) 45%, transparent);
+  border-radius: 0.5rem;
+}
+
+/* Variante locale de rythme mobile, activée uniquement par le mode développement. */
+@media (max-width: 860px) {
+  .compact-mobile .chapter__inner {
+    padding-top: 42svh;
+  }
+
+  .compact-mobile .chapter__beat--outcome {
+    margin-top: 16svh;
+  }
+}
+
 .chapter__beat--outcome > .chapter__proof {
   grid-template-columns: 1fr;
 }
 
 /* Ouvert, le panneau peut dépasser l'écran : il défile alors sur lui-même. */
 @media (min-width: 861px) {
-  .chapter__panel:has(.chapter__more[open]) {
+  .chapter__panel:has(.chapter__more[open], .chapter__preview[open]) {
     max-height: calc(100svh - 6rem);
     overflow-y: auto;
   }
@@ -6088,6 +6135,24 @@ button:focus-visible {
 }
 
 /* Écran d'attente : ne dépend que de ce fichier, avec repli automatique sans JS. */
+.no-js .boot-loader {
+  display: none;
+}
+
+.no-js .hud,
+.no-js .contact__disclosure,
+.no-js .contact__copy {
+  display: none;
+}
+
+.no-js-content {
+  padding: 4rem max(2rem, 10vw);
+}
+
+.no-js-content article {
+  margin: 2rem 0;
+}
+
 .boot-loader {
   position: fixed;
   inset: 0;
@@ -6191,7 +6256,7 @@ button:focus-visible {
   }
 }
 
-/* Rail desktop : plus lisible, fil de progression titane/laiton, poignée évidente. */
+/* Rail desktop : repères alignés et progression en laiton. */
 @media (min-width: 861px) {
   .rail {
     cursor: grab;
@@ -6205,6 +6270,13 @@ button:focus-visible {
   .rail__dot {
     height: 2.3rem;
     cursor: inherit;
+    transform: none;
+  }
+
+  .rail__dot.is-current,
+  .rail.is-dragging .rail__dot,
+  .rail.is-dragging .rail__dot.is-current {
+    transform: none;
   }
 
   .rail__marker {
@@ -6229,8 +6301,29 @@ button:focus-visible {
     );
   }
 
-  /* Fil vertical derrière les repères : gris titane, rempli en laiton jusqu'au chapitre courant. */
-  .rail::before,
+  .rail__dot.is-current {
+    background: linear-gradient(
+      90deg,
+      rgba(201, 164, 92, 0.13),
+      rgba(201, 164, 92, 0.035)
+    );
+    box-shadow: inset 0 0 0 1px rgba(201, 164, 92, 0.22);
+  }
+
+  .rail__dot.is-current .rail__label {
+    overflow: visible;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.05;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  /* Seule la progression en laiton relie les centres des repères. */
+  .rail::before {
+    display: none;
+  }
+
   .rail::after {
     content: '';
     display: block;
@@ -6241,11 +6334,6 @@ button:focus-visible {
     border-radius: 2px;
     pointer-events: none;
     z-index: 0;
-  }
-
-  .rail::before {
-    height: calc((var(--rail-count, 10) - 1) * 2.38rem);
-    background: color-mix(in srgb, var(--titanium-deep) 55%, transparent);
   }
 
   .rail::after {
@@ -6260,15 +6348,106 @@ button:focus-visible {
   .rail.is-dragging .rail__marker {
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--brass) 18%, transparent);
   }
+}
 
-  .rail.is-dragging .rail__dot {
-    transform: scale(
-      calc(0.9 + var(--rail-depth) * 0.1 + var(--rail-proximity) * 0.04)
+/* Les étapes déjà parcourues restent distinctes du chapitre courant. */
+.rail__dot.is-complete .rail__marker {
+  border-color: var(--brass);
+  background: var(--brass);
+  opacity: 0.8;
+}
+
+/* Navigation mobile compacte : laisser une plus grande zone de lecture. */
+@media (max-width: 860px) {
+  html {
+    scroll-padding-top: calc(4.75rem + env(safe-area-inset-top));
+    scroll-padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  }
+
+  .hud {
+    top: max(0.4rem, env(safe-area-inset-top));
+    right: max(0.4rem, env(safe-area-inset-right));
+    gap: 0.2rem;
+    padding: 0.15rem;
+  }
+
+  .rail {
+    height: calc(3.5rem + env(safe-area-inset-bottom));
+  }
+
+  .rail::before {
+    background: linear-gradient(
+      to top,
+      rgba(3, 5, 10, 0.88),
+      rgba(3, 5, 10, 0.65) 50%,
+      transparent
     );
   }
 
-  .rail.is-dragging .rail__dot.is-current {
-    transform: scale(1.07);
+  .rail__dot {
+    bottom: calc(0.25rem + env(safe-area-inset-bottom));
+  }
+
+  .rail__label {
+    max-width: min(14rem, calc(100vw - 2rem));
+    margin-bottom: 0.05rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Galaxy : l'objet, puis une fenêtre directe sur le véritable produit. */
+.chapter__exhibit {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    margin: 1.2rem 0 1.3rem;
+    border: 1px solid color-mix(in srgb, var(--chapter-accent) 45%, transparent);
+    border-radius: 0.45rem;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit span {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 0.5rem 0.7rem;
+    background: rgba(5, 7, 14, 0.9);
+    color: var(--chapter-accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit:focus-visible {
+    outline: 2px solid var(--chapter-accent);
+    outline-offset: 4px;
+  }
+
+  #galaxy .chapter__beat--outcome {
+    margin-top: 10svh;
+  }
+}
+
+/* Chaque pièce conserve sa propre respiration mobile. */
+@media (max-width: 860px) {
+  #ludora .chapter__beat--outcome {
+    margin-top: 12svh;
+  }
+
+  #magnotes .chapter__beat--outcome {
+    margin-top: 14svh;
   }
 }
 

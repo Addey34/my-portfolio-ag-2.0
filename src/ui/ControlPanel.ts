@@ -65,18 +65,18 @@ export class ControlPanel {
   attachTrigger(el: HTMLElement): void {
     el.addEventListener('click', (e) => {
       e.stopPropagation();
-      this.toggle();
+      this.toggle(el);
     });
   }
 
-  private toggle(): void {
+  private toggle(trigger: HTMLElement): void {
     if (this.open) this.close();
-    else this.show();
+    else this.show(trigger);
   }
 
-  private show(): void {
+  private show(trigger: HTMLElement): void {
     this.open = true;
-    this.lastFocused = document.activeElement as HTMLElement | null;
+    this.lastFocused = trigger;
     this.root.hidden = false;
     this.root
       .querySelector<HTMLElement>('.controls__switch')
@@ -170,9 +170,24 @@ export class ControlPanel {
 
   private bindOutsideClose(): void {
     document.addEventListener('keydown', (e) => {
-      if (this.open && e.key === 'Escape') {
+      if (!this.open) return;
+      if (e.key === 'Escape') {
         e.preventDefault();
         this.close();
+      } else if (e.key === 'Tab') {
+        const focusable = Array.from(
+          this.root.querySelectorAll<HTMLElement>(
+            'button:not(:disabled), select:not(:disabled)'
+          )
+        );
+        const index = focusable.indexOf(document.activeElement as HTMLElement);
+        const next = e.shiftKey
+          ? index <= 0
+            ? focusable.length - 1
+            : index - 1
+          : (index + 1) % focusable.length;
+        e.preventDefault();
+        focusable[next]?.focus();
       }
     });
     document.addEventListener('click', (e) => {

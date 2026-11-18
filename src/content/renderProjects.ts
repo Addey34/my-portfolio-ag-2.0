@@ -1,5 +1,5 @@
 import { CASE_STUDIES, PROJECTS, type Project } from '@/content/projects';
-import { registerDynamic, t, tl } from '@/i18n';
+import { onLocaleChange, registerDynamic, t, tl } from '@/i18n';
 
 /**
  * Construit le seuil narratif et le DOM des chapitres depuis PROJECTS.
@@ -152,6 +152,26 @@ function buildChapter(project: Project, index: number): HTMLElement {
   stack.className = 'chapter__stack';
   project.stack.forEach((tech) => stack.appendChild(el('li', '', tech)));
 
+  const preview = document.createElement('details');
+  preview.className = 'chapter__preview';
+  const previewToggle = el(
+    'summary',
+    'chapter__more-toggle',
+    t('project.preview')
+  );
+  previewToggle.dataset.i18n = 'project.preview';
+  const previewImage = document.createElement('img');
+  previewImage.src = project.preview.src;
+  previewImage.alt = tl(project.preview.alt);
+  previewImage.loading = 'lazy';
+  previewImage.decoding = 'async';
+  previewImage.width = 1280;
+  previewImage.height = project.preview.height;
+  onLocaleChange(() => {
+    previewImage.alt = tl(project.preview.alt);
+  });
+  preview.append(previewToggle, previewImage);
+
   const links = document.createElement('div');
   links.className = 'chapter__links';
   project.links.forEach(({ label, href }, index) => {
@@ -190,8 +210,32 @@ function buildChapter(project: Project, index: number): HTMLElement {
   });
   links.appendChild(share);
 
-  context.append(meta, thesis, name, tagline, contextProof);
-  outcome.append(outcomeProof, highlights, more, stack, links);
+  context.append(meta, thesis, name, tagline);
+  const demoLink = project.links.find((link) => link.kind === 'demo');
+  if (demoLink) {
+    // Le véritable produit accompagne la pièce exposée sur petit écran.
+    const exhibit = document.createElement('a');
+    exhibit.className = 'chapter__exhibit';
+    exhibit.href = demoLink.href;
+    exhibit.target = '_blank';
+    exhibit.rel = 'noopener';
+    const image = document.createElement('img');
+    image.src = project.preview.src;
+    image.width = 1280;
+    image.height = project.preview.height;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    const caption = document.createElement('span');
+    registerDynamic(caption, () => tl(demoLink.label));
+    onLocaleChange(() => {
+      image.alt = tl(project.preview.alt);
+    });
+    image.alt = tl(project.preview.alt);
+    exhibit.append(image, caption);
+    context.appendChild(exhibit);
+  }
+  context.appendChild(contextProof);
+  outcome.append(outcomeProof, highlights, more, stack, preview, links);
   panel.append(context, outcome);
   shell.appendChild(panel);
   inner.appendChild(shell);
@@ -213,7 +257,6 @@ function buildProof(
   entries.forEach(([key, value]) => {
     const item = document.createElement('div');
     item.className = 'chapter__proof-item';
-    item.tabIndex = 0;
     item.dataset.storyFocus = '';
     const term = el('dt', 'chapter__proof-label', t(`project.${key}`));
     term.dataset.i18n = `project.${key}`;

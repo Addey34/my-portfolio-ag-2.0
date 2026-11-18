@@ -112,18 +112,24 @@ export class ScrollChoreographer {
         const top = rect.top + scrollY;
         let target = top + (rect.height - viewport) / 2;
 
-        if (section.id === 'projects-intro') {
+        if (section.id === 'projects-intro' || section.id === 'studies') {
           target = top;
-        } else if (
-          window.innerWidth <= 860 &&
-          (section.id === 'studies' || section.id === 'contact')
-        ) {
+        } else if (window.innerWidth <= 860 && section.id === 'contact') {
           // Sur mobile, l'objet 3D occupe le haut : le texte reste sous la zone réservée.
           target = top;
         } else if (window.innerWidth <= 860 && section.id === 'freelance') {
-          // Sur mobile, le monolithe n'est net qu'une fois la section engagée :
-          // l'arrêt le montre entre le texte et la liste des offres.
-          target = top + (rect.height - viewport) * 0.3;
+          // Garder le titre lisible sans masquer la pièce 3D au début de Solutions.
+          if (window.innerWidth <= 600) {
+            target = top - viewport * 0.18;
+          } else {
+            const padding = parseFloat(getComputedStyle(section).paddingTop);
+            target =
+              top +
+              Math.min(
+                (rect.height - viewport) * 0.3,
+                Math.max(0, padding - 76)
+              );
+          }
         } else if (section.classList.contains('chapter__beat--outcome')) {
           if (window.innerWidth > 860) return;
           target = top - Math.max(72, viewport * 0.08);

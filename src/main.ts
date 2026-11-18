@@ -45,12 +45,6 @@ function initContactForm(): void {
   )
     return;
 
-  const disclosure = form.closest('details');
-  disclosure?.addEventListener('toggle', () => {
-    // Le dépliage change la hauteur du document : les ancres restent exactes.
-    gsap.delayedCall(0.05, () => ScrollTrigger.refresh());
-  });
-
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -71,6 +65,14 @@ function initContactForm(): void {
     link.click();
   });
   fields.disabled = false;
+}
+
+function initDisclosureRefresh(): void {
+  document.querySelectorAll('details').forEach((details) => {
+    details.addEventListener('toggle', () => {
+      gsap.delayedCall(0.05, () => ScrollTrigger.refresh());
+    });
+  });
 }
 
 /** Adresse visible et copiable : le formulaire mailto ne suffit pas en webmail. */
@@ -128,7 +130,14 @@ function initBootLoader(hasWorld: boolean): () => void {
   }
   // On attend la fin du chargement de fond (objets analysés, shaders et pièces
   // amorcés) : c'est lui qui faisait saccader les premières secondes de défilement.
-  window.addEventListener('world-settled', dismiss, { once: true });
+  const earlyBootExperiment =
+    (import.meta.env.DEV || import.meta.env.MODE === 'startup-experiment') &&
+    new URLSearchParams(window.location.search).has('early-boot');
+  window.addEventListener(
+    earlyBootExperiment ? 'world-ready' : 'world-settled',
+    dismiss,
+    { once: true }
+  );
   window.setTimeout(dismiss, 12000);
   return dismiss;
 }
@@ -144,14 +153,23 @@ function createFpsProbe(): FPSCounter {
 function boot(): void {
   // 1. Contenu injecté depuis la source unique (les chapitres projet).
   const projectsMount = document.getElementById('projects');
-  if (projectsMount) renderProjects(projectsMount);
+  if (projectsMount) {
+    const content = document.createElement('div');
+    renderProjects(content);
+    projectsMount.replaceChildren(...content.childNodes);
+  }
   const heroProjectsMount = document.getElementById('hero-projects');
   if (heroProjectsMount) renderHeroProjects(heroProjectsMount);
   const studiesMount = document.getElementById('studies-list');
-  if (studiesMount) renderStudies(studiesMount);
+  if (studiesMount) {
+    const content = document.createElement('div');
+    renderStudies(content);
+    studiesMount.replaceChildren(...content.childNodes);
+  }
 
   // 2. i18n : applique la langue courante à tout le DOM (statique + dynamique).
   initI18n();
+  initDisclosureRefresh();
   initContactForm();
   initContactEmail();
   const langBtn = document.getElementById('lang-toggle');
@@ -291,12 +309,20 @@ function boot(): void {
   });
 }
 
-// La classe .no-js est retirée dès que ce module s'exécute : les [data-reveal]
-// ne sont masqués (donc animables) que si le JS a bien démarré. SEO/no-JS safe.
-document.documentElement.classList.replace('no-js', 'js');
+// En cas d'échec synchrone au démarrage, restaurer le contenu statique complet.
+const staticMarkup = document.body.innerHTML;
 try {
+  if (
+    import.meta.env.DEV &&
+    new URLSearchParams(window.location.search).has('compact-mobile')
+  ) {
+    document.documentElement.classList.add('compact-mobile');
+  }
+  document.documentElement.classList.replace('no-js', 'js');
   boot();
 } catch (error) {
+  document.body.innerHTML = staticMarkup;
+  document.documentElement.classList.remove('compact-mobile');
   document.documentElement.classList.replace('js', 'no-js');
-  throw error;
+  console.error('Échec du démarrage du portfolio :', error);
 }
