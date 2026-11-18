@@ -29,6 +29,8 @@ async function checkFallback(page: Page) {
 }
 
 test('parcours normal FR et EN, bouton et clavier sans envoi réel', async ({ page }) => {
+  test.setTimeout(120_000);
+  page.setDefaultTimeout(25_000);
   const leaks = await guard(page);
   await page.addInitScript(() => {
     const original = HTMLAnchorElement.prototype.click;
@@ -43,7 +45,7 @@ test('parcours normal FR et EN, bouton et clavier sans envoi réel', async ({ pa
   await page.goto('/');
   await expect(page.locator('#boot-loader')).toHaveCount(0, { timeout: 60000 });
   const summary = page.locator('.contact__form-toggle');
-  await summary.scrollIntoViewIfNeeded();
+  await summary.scrollIntoViewIfNeeded({ timeout: 25_000 });
   await summary.click();
   const form = page.locator('#contact-form');
   await expect(form.locator('#contact-name')).toBeEnabled();
@@ -59,7 +61,7 @@ test('parcours normal FR et EN, bouton et clavier sans envoi réel', async ({ pa
   await expect(form.locator('button[type=submit]')).toHaveText('Prepare the message');
   await page.evaluate(() => { delete document.documentElement.dataset.testMailto; });
   await form.locator('#contact-name').focus();
-  await page.keyboard.press('Enter');
+  await test.step('Validation clavier', () => page.keyboard.press('Enter'), { timeout: 25_000 });
   mail = await page.locator('html').getAttribute('data-test-mailto');
   expect(decodeURIComponent(mail ?? '')).toContain(marker);
   expect(leaks).toEqual([]);

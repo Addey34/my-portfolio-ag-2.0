@@ -6,6 +6,8 @@ const email = 'qualification@example.invalid';
 const message = 'MessageSynthétique & élève\nDeuxième ligne';
 
 test('validation native, trim, encodage exact et clavier FR/EN', async ({ page }) => {
+  test.setTimeout(120_000);
+  page.setDefaultTimeout(25_000);
   await page.route('**/*', async (route) => {
     const data = route.request().url() + (route.request().postData() ?? '');
     if (/NomSynth|MessageSynth|qualification(?:%40|@)example/i.test(data)) throw new Error('Données synthétiques sur le réseau');
@@ -21,7 +23,7 @@ test('validation native, trim, encodage exact et clavier FR/EN', async ({ page }
   await page.goto('/');
   await expect(page.locator('#boot-loader')).toHaveCount(0, { timeout: 60000 });
   const toggle = page.locator('.contact__form-toggle');
-  await toggle.scrollIntoViewIfNeeded();
+  await toggle.scrollIntoViewIfNeeded({ timeout: 25_000 });
   await toggle.click();
   const form = page.locator('#contact-form');
   const nom = form.locator('#contact-name');
@@ -38,7 +40,7 @@ test('validation native, trim, encodage exact et clavier FR/EN', async ({ page }
   await expect(page.locator('html')).not.toHaveAttribute('data-test-mail', /.+/);
   await nom.fill(name); await texte.fill('   '); await submit.click();
   await expect(page.locator('html')).not.toHaveAttribute('data-test-mail', /.+/);
-  await texte.fill(message); await nom.focus(); await page.keyboard.press('Enter');
+  await texte.fill(message); await nom.focus(); await test.step('Validation clavier', () => page.keyboard.press('Enter'), { timeout: 25_000 });
   const href = await page.locator('html').getAttribute('data-test-mail');
   const url = new URL(href!);
   expect(url.protocol).toBe('mailto:');
@@ -47,7 +49,7 @@ test('validation native, trim, encodage exact et clavier FR/EN', async ({ page }
   expect(url.searchParams.get('body')).toBe(`Nom : ${name}\nEmail : ${email}\n\n${message}`);
   await toggle.click(); await expect(form).not.toBeVisible();
   await page.locator('#lang-toggle').click();
-  await toggle.scrollIntoViewIfNeeded(); await toggle.click();
+  await toggle.scrollIntoViewIfNeeded({ timeout: 25_000 }); await toggle.click();
   await expect(submit).toHaveText('Prepare the message');
   await expect(form).toBeVisible();
 });
