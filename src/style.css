@@ -6271,3 +6271,17 @@ button:focus-visible {
     transform: scale(1.07);
   }
 }
+
+/* Le repli conserve un contact direct en absence de module. */
+.no-js .boot-loader {
+  display: none;
+}
+
+.contact__fields {
+  display: grid;
+  min-width: 0;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}

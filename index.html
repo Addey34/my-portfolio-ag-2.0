@@ -413,18 +413,19 @@
           </summary>
           <div class="contact__form-shell">
             <form id="contact-form" class="contact__form">
+              <fieldset class="contact__fields" disabled>
               <p class="contact__form-label" data-i18n="contact.form.label">
                 Contact / brief
               </p>
               <div class="contact__form-grid">
                 <label>
                   <span data-i18n="contact.form.name">Nom</span>
-                  <input name="name" type="text" autocomplete="name" required />
+                  <input id="contact-name" type="text" autocomplete="name" required />
                 </label>
                 <label>
                   <span data-i18n="contact.form.email">Email</span>
                   <input
-                    name="email"
+                    id="contact-email"
                     type="email"
                     autocomplete="email"
                     required
@@ -433,7 +434,7 @@
               </div>
               <label>
                 <span data-i18n="contact.form.message">Projet ou contexte</span>
-                <textarea name="message" rows="4" required></textarea>
+                <textarea id="contact-message" rows="4" required></textarea>
               </label>
               <button
                 class="contact__cta"
@@ -447,14 +448,15 @@
                 (webmail), copiez l’adresse ci-dessous et écrivez-moi
                 directement.
               </p>
+              </fieldset>
             </form>
           </div>
         </details>
-        <div class="contact__links" data-reveal>
+        <div class="contact__links">
           <p class="contact__availability" data-i18n="contact.availability">
             Ouvert aux opportunités · Montpellier, France
           </p>
-          <a href="mailto:" data-contact-email></a>
+          <a href="mailto:contact@adrianguichard.dev" data-contact-email>contact@adrianguichard.dev</a>
           <button
             type="button"
             class="contact__copy"
