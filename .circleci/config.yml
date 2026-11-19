@@ -4,14 +4,14 @@ version: 2.1
 jobs:
   verify:
     docker:
-      - image: cimg/node:22.22.0-browsers
+      - image: mcr.microsoft.com/playwright:v1.64.0-noble@sha256:bc72a8df40831ded821e3cbc79c318c21b44d6e51dff9fd89ace7a8249c5b462
     resource_class: medium
     retention:
       caches: 7d
     environment:
       GITLEAKS_VERSION: 8.30.0
       GITLEAKS_SHA256: 79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e
-      PLAYWRIGHT_BROWSERS_PATH: /home/circleci/.cache/ms-playwright
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
     steps:
       - checkout
       - run:
@@ -51,16 +51,19 @@ jobs:
       - run:
           name: Tests, formatage, lint, types et build
           command: timeout --kill-after=30s 10m pnpm verify
-      - restore_cache:
-          keys:
-            - portfolio-playwright-v1-{{ checksum "pnpm-lock.yaml" }}
       - run:
-          name: Installer Chromium pour les tests cibles
-          command: timeout --kill-after=30s 10m pnpm exec playwright install --with-deps chromium
-      - save_cache:
-          key: portfolio-playwright-v1-{{ checksum "pnpm-lock.yaml" }}
-          paths:
-            - /home/circleci/.cache/ms-playwright
+          name: Verifier Chromium fourni par l image Playwright
+          command: |
+            timeout --kill-after=30s 2m node -e '
+              const fs = require("node:fs");
+              const version = require("@playwright/test/package.json").version;
+              if (version !== "1.64.0") throw new Error("Version Playwright inattendue : " + version);
+              const { chromium } = require("@playwright/test");
+              const executable = chromium.executablePath();
+              if (!executable.startsWith("/ms-playwright/")) throw new Error("Chemin Chromium inattendu : " + executable);
+              fs.accessSync(executable, fs.constants.X_OK);
+              console.log("Chromium image : " + executable);
+            '
       - run:
           name: Confidentialite du formulaire sur Chromium desktop et Android emule
           command: >-
