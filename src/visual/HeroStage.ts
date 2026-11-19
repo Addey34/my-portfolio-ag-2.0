@@ -6,7 +6,6 @@ import {
   MeshStandardMaterial,
   Object3D,
   PlaneGeometry,
-  PointLight,
   ShaderMaterial,
   TorusGeometry,
   type Texture,
@@ -16,8 +15,6 @@ import {
 export class HeroStage {
   readonly group = new Group();
   private readonly metal: MeshStandardMaterial;
-  private readonly light = new PointLight('#f7d9a3', 0, 10, 2);
-  private readonly rim = new PointLight('#bbd3e3', 0, 10, 2);
   private readonly atmosphere = new ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -72,11 +69,6 @@ export class HeroStage {
     const backdrop = new Mesh(new PlaneGeometry(6.8, 6.8), this.atmosphere);
     backdrop.position.z = -2.3;
     this.group.add(backdrop);
-    this.light.position.set(-2.1, 2.2, 3.5);
-    this.rim.position.set(2.4, -0.1, 2.2);
-    this.light.layers.set(2);
-    this.rim.layers.set(2);
-    this.group.add(this.light, this.rim);
     this.group.traverse((object) => {
       if (object instanceof Mesh) object.layers.set(2);
     });
@@ -87,8 +79,6 @@ export class HeroStage {
     this.group.visible = presence > 0.002;
     this.metal.opacity = presence * 0.8;
     this.atmosphere.uniforms.uPresence.value = presence;
-    this.light.intensity = presence * 22;
-    this.rim.intensity = presence * 12;
   }
 
   dispose(): void {
@@ -99,7 +89,5 @@ export class HeroStage {
     this.group.removeFromParent();
     this.metal.dispose();
     this.atmosphere.dispose();
-    this.light.dispose();
-    this.rim.dispose();
   }
 }

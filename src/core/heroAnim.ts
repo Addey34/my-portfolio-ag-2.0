@@ -51,10 +51,14 @@ export function initHero(scroll: SmoothScroll): void {
       const reduced = prefersReducedMotion();
       const exit = ScrollTrigger.create({
         trigger: '#top',
-        start: 'top top',
+        start: () =>
+          window.matchMedia('(max-width: 860px) and (max-height: 740px)')
+            .matches
+            ? 'bottom top'
+            : 'top top',
         end: () => `+=${Math.max(40, Math.min(64, innerHeight * 0.05))}`,
         onUpdate: ({ progress }) => {
-          // Le texte quitte l'axe avant de croiser le cadran fixe.
+          // Sur écran bas, les liens restent disponibles pendant le défilement du héros.
           gsap.set(hero, {
             autoAlpha: reduced ? Number(progress < 0.5) : 1 - progress,
           });

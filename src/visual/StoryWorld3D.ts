@@ -344,7 +344,6 @@ export class StoryWorld3D {
     this.liquidMaterial
   );
   private identityRoughness: DataTexture | null = null;
-  private identityAlbedo: DataTexture | null = null;
   private readonly onResize = () => this.resize();
   private readonly onPointerMove = (event: PointerEvent) => {
     this.targetPointer.x = event.clientX / Math.max(innerWidth, 1);
@@ -1178,7 +1177,6 @@ export class StoryWorld3D {
     this.heroStage?.dispose();
     this.galaxySignature.dispose();
     this.identityRoughness?.dispose();
-    this.identityAlbedo?.dispose();
     this.metalReflection?.dispose();
     this.renderer?.dispose();
   }
@@ -1401,7 +1399,6 @@ export class StoryWorld3D {
     const identityMaterials: Feature['materials'] = [];
     const textureSize = 256;
     const roughnessData = new Uint8Array(textureSize * textureSize * 4);
-    const albedoData = new Uint8Array(textureSize * textureSize * 4);
     let grain = 173;
     for (let pixel = 0; pixel < textureSize * textureSize; pixel += 1) {
       grain = (grain * 1664525 + 1013904223) >>> 0;
@@ -1418,17 +1415,6 @@ export class StoryWorld3D {
       roughnessData[offset + 1] = value;
       roughnessData[offset + 2] = value;
       roughnessData[offset + 3] = 255;
-      const surface = Math.max(
-        205,
-        Math.min(
-          250,
-          236 + brushed * 0.42 + ((grain >>> 24) - 128) * 0.045 + mark * 0.65
-        )
-      );
-      albedoData[offset] = surface - 5;
-      albedoData[offset + 1] = surface;
-      albedoData[offset + 2] = Math.min(255, surface + 7);
-      albedoData[offset + 3] = 255;
     }
     // Les stries et micro-entailles travaillent la rugosité et le relief.
     this.identityRoughness = new DataTexture(
@@ -1441,17 +1427,6 @@ export class StoryWorld3D {
     this.identityRoughness.wrapT = RepeatWrapping;
     this.identityRoughness.repeat.set(1.25, 1.25);
     this.identityRoughness.needsUpdate = true;
-    this.identityAlbedo = new DataTexture(
-      albedoData,
-      textureSize,
-      textureSize,
-      RGBAFormat
-    );
-    this.identityAlbedo.colorSpace = SRGBColorSpace;
-    this.identityAlbedo.wrapS = RepeatWrapping;
-    this.identityAlbedo.wrapT = RepeatWrapping;
-    this.identityAlbedo.repeat.set(1.25, 1.25);
-    this.identityAlbedo.needsUpdate = true;
     const heroKey = new DirectionalLight('#e5eeff', 1.8);
     heroKey.position.set(-3, 4, 6);
     heroKey.castShadow = true;
