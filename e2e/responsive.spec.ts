@@ -186,7 +186,7 @@ test('les aperçus des produits sont accessibles et traduits', async ({
     'View of the interactive Galaxy solar system.'
   );
   await expect(page.locator('#galaxy .chapter__preview summary')).toHaveText(
-    'See a product preview'
+    'Enlarge the product screenshot'
   );
   expect(
     await page.evaluate(
