@@ -6464,3 +6464,76 @@ button:focus-visible {
   padding: 0;
   border: 0;
 }
+
+/* Galaxy : l'instrument et le produit partagé dans une même composition. */
+@media (min-width: 861px) {
+  #galaxy .chapter__beat--context {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: 1.25rem;
+    align-items: start;
+  }
+  #galaxy .chapter__meta,
+  #galaxy .chapter__thesis,
+  #galaxy .chapter__name,
+  #galaxy .chapter__tagline {
+    grid-column: 1;
+  }
+  #galaxy .chapter__exhibit {
+    display: block;
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / 5;
+    overflow: hidden;
+    border: 1px solid rgba(197, 164, 115, 0.6);
+    border-radius: 0.35rem;
+    text-decoration: none;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  }
+  #galaxy .chapter__exhibit img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  #galaxy .chapter__exhibit span {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 0.5rem 0.7rem;
+    background: rgba(8, 9, 13, 0.92);
+    color: #eeeae2;
+    font-size: 0.8rem;
+  }
+  #galaxy .chapter__exhibit:focus-visible {
+    outline: 2px solid #e9b84c;
+    outline-offset: 4px;
+  }
+  #galaxy .chapter__beat--context > .chapter__proof {
+    grid-column: 1 / -1;
+  }
+  #galaxy .chapter__panel {
+    background: linear-gradient(
+      125deg,
+      rgba(25, 28, 32, 0.97),
+      rgba(8, 9, 13, 0.93)
+    );
+  }
+}
+@media (max-width: 860px) {
+  #galaxy .chapter__inner {
+    padding-top: 19svh;
+  }
+  #galaxy .chapter__beat--outcome {
+    margin-top: 6svh;
+  }
+}
+
+@media (max-width: 860px) {
+  #galaxy .chapter__exhibit {
+    margin-block: 0.65rem 0.8rem;
+    scroll-margin-block: 5.5rem;
+  }
+  #galaxy .chapter__tagline {
+    line-height: 1.4;
+  }
+}

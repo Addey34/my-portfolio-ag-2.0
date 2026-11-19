@@ -52,6 +52,7 @@ import {
 import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { prefersReducedMotion } from '@/core/motion';
 import { clockHandAngles } from '@/visual/clockHands';
+import { GalaxySignature } from '@/visual/GalaxySignature';
 import type { VisualScene, VisualState } from '@/visual/types';
 
 const NODE_COUNT = 24;
@@ -225,6 +226,7 @@ export class StoryWorld3D {
   private stackCubeSparks: Points | null = null;
   private readonly selectionSeals: { pivot: Object3D; base: Vector3 }[] = [];
   private readonly galaxyRingSpins: Object3D[] = [];
+  private readonly galaxySignature = new GalaxySignature();
   /** Scènes dont la forme vient d'un GLB fini : les anciennes animations par pièce les ignorent. */
   private readonly craftedScenes = new Set<VisualScene>();
   private readonly craftedNodes = new Map<string, Object3D>();
@@ -262,6 +264,8 @@ export class StoryWorld3D {
   });
   private readonly filamentGlow = new Sprite(this.filamentGlowMaterial);
   private filamentMaterial: MeshStandardMaterial | null = null;
+  private lampReflector: MeshStandardMaterial | null = null;
+  private lampReflectorColor: Color | null = null;
   private readonly clockHands: Object3D[] = [];
   private readonly clockMelt = { value: 0 };
   private readonly clockMorph = { value: 0 };
@@ -959,7 +963,8 @@ export class StoryWorld3D {
       medallionOpening,
       medallionOpening && crossing === 'identity-stack'
         ? 1 - smooth((identityStackProgress - 0.5) / 0.23)
-        : 1 - shellBurst
+        : 1 - shellBurst,
+      galaxyPresence
     );
     if (directOpening || medallionOpening) {
       this.liquid.visible = false;
@@ -1160,6 +1165,7 @@ export class StoryWorld3D {
       });
       materials.forEach((material) => material.dispose());
     });
+    this.galaxySignature.dispose();
     this.identityRoughness?.dispose();
     this.identityAlbedo?.dispose();
     this.metalReflection?.dispose();
@@ -2453,7 +2459,8 @@ export class StoryWorld3D {
       (object) => {
         if (/ASTRO__ring_\d_spin$/.test(object.name)) spins.push(object);
       },
-      () => {
+      (root) => {
+        this.galaxySignature.install(root);
         spins.sort((a, b) => a.name.localeCompare(b.name));
         this.galaxyRingSpins.push(...spins);
       }
@@ -2463,7 +2470,7 @@ export class StoryWorld3D {
   private updateGalaxyAstrolabe(time: number, appear: number): void {
     const group = this.features.get('galaxy')?.group;
     if (!group || this.galaxyRingSpins.length === 0) return;
-    group.scale.setScalar((this.compact ? 1.02 : 0.92) * (0.6 + 0.4 * appear));
+    group.scale.setScalar((this.compact ? 1.14 : 1.2) * (0.6 + 0.4 * appear));
     group.rotation.set(-0.28, 0.5 + Math.sin(time * 0.25) * 0.2, 0);
     // Les anneaux tournent autour de leur axe, plus vite à l'apparition.
     this.galaxyRingSpins.forEach((spin, index) => {
@@ -3379,6 +3386,10 @@ export class StoryWorld3D {
       });
       materials.forEach((material) => {
         this.tuneLampMaterial(material);
+        if (material.name.toLowerCase().includes('porcelain reflector')) {
+          this.lampReflector = material;
+          this.lampReflectorColor = material.color.clone();
+        }
         this.lampMaterials.push(material);
       });
       this.lampSwing.add(asset.scene);
@@ -3531,7 +3542,8 @@ export class StoryWorld3D {
     clockAgProgress: number,
     directProgress: number | null,
     medallionOpening: boolean,
-    shellPresence: number
+    shellPresence: number,
+    galaxyPresence: number
   ): void {
     const active =
       medallionOpening ||
@@ -3599,12 +3611,23 @@ export class StoryWorld3D {
     });
     this.lampSwing.visible = this.lampReady;
     this.bulbLight.intensity =
-      (this.compact || this.heroTablet ? 24 : 30) * this.lampLab.power;
+      (this.compact || this.heroTablet ? 24 : 30) *
+      this.lampLab.power *
+      (1 - 0.28 * galaxyPresence);
     this.reflectorBounce.intensity =
-      (this.compact || this.heroTablet ? 17 : 22) * this.lampLab.power;
+      (this.compact || this.heroTablet ? 17 : 22) *
+      this.lampLab.power *
+      (1 - 0.32 * galaxyPresence);
     this.filamentGlowMaterial.opacity =
-      this.compact || this.heroTablet ? 0.35 : 0.45;
-    if (this.filamentMaterial) this.filamentMaterial.emissiveIntensity = 2.7;
+      (this.compact || this.heroTablet ? 0.35 : 0.45) *
+      (1 - 0.55 * galaxyPresence);
+    if (this.filamentMaterial)
+      this.filamentMaterial.emissiveIntensity =
+        2.7 * (1 - 0.5 * galaxyPresence);
+    if (this.lampReflector && this.lampReflectorColor)
+      this.lampReflector.color
+        .copy(this.lampReflectorColor)
+        .multiplyScalar(1 - 0.55 * galaxyPresence);
     this.clockMaterials.forEach((material, index) => {
       const finish = this.clockFinishes.get(material);
       if (finish) {
@@ -3875,6 +3898,12 @@ export class StoryWorld3D {
     const motion = this.reduced ? 0 : time * 0.001;
     this.updateSelectionSeals(motion, this.featureAppear('selection'));
     this.updateGalaxyAstrolabe(motion, this.featureAppear('galaxy'));
+    this.galaxySignature.update(
+      this.featureAppear('galaxy'),
+      motion,
+      this.reduced,
+      this.liteMode
+    );
     this.updateLudoraDice(motion, this.featureAppear('ludora'));
     this.updateMagnotesGrimoire(motion, this.featureAppear('magnotes'));
     this.updateStudiesArtifacts(motion, this.featureAppear('studies'));

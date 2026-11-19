@@ -43,6 +43,7 @@ const fr: Dict = {
   'project.limit': 'Où ça s’arrête',
   'project.more': 'Détail technique et ce qui est vérifié',
   'project.preview': 'Voir un aperçu du produit',
+  'project.previewLarge': 'Agrandir la capture du produit',
   'studies.kicker': 'Études complémentaires',
   'studies.title': 'Deux autres systèmes, deux problèmes concrets.',
   'studies.lead':
@@ -176,6 +177,7 @@ const en: Dict = {
   'project.limit': 'Where it stops',
   'project.more': 'Technical detail and what has been verified',
   'project.preview': 'See a product preview',
+  'project.previewLarge': 'Enlarge the product screenshot',
   'studies.kicker': 'Additional case studies',
   'studies.title': 'Two more systems, two concrete problems.',
   'studies.lead':

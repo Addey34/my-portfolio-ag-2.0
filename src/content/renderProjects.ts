@@ -154,12 +154,10 @@ function buildChapter(project: Project, index: number): HTMLElement {
 
   const preview = document.createElement('details');
   preview.className = 'chapter__preview';
-  const previewToggle = el(
-    'summary',
-    'chapter__more-toggle',
-    t('project.preview')
-  );
-  previewToggle.dataset.i18n = 'project.preview';
+  const previewKey =
+    project.id === 'galaxy' ? 'project.previewLarge' : 'project.preview';
+  const previewToggle = el('summary', 'chapter__more-toggle', t(previewKey));
+  previewToggle.dataset.i18n = previewKey;
   const previewImage = document.createElement('img');
   previewImage.src = project.preview.src;
   previewImage.alt = tl(project.preview.alt);
