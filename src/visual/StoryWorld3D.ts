@@ -307,6 +307,11 @@ export class StoryWorld3D {
     this.queueWarmup()
   );
   private warmupTimers: number[] = [];
+  // Les deux passes ne réinitialisent que les textures ou sources modifiées.
+  private initializedTextures = new WeakMap<Texture, [number, number]>();
+  private readonly onContextRestored = () => {
+    this.initializedTextures = new WeakMap<Texture, [number, number]>();
+  };
   private readonly loadQueue: Array<{
     url: string;
     load: () => Promise<void>;
@@ -403,6 +408,10 @@ export class StoryWorld3D {
     renderer.shadowMap.type = PCFShadowMap;
     this.metalReflection = this.createMetalReflection(renderer);
     this.heroStage = new HeroStage(this.metalReflection.texture);
+    renderer.domElement.addEventListener(
+      'webglcontextrestored',
+      this.onContextRestored
+    );
     this.camera.position.set(0, 0, 15);
     this.camera.lookAt(0, 0, 0);
     // Les calques 1 et 2 isolent la lampe et l'horloge des éclairages généraux.
@@ -1174,6 +1183,10 @@ export class StoryWorld3D {
       });
       materials.forEach((material) => material.dispose());
     });
+    this.renderer?.domElement.removeEventListener(
+      'webglcontextrestored',
+      this.onContextRestored
+    );
     this.heroStage?.dispose();
     this.galaxySignature.dispose();
     this.identityRoughness?.dispose();
@@ -2077,6 +2090,13 @@ export class StoryWorld3D {
     });
     // Une texture par tranche de temps, pour ne jamais bloquer l'image.
     for (const texture of textures) {
+      const initialized = this.initializedTextures.get(texture);
+      if (
+        initialized &&
+        initialized[0] === texture.version &&
+        initialized[1] === texture.source.version
+      )
+        continue;
       if (this.destroyed) return;
       if (
         (import.meta.env.DEV ||
@@ -2093,6 +2113,10 @@ export class StoryWorld3D {
       )
         performance.mark('warmup-texture-start');
       renderer.initTexture(texture);
+      this.initializedTextures.set(texture, [
+        texture.version,
+        texture.source.version,
+      ]);
       if (
         (import.meta.env.DEV ||
           import.meta.env.MODE === 'startup-experiment') &&
