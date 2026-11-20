@@ -55,6 +55,7 @@ import { clockHandAngles } from '@/visual/clockHands';
 import { GalaxySignature } from '@/visual/GalaxySignature';
 import { TextureWarmupCache } from '@/visual/TextureWarmupCache';
 import { HeroStage } from '@/visual/HeroStage';
+import { magnotesOrganization } from '@/visual/magnotesLayout';
 import type { VisualScene, VisualState } from '@/visual/types';
 
 const NODE_COUNT = 24;
@@ -2722,22 +2723,35 @@ export class StoryWorld3D {
     group.rotation.set(0.42, 0.28, 0);
     book.position.y =
       (this.craftedBase.get('BOOK__book_pivot')?.y ?? 0) +
-      Math.sin(time * 0.7) * 0.05;
-    // Six notes s'échappent du livre et se rangent en deux rangées.
+      Math.sin(time * 0.5) * 0.015;
+    // Les mêmes fiches passent du placement libre à un registre aligné, au scroll.
+    const order = magnotesOrganization(
+      this.state?.scene,
+      this.state?.sceneProgress ?? 0,
+      this.reduced
+    );
     for (let k = 0; k < 6; k += 1) {
       const note = this.craftedNodes.get(`NOTE__0${k + 1}_pivot`);
       if (!note) continue;
       const column = k % 3;
       const row = Math.floor(k / 3);
       const settle = smooth(appear * 1.4 - k * 0.07);
-      const tx = (column - 1) * 0.7;
-      const ty = 0.05 + row * 0.55 + Math.sin(time * 0.9 + k * 1.3) * 0.05;
+      const tx = (column - 1) * 0.7 + (1 - order) * (row ? 0.14 : -0.08);
+      const ty =
+        0.08 +
+        row * 0.55 +
+        (1 - order) * Math.sin(k * 1.7) * 0.12 +
+        Math.sin(time * 0.55 + k * 1.3) * 0.012;
       note.position.set(
         tx * settle,
         -0.6 + (ty + 0.6) * settle,
         0.1 + row * 0.12 + (1 - settle) * 0.2
       );
-      note.rotation.set(0, (1 - settle) * 1.4, (column - 1) * -0.06 * settle);
+      note.rotation.set(
+        0,
+        (1 - settle) * 1.4,
+        (column - 1) * -0.12 * settle * (1 - order)
+      );
       note.scale.setScalar(0.4 + 0.6 * settle);
     }
   }
