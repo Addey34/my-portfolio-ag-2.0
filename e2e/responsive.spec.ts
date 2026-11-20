@@ -605,7 +605,10 @@ test('médaillon AG devient horloge et retrouve AG au retour', async ({
     await page.screenshot({
       path: testInfo.outputPath(`horloge-ag-${step}.png`),
     });
-    if (page.viewportSize()!.width <= 980) {
+    if (
+      page.viewportSize()!.width <= 980 &&
+      page.viewportSize()!.height > 740
+    ) {
       await expect(page.locator('.hero__inner')).toBeHidden();
     }
     expect(
@@ -615,6 +618,15 @@ test('médaillon AG devient horloge et retrouve AG au retour', async ({
           document.documentElement.clientWidth
       )
     ).toBeLessThanOrEqual(1);
+  }
+  if (page.viewportSize()!.width <= 860 && page.viewportSize()!.height <= 740) {
+    await page.evaluate(() => {
+      const top = document.querySelector('#top')!;
+      window.scrollTo(0, top.getBoundingClientRect().bottom + scrollY + 80);
+    });
+    await expect(page.locator('.hero__inner')).toBeHidden();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.locator('.hero__inner')).toBeVisible();
   }
 });
 
@@ -894,7 +906,14 @@ test('contenu utilisable avec mouvement réduit', async ({ page }) => {
   if (page.viewportSize()!.width <= 980) {
     await page.goto('/');
     await expect(page.locator('.hero__inner')).toBeVisible();
-    await page.evaluate(() => window.scrollTo(0, 100));
+    await page.evaluate(() => {
+      const top = document.querySelector('#top')!;
+      const lowScreen = innerWidth <= 860 && innerHeight <= 740;
+      window.scrollTo(
+        0,
+        lowScreen ? top.getBoundingClientRect().bottom + scrollY + 80 : 100
+      );
+    });
     await expect(page.locator('.hero__inner')).toBeHidden();
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(page.locator('.hero__inner')).toBeVisible();
@@ -1403,3 +1422,65 @@ test.describe('écran d’attente', () => {
     await expect(page.locator('#world-3d')).toBeVisible();
   });
 });
+
+for (const size of [
+  { width: 360, height: 640 },
+  { width: 390, height: 664 },
+]) {
+  test(`liens projets accessibles sur ${size.width} px`, async ({
+    page,
+    isMobile,
+  }, testInfo) => {
+    test.skip(!isMobile, 'Contrôle réservé aux profils tactiles.');
+    await page.setViewportSize(size);
+    await page.goto('/');
+    await expect(page.locator('.hero__projects a')).toHaveCount(3);
+    await expect(page.locator('.rail')).toBeAttached();
+    await page.waitForFunction(() => {
+      const projects = document.querySelector('.hero__projects');
+      return projects && getComputedStyle(projects).opacity === '1';
+    });
+    const initialOverlap = await page.evaluate(() => {
+      const rail = document.querySelector('.rail')!.getBoundingClientRect();
+      return [...document.querySelectorAll('.hero__projects a')].some(
+        (link) => {
+          const rect = link.getBoundingClientRect();
+          return (
+            rect.top < innerHeight &&
+            rect.bottom > rail.top &&
+            rect.top < rail.bottom
+          );
+        }
+      );
+    });
+    expect(initialOverlap).toBe(false);
+    for (const lang of ['fr', 'en']) {
+      if ((await page.locator('html').getAttribute('lang')) !== lang) {
+        await page.locator('#lang-toggle').click();
+      }
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
+      for (const link of await page.locator('.hero__projects a').all()) {
+        await link.evaluate((element) =>
+          element.scrollIntoView({ block: 'center', inline: 'nearest' })
+        );
+        await expect
+          .poll(async () =>
+            link.evaluate((element) => {
+              const rect = element.getBoundingClientRect();
+              const hit = document.elementFromPoint(
+                rect.left + rect.width / 2,
+                rect.top + rect.height / 2
+              );
+              return hit === element || element.contains(hit);
+            })
+          )
+          .toBe(true);
+        await expect(link).toBeInViewport();
+        await link.click({ trial: true });
+      }
+      await page.screenshot({
+        path: testInfo.outputPath('hero-links-' + lang + '.png'),
+      });
+    }
+  });
+}

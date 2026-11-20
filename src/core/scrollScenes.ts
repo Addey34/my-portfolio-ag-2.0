@@ -23,16 +23,18 @@ export function initScrollScenes(): void {
 
   const heroInner = document.querySelector<HTMLElement>('.hero__inner');
   if (heroInner) {
-    gsap.to(heroInner, {
-      yPercent: -CONFIG.heroParallax,
-      opacity: CONFIG.heroFade,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '#top',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-      },
+    gsap.matchMedia().add('(min-width: 861px), (min-height: 741px)', () => {
+      gsap.to(heroInner, {
+        yPercent: -CONFIG.heroParallax,
+        opacity: CONFIG.heroFade,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#top',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
     });
   }
   // Entrées et sorties des autres actes : voir SectionTransitions.

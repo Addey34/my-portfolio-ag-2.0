@@ -53,6 +53,7 @@ import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { prefersReducedMotion } from '@/core/motion';
 import { clockHandAngles } from '@/visual/clockHands';
 import { GalaxySignature } from '@/visual/GalaxySignature';
+import { HeroStage } from '@/visual/HeroStage';
 import type { VisualScene, VisualState } from '@/visual/types';
 
 const NODE_COUNT = 24;
@@ -227,6 +228,7 @@ export class StoryWorld3D {
   private readonly selectionSeals: { pivot: Object3D; base: Vector3 }[] = [];
   private readonly galaxyRingSpins: Object3D[] = [];
   private readonly galaxySignature = new GalaxySignature();
+  private heroStage: HeroStage | null = null;
   /** Scènes dont la forme vient d'un GLB fini : les anciennes animations par pièce les ignorent. */
   private readonly craftedScenes = new Set<VisualScene>();
   private readonly craftedNodes = new Map<string, Object3D>();
@@ -342,7 +344,6 @@ export class StoryWorld3D {
     this.liquidMaterial
   );
   private identityRoughness: DataTexture | null = null;
-  private identityAlbedo: DataTexture | null = null;
   private readonly onResize = () => this.resize();
   private readonly onPointerMove = (event: PointerEvent) => {
     this.targetPointer.x = event.clientX / Math.max(innerWidth, 1);
@@ -401,6 +402,7 @@ export class StoryWorld3D {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFShadowMap;
     this.metalReflection = this.createMetalReflection(renderer);
+    this.heroStage = new HeroStage(this.metalReflection.texture);
     this.camera.position.set(0, 0, 15);
     this.camera.lookAt(0, 0, 0);
     // Les calques 1 et 2 isolent la lampe et l'horloge des éclairages généraux.
@@ -416,6 +418,7 @@ export class StoryWorld3D {
 
     this.scene.add(this.world);
     this.world.add(this.medallion);
+    if (this.heroStage) this.medallion.add(this.heroStage.group);
     this.medallion.add(this.medallionContent, this.clock);
     this.clock.add(this.pendantTrim);
     this.world.add(this.liquid);
@@ -765,6 +768,10 @@ export class StoryWorld3D {
           : this.previousScene === 'identity'
             ? 1 - mix
             : 0;
+    const heroPresence = medallionOpening
+      ? identityPresence * (1 - smooth((clockAgProgress - 0.03) / 0.22))
+      : 0;
+    this.heroStage?.update(heroPresence);
     this.world.rotation.y =
       (this.pointer.x - 0.5) * 0.11 +
       galaxyPresence * 0.3 +
@@ -783,7 +790,8 @@ export class StoryWorld3D {
     const defaultScale = this.compact ? 0.62 : Math.min(1.1, innerWidth / 1200);
     this.world.scale.setScalar(
       medallionOpening
-        ? presenceScale
+        ? presenceScale *
+            (1 + (this.compact || this.heroTablet ? 0 : 0.14) * heroPresence)
         : defaultScale +
             (presenceScale - defaultScale) * identityPresence +
             galaxyPresence * (this.compact ? 0.1 : 0.13) +
@@ -964,7 +972,8 @@ export class StoryWorld3D {
       medallionOpening && crossing === 'identity-stack'
         ? 1 - smooth((identityStackProgress - 0.5) / 0.23)
         : 1 - shellBurst,
-      galaxyPresence
+      galaxyPresence,
+      heroPresence
     );
     if (directOpening || medallionOpening) {
       this.liquid.visible = false;
@@ -1165,9 +1174,9 @@ export class StoryWorld3D {
       });
       materials.forEach((material) => material.dispose());
     });
+    this.heroStage?.dispose();
     this.galaxySignature.dispose();
     this.identityRoughness?.dispose();
-    this.identityAlbedo?.dispose();
     this.metalReflection?.dispose();
     this.renderer?.dispose();
   }
@@ -1390,7 +1399,6 @@ export class StoryWorld3D {
     const identityMaterials: Feature['materials'] = [];
     const textureSize = 256;
     const roughnessData = new Uint8Array(textureSize * textureSize * 4);
-    const albedoData = new Uint8Array(textureSize * textureSize * 4);
     let grain = 173;
     for (let pixel = 0; pixel < textureSize * textureSize; pixel += 1) {
       grain = (grain * 1664525 + 1013904223) >>> 0;
@@ -1407,17 +1415,6 @@ export class StoryWorld3D {
       roughnessData[offset + 1] = value;
       roughnessData[offset + 2] = value;
       roughnessData[offset + 3] = 255;
-      const surface = Math.max(
-        205,
-        Math.min(
-          250,
-          236 + brushed * 0.42 + ((grain >>> 24) - 128) * 0.045 + mark * 0.65
-        )
-      );
-      albedoData[offset] = surface - 5;
-      albedoData[offset + 1] = surface;
-      albedoData[offset + 2] = Math.min(255, surface + 7);
-      albedoData[offset + 3] = 255;
     }
     // Les stries et micro-entailles travaillent la rugosité et le relief.
     this.identityRoughness = new DataTexture(
@@ -1430,17 +1427,6 @@ export class StoryWorld3D {
     this.identityRoughness.wrapT = RepeatWrapping;
     this.identityRoughness.repeat.set(1.25, 1.25);
     this.identityRoughness.needsUpdate = true;
-    this.identityAlbedo = new DataTexture(
-      albedoData,
-      textureSize,
-      textureSize,
-      RGBAFormat
-    );
-    this.identityAlbedo.colorSpace = SRGBColorSpace;
-    this.identityAlbedo.wrapS = RepeatWrapping;
-    this.identityAlbedo.wrapT = RepeatWrapping;
-    this.identityAlbedo.repeat.set(1.25, 1.25);
-    this.identityAlbedo.needsUpdate = true;
     const heroKey = new DirectionalLight('#e5eeff', 1.8);
     heroKey.position.set(-3, 4, 6);
     heroKey.castShadow = true;
@@ -1487,14 +1473,13 @@ export class StoryWorld3D {
         opacity: 1,
       });
       const face = new MeshStandardMaterial({
-        color: '#c4ced6',
-        emissive: '#7a5a2a',
-        emissiveIntensity: 0.45,
+        color: '#e9dfc8',
+        emissive: '#9a7950',
+        emissiveIntensity: 0.75,
         metalness: 0.9,
         roughness: 0.36,
         envMap: this.metalReflection?.texture,
-        envMapIntensity: 0.42,
-        map: this.identityAlbedo,
+        envMapIntensity: 0.65,
         roughnessMap: this.identityRoughness,
         bumpMap: this.identityRoughness,
         bumpScale: 0.018,
@@ -1506,8 +1491,7 @@ export class StoryWorld3D {
         metalness: 0.9,
         roughness: 0.38,
         envMap: this.metalReflection?.texture,
-        envMapIntensity: 0.42,
-        map: this.identityAlbedo,
+        envMapIntensity: 0.65,
         roughnessMap: this.identityRoughness,
         bumpMap: this.identityRoughness,
         bumpScale: 0.016,
@@ -3543,7 +3527,8 @@ export class StoryWorld3D {
     directProgress: number | null,
     medallionOpening: boolean,
     shellPresence: number,
-    galaxyPresence: number
+    galaxyPresence: number,
+    heroPresence: number
   ): void {
     const active =
       medallionOpening ||
@@ -3613,21 +3598,24 @@ export class StoryWorld3D {
     this.bulbLight.intensity =
       (this.compact || this.heroTablet ? 24 : 30) *
       this.lampLab.power *
-      (1 - 0.28 * galaxyPresence);
+      (1 - 0.28 * galaxyPresence) *
+      (1 - 0.18 * heroPresence);
     this.reflectorBounce.intensity =
       (this.compact || this.heroTablet ? 17 : 22) *
       this.lampLab.power *
-      (1 - 0.32 * galaxyPresence);
+      (1 - 0.32 * galaxyPresence) *
+      (1 - 0.2 * heroPresence);
     this.filamentGlowMaterial.opacity =
       (this.compact || this.heroTablet ? 0.35 : 0.45) *
-      (1 - 0.55 * galaxyPresence);
+      (1 - 0.55 * galaxyPresence) *
+      (1 - 0.35 * heroPresence);
     if (this.filamentMaterial)
       this.filamentMaterial.emissiveIntensity =
-        2.7 * (1 - 0.5 * galaxyPresence);
+        2.7 * (1 - 0.5 * galaxyPresence) * (1 - 0.25 * heroPresence);
     if (this.lampReflector && this.lampReflectorColor)
       this.lampReflector.color
         .copy(this.lampReflectorColor)
-        .multiplyScalar(1 - 0.55 * galaxyPresence);
+        .multiplyScalar((1 - 0.55 * galaxyPresence) * (1 - 0.3 * heroPresence));
     this.clockMaterials.forEach((material, index) => {
       const finish = this.clockFinishes.get(material);
       if (finish) {

@@ -6537,3 +6537,72 @@ button:focus-visible {
     line-height: 1.4;
   }
 }
+
+/* Le héros relie l'écriture éditoriale à l'instrument de l'atelier. */
+@media (min-width: 981px) {
+  .hero__inner {
+    padding-left: clamp(1.2rem, 2vw, 2rem);
+    border-left: 1px solid rgba(197, 164, 115, 0.48);
+  }
+  .hero__title {
+    font-size: clamp(3.5rem, 7.5vw, 7.25rem);
+  }
+  .hero__lead {
+    line-height: 1.55;
+  }
+  .hero__ctas {
+    padding-top: 1.15rem;
+    border-top: 1px solid rgba(197, 164, 115, 0.22);
+  }
+}
+@media (max-width: 860px) {
+  .section--hero {
+    padding-top: 37svh;
+  }
+  .hero__lead {
+    margin-top: 0.65rem;
+    line-height: 1.45;
+  }
+  .hero__ctas {
+    margin-top: 1rem;
+  }
+  .hero__projects {
+    margin-top: 0.55rem;
+  }
+  .hero__status {
+    margin-top: 0.65rem;
+  }
+}
+
+@media (max-width: 860px) and (max-height: 740px) {
+  .hero__title {
+    font-size: clamp(2.75rem, 8vw, 3.1rem);
+  }
+}
+
+/* Le focus peut dégager les liens de la molette et de la zone de sécurité. */
+@media (max-width: 860px) and (max-height: 740px) {
+  .hero__projects {
+    margin-top: calc(5.5rem + env(safe-area-inset-bottom));
+    scroll-margin-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Cette exception doit suivre la composition mobile du héros. */
+@media (max-width: 380px) and (max-height: 740px) {
+  .section--hero {
+    padding-top: max(7rem, 34svh);
+  }
+}
+
+/* Le texte défile devant la scène sans perdre son contraste sur écran bas. */
+@media (max-width: 860px) and (max-height: 740px) {
+  .hero__inner {
+    isolation: isolate;
+  }
+  .hero__inner::before {
+    content: '';
+    inset: -0.5rem -0.75rem;
+    background: linear-gradient(to bottom, transparent, #03050a 2rem);
+  }
+}
