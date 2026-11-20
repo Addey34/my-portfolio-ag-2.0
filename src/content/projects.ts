@@ -118,8 +118,8 @@ export const PROJECTS: Project[] = [
     status: live,
     visual: 'immersive',
     thesis: {
-      fr: 'Faire tenir la diversité dans un même système.',
-      en: 'Making variety work as one system.',
+      fr: 'Des jeux singuliers, une mécanique commune.',
+      en: 'Distinct games, one shared system.',
     },
     tagline: {
       fr: 'Un catalogue de jeux en évolution, avec moteurs partagés, multijoueur et progression commune.',

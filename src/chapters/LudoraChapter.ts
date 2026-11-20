@@ -10,11 +10,7 @@ import {
 /**
  * Chapitre LUDORA — reconstitution du portail d'arcade.
  *
- * Fidèle à l'app réelle : le fond « portail » navy aux aurores cyan/indigo
- * (les tokens exacts de `variables.css`), et sa signature — la grille dense de
- * tuiles de jeux teintées, chacune dans SA couleur du design system
- * (`--color-snake`, `--color-tetris`, …), avec le badge ⚡ du jeu spotlight
- * du jour (la boucle quotidienne de l'app).
+ * Prototype archivé du catalogue, sans synchronisation avec la sélection publique.
  *
  * Scroll : les tuiles arrivent en cascade (pop staggeré), comme le catalogue
  * qui se remplit. Temps : flottement d'inactivité très léger.
@@ -34,8 +30,6 @@ const GAMES = [
   { label: 'Asteroids', color: '#8b5cf6', icon: '🚀' },
 ];
 
-const SPOTLIGHT_INDEX = 2; // le « jeu du jour » (⚡ ×2 LP dans l'app)
-
 class LudoraChapter implements ChapterScene {
   private readonly grid: HTMLElement;
   private readonly tiles: HTMLElement[] = [];
@@ -48,7 +42,7 @@ class LudoraChapter implements ChapterScene {
     this.grid = document.createElement('div');
     this.grid.className = 'ld-grid';
 
-    GAMES.forEach((game, i) => {
+    GAMES.forEach((game) => {
       const tile = document.createElement('div');
       tile.className = 'ld-tile';
       tile.style.setProperty('--tile', game.color);
@@ -62,12 +56,7 @@ class LudoraChapter implements ChapterScene {
       label.textContent = game.label;
 
       tile.append(icon, label);
-      if (i === SPOTLIGHT_INDEX) {
-        const badge = document.createElement('span');
-        badge.className = 'ld-tile__badge';
-        badge.textContent = '⚡';
-        tile.appendChild(badge);
-      }
+
       this.grid.appendChild(tile);
       this.tiles.push(tile);
     });
@@ -85,7 +74,6 @@ class LudoraChapter implements ChapterScene {
     const t = this.reduced ? 0 : time * 0.001;
     const n = this.tiles.length;
     const energy = this.visualState?.energy ?? 0.5;
-    const pulse = this.visualState?.pulse ?? 0.5;
 
     for (let i = 0; i < n; i++) {
       const local = easeOut(
@@ -98,9 +86,6 @@ class LudoraChapter implements ChapterScene {
       const el = this.tiles[i];
       el.style.opacity = String(local);
       el.style.transform = `translate3d(0, ${(1 - local) * 26 + idle}px, 0) scale(${0.7 + 0.3 * local})`;
-      if (i === SPOTLIGHT_INDEX) {
-        el.style.filter = `brightness(${1 + pulse * 0.08})`;
-      }
     }
   }
 
