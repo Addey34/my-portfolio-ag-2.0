@@ -53,6 +53,7 @@ import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { prefersReducedMotion } from '@/core/motion';
 import { clockHandAngles } from '@/visual/clockHands';
 import { GalaxySignature } from '@/visual/GalaxySignature';
+import { TextureWarmupCache } from '@/visual/TextureWarmupCache';
 import { HeroStage } from '@/visual/HeroStage';
 import type { VisualScene, VisualState } from '@/visual/types';
 
@@ -307,6 +308,11 @@ export class StoryWorld3D {
     this.queueWarmup()
   );
   private warmupTimers: number[] = [];
+  // Les deux passes ne réinitialisent que les textures ou sources modifiées.
+  private readonly initializedTextures = new TextureWarmupCache();
+  private readonly onContextRestored = () => {
+    this.initializedTextures.clear();
+  };
   private readonly loadQueue: Array<{
     url: string;
     load: () => Promise<void>;
@@ -403,6 +409,10 @@ export class StoryWorld3D {
     renderer.shadowMap.type = PCFShadowMap;
     this.metalReflection = this.createMetalReflection(renderer);
     this.heroStage = new HeroStage(this.metalReflection.texture);
+    renderer.domElement.addEventListener(
+      'webglcontextrestored',
+      this.onContextRestored
+    );
     this.camera.position.set(0, 0, 15);
     this.camera.lookAt(0, 0, 0);
     // Les calques 1 et 2 isolent la lampe et l'horloge des éclairages généraux.
@@ -1148,6 +1158,7 @@ export class StoryWorld3D {
 
   destroy(): void {
     this.destroyed = true;
+    this.initializedTextures.clear();
     window.clearTimeout(this.safetyTimer);
     this.warmupTimers.forEach((timer) => window.clearTimeout(timer));
     window.removeEventListener('resize', this.onResize);
@@ -1174,6 +1185,10 @@ export class StoryWorld3D {
       });
       materials.forEach((material) => material.dispose());
     });
+    this.renderer?.domElement.removeEventListener(
+      'webglcontextrestored',
+      this.onContextRestored
+    );
     this.heroStage?.dispose();
     this.galaxySignature.dispose();
     this.identityRoughness?.dispose();
@@ -2042,7 +2057,8 @@ export class StoryWorld3D {
 
   private async warmup(): Promise<void> {
     const renderer = this.renderer;
-    if (!renderer || this.destroyed) return;
+    if (!renderer || this.destroyed || renderer.getContext().isContextLost())
+      return;
     try {
       await renderer.compileAsync(this.scene, this.camera);
     } catch {
@@ -2077,6 +2093,7 @@ export class StoryWorld3D {
     });
     // Une texture par tranche de temps, pour ne jamais bloquer l'image.
     for (const texture of textures) {
+      if (this.initializedTextures.has(texture)) continue;
       if (this.destroyed) return;
       if (
         (import.meta.env.DEV ||
@@ -2092,7 +2109,11 @@ export class StoryWorld3D {
         new URLSearchParams(location.search).has('warmup-trace')
       )
         performance.mark('warmup-texture-start');
+      if (this.initializedTextures.has(texture)) continue;
+      if (renderer.getContext().isContextLost()) return;
       renderer.initTexture(texture);
+      if (!renderer.getContext().isContextLost())
+        this.initializedTextures.mark(texture);
       if (
         (import.meta.env.DEV ||
           import.meta.env.MODE === 'startup-experiment') &&
