@@ -53,6 +53,7 @@ import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { prefersReducedMotion } from '@/core/motion';
 import { clockHandAngles } from '@/visual/clockHands';
 import { GalaxySignature } from '@/visual/GalaxySignature';
+import { TextureWarmupCache } from '@/visual/TextureWarmupCache';
 import { HeroStage } from '@/visual/HeroStage';
 import type { VisualScene, VisualState } from '@/visual/types';
 
@@ -308,9 +309,9 @@ export class StoryWorld3D {
   );
   private warmupTimers: number[] = [];
   // Les deux passes ne réinitialisent que les textures ou sources modifiées.
-  private initializedTextures = new WeakMap<Texture, [number, number]>();
+  private readonly initializedTextures = new TextureWarmupCache();
   private readonly onContextRestored = () => {
-    this.initializedTextures = new WeakMap<Texture, [number, number]>();
+    this.initializedTextures.clear();
   };
   private readonly loadQueue: Array<{
     url: string;
@@ -1157,6 +1158,7 @@ export class StoryWorld3D {
 
   destroy(): void {
     this.destroyed = true;
+    this.initializedTextures.clear();
     window.clearTimeout(this.safetyTimer);
     this.warmupTimers.forEach((timer) => window.clearTimeout(timer));
     window.removeEventListener('resize', this.onResize);
@@ -2055,7 +2057,8 @@ export class StoryWorld3D {
 
   private async warmup(): Promise<void> {
     const renderer = this.renderer;
-    if (!renderer || this.destroyed) return;
+    if (!renderer || this.destroyed || renderer.getContext().isContextLost())
+      return;
     try {
       await renderer.compileAsync(this.scene, this.camera);
     } catch {
@@ -2090,13 +2093,7 @@ export class StoryWorld3D {
     });
     // Une texture par tranche de temps, pour ne jamais bloquer l'image.
     for (const texture of textures) {
-      const initialized = this.initializedTextures.get(texture);
-      if (
-        initialized &&
-        initialized[0] === texture.version &&
-        initialized[1] === texture.source.version
-      )
-        continue;
+      if (this.initializedTextures.has(texture)) continue;
       if (this.destroyed) return;
       if (
         (import.meta.env.DEV ||
@@ -2112,11 +2109,11 @@ export class StoryWorld3D {
         new URLSearchParams(location.search).has('warmup-trace')
       )
         performance.mark('warmup-texture-start');
+      if (this.initializedTextures.has(texture)) continue;
+      if (renderer.getContext().isContextLost()) return;
       renderer.initTexture(texture);
-      this.initializedTextures.set(texture, [
-        texture.version,
-        texture.source.version,
-      ]);
+      if (!renderer.getContext().isContextLost())
+        this.initializedTextures.mark(texture);
       if (
         (import.meta.env.DEV ||
           import.meta.env.MODE === 'startup-experiment') &&
