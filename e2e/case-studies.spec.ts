@@ -103,8 +103,25 @@ test('petit écran sans WebGL : liens et volets utilisables sans collision avec 
       await toggle.evaluate((node) =>
         node.scrollIntoView({ block: 'center', behavior: 'instant' })
       );
+      // Après repli de la mise en page, le toucher est testé au point réellement exposé.
+      await expect
+        .poll(() =>
+          toggle.evaluate((node) => {
+            const r = node.getBoundingClientRect();
+            return node.contains(
+              document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)
+            );
+          })
+        )
+        .toBe(true);
       if (testInfo.project.name === 'desktop-chromium') await toggle.click();
-      else await toggle.tap();
+      else {
+        const target = await toggle.boundingBox();
+        await page.touchscreen.tap(
+          target!.x + target!.width / 2,
+          target!.y + target!.height / 2
+        );
+      }
       await expect(article.locator('details')).not.toHaveAttribute('open');
     }
     expect(
