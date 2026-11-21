@@ -194,6 +194,11 @@ function boot(): void {
     'world-3d'
   ) as HTMLCanvasElement | null;
   const visual = new VisualDirector();
+  // Sur petit écran, les dossiers opaques passent devant le décor pendant la lecture.
+  const storyRoot = document.getElementById('scroll-root');
+  const stopStudyComposition = visual.onSceneChange((scene) => {
+    storyRoot?.classList.toggle('is-reading-studies', scene === 'studies');
+  });
   let sceneLab: SceneLab | null = null;
   if (
     import.meta.env.DEV &&
@@ -302,6 +307,7 @@ function boot(): void {
     scroll.destroy();
     transitions.destroy();
     choreographer.destroy();
+    stopStudyComposition();
     visual.destroy();
     sceneLab?.destroy();
     rail?.destroy();

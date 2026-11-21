@@ -48,6 +48,7 @@ const fr: Dict = {
   'studies.title': 'Deux autres systèmes, deux problèmes concrets.',
   'studies.lead':
     'Des projets au code privé, présentés par leurs décisions, leurs preuves datées et leurs limites connues.',
+  'studies.architecture': 'Architecture · schéma de principe',
   'studies.more': 'Voir le contexte, les preuves et les limites',
   'stack.kicker': 'Stacks en pratique',
   'stack.title': 'Du navigateur au déploiement.',
@@ -182,6 +183,7 @@ const en: Dict = {
   'studies.title': 'Two more systems, two concrete problems.',
   'studies.lead':
     'Projects with private code, presented through their decisions, dated evidence and known limits.',
+  'studies.architecture': 'Architecture · conceptual flow',
   'studies.more': 'View context, evidence and limitations',
   'stack.kicker': 'Stacks in practice',
   'stack.title': 'From browser to deployment.',
