@@ -270,6 +270,8 @@ export interface CaseStudy {
   evidence: Localized;
   limit: Localized;
   stack: string[];
+  flow: Localized[];
+  links: Project['links'];
   note: Localized;
 }
 
@@ -277,86 +279,111 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'siteguardian',
     name: 'SiteGuardian',
-    status: { fr: 'Pilote technique', en: 'Technical pilot' },
+    status: { fr: 'Pilote contrôlé', en: 'Controlled pilot' },
     accent: '#ffb35f',
     summary: {
-      fr: 'Un outil de surveillance qui dit quoi faire, pas seulement ce qui est cassé.',
-      en: 'A monitoring tool that says what to do, not just what is broken.',
+      fr: 'Transformer une anomalie sur un site en correction vérifiable, pour les freelances et petites agences.',
+      en: 'Turn a website anomaly into a verifiable fix, for freelancers and small agencies.',
     },
     highlight: {
-      fr: '194 tests documentés · sonde publique datée',
-      en: '194 documented tests · dated public probe',
+      fr: 'Cycle d’incident validé le 1 septembre 2026 · preuve historique, pas un statut de santé actuel.',
+      en: 'Incident lifecycle validated on 1 September 2026 · historical evidence, not a current health status.',
     },
     problem: {
-      fr: 'Surveiller les sites livrés, détecter les incidents et transformer les anomalies techniques en actions compréhensibles pour les freelances et petites agences.',
-      en: 'Monitor delivered websites, detect incidents and turn technical anomalies into understandable actions for freelancers and small agencies.',
+      fr: 'Une alerte seule ne dit ni quelle page corriger, ni si la correction a réellement rétabli le service.',
+      en: 'An alert alone says neither which page needs fixing nor whether the fix actually restored service.',
     },
     role: {
-      fr: 'Conception produit, interface, API, logique de surveillance et déploiement.',
-      en: 'Product design, interface, API, monitoring logic and deployment.',
+      fr: 'Conception produit et réalisation de l’interface, de l’API, de la persistance et du cycle des incidents. Frontend Vite sur Cloudflare Pages ; API Node.js et PostgreSQL sur Oracle Cloud.',
+      en: 'Product design and implementation of the interface, API, persistence and incident lifecycle. Vite frontend on Cloudflare Pages; Node.js API and PostgreSQL on Oracle Cloud.',
     },
     decision: {
-      fr: 'Un incident ne se résout qu’après une revisite saine de l’URL : séparer prise en compte et résolution évite de clore une panne qui existe encore.',
-      en: 'An incident only resolves after a healthy revisit of the URL: separating acknowledgement from resolution avoids closing an outage that still exists.',
+      fr: 'Reconnaître un incident ne le résout pas. Seule une nouvelle vérification saine de la page concernée confirme le rétablissement.',
+      en: 'Acknowledging an incident does not resolve it. Only a fresh, healthy check of the affected page confirms recovery.',
     },
     evidence: {
-      fr: '194 tests documentés (01/09/2026) · smoke public quotidien vert, dernier 14/10/2026 · Stripe en mode test validé (28/08/2026). Aucun client payant confirmé.',
-      en: '194 documented tests (1 Sep 2026) · daily public smoke check green, latest 14 Oct 2026 · Stripe test mode validated (28 Aug 2026). No paying customer confirmed.',
+      fr: 'Code et tests distinguent prise en compte, résolution et régression : un scan partiel ne clôt pas les incidents des pages non revisitées. Le scénario panne → rétablissement → régression est documenté au 01/09/2026. La validation du 02/09/2026 rapporte 260 tests et les builds frontend/API réussis. Rapports partagés révocables et PDF authentifiés sont implémentés.',
+      en: 'Code and tests distinguish acknowledgement, resolution and regression: a partial scan cannot close incidents on pages it did not revisit. The failure → recovery → regression scenario is documented on 1 Sep 2026. Validation on 2 Sep 2026 records 260 passing tests and frontend/API builds. Revocable shared reports and authenticated PDFs are implemented.',
     },
     limit: {
-      fr: 'Sessions en mémoire, workers largement séquentiels, protection réseau à renforcer, aucun test de charge.',
-      en: 'In-memory sessions, mostly sequential workers, network protection to harden, no load testing.',
+      fr: 'Pilote sur des sites autorisés, notifications contrôlées. La démo publique utilise des données fictives, sans scan réseau. Ces validations datées ne constituent ni une garantie de disponibilité actuelle ni une qualification à grande échelle.',
+      en: 'Pilot on authorised sites, with controlled notifications. The public demo uses fictional data, without network scans. Dated validations establish neither current availability nor qualification at scale.',
     },
-    stack: [
-      'TypeScript',
-      'Vite',
-      'Node.js',
-      'PostgreSQL',
-      'Playwright',
-      'Stripe',
+    stack: ['TypeScript', 'Vite', 'Node.js', 'PostgreSQL', 'Playwright'],
+    flow: [
+      { fr: 'Site autorisé', en: 'Authorised site' },
+      { fr: 'Constat + preuve', en: 'Finding + evidence' },
+      { fr: 'Notification contrôlée', en: 'Controlled notification' },
+      { fr: 'Prise en compte', en: 'Acknowledgement' },
+      { fr: 'Nouvelle vérification', en: 'Fresh check' },
+      { fr: 'Résolution ou régression', en: 'Resolution or regression' },
+    ],
+    links: [
+      {
+        label: {
+          fr: 'Explorer la démo fictive',
+          en: 'Explore the fictional demo',
+        },
+        href: 'https://siteguardian.adrianguichard.dev/',
+      },
     ],
     note: {
-      fr: 'Code privé ; présentation sans données ni configuration d’exploitation.',
-      en: 'Private code; presented without data or operating configuration.',
+      fr: 'Sources privées examinées ; aucun code, donnée client ou paramètre d’exploitation publié ici.',
+      en: 'Private sources reviewed; no code, customer data or operating settings published here.',
     },
   },
   {
     id: 'imagegeneratorlocal',
-    name: 'ImageGeneratorLocal',
-    status: { fr: 'En développement', en: 'In development' },
+    name: 'AIGen',
+    status: { fr: 'Produit en développement', en: 'Product in development' },
     accent: '#a78bfa',
     summary: {
-      fr: 'Installer et orchestrer des modèles de génération d’images sur son propre ordinateur.',
-      en: 'Install and orchestrate image generation models on your own computer.',
+      fr: 'Relier une interface web à un moteur d’IA sur son ordinateur : installer, choisir le runtime et orchestrer les tâches.',
+      en: 'Connect a web interface to an AI engine on your computer: install, select a runtime and orchestrate jobs.',
     },
     highlight: {
-      fr: 'Runtimes Windows vérifiés au téléchargement · calcul CUDA testé',
-      en: 'Windows runtime downloads verified · CUDA compute tested',
+      fr: 'Lanceur Windows et empreinte publiés · interface accessible le 21/11/2026. Génération de bout en bout non requalifiée.',
+      en: 'Windows launcher and checksum published · interface reachable on 21 Nov 2026. End-to-end generation not requalified.',
     },
     problem: {
-      fr: 'Générer des images par IA sur son propre ordinateur, sans dépendre d’un serveur GPU hébergé.',
-      en: 'Generate AI images on your own computer, without depending on a hosted GPU server.',
+      fr: 'L’accès aux modèles ne suffit pas : il faut installer leurs dépendances, choisir un moteur compatible et relier calcul local et interface.',
+      en: 'Access to models is not enough: dependencies must be installed, a compatible engine selected and local compute connected to the interface.',
     },
     role: {
-      fr: 'Conception de l’application et de l’orchestration autour de modèles existants : tâches, agents, mémoire, installation.',
-      en: 'Design of the application and orchestration around existing models: jobs, agents, memory, installation.',
+      fr: 'Conception de l’application et de l’orchestration : API FastAPI, tâches persistantes, association navigateur–agent et distribution des runtimes PyTorch/Diffusers. Les modèles utilisés sont tiers, pas entraînés dans ce projet.',
+      en: 'Application and orchestration design: FastAPI API, persistent jobs, browser–agent pairing and PyTorch/Diffusers runtime distribution. Models are third-party, not trained in this project.',
     },
     decision: {
-      fr: 'Un lanceur léger télécharge le runtime adapté au matériel, sans imposer le paquet CUDA à toutes les machines.',
-      en: 'A small launcher downloads the runtime suited to the hardware, without forcing the CUDA package onto every machine.',
+      fr: 'Séparer le petit lanceur, le runtime adapté au matériel et les modèles. Chaque machine télécharge son moteur sans imposer CUDA à tout le monde.',
+      en: 'Separate the small launcher, hardware-specific runtime and models. Each machine downloads its engine without imposing CUDA on everyone.',
     },
     evidence: {
-      fr: 'Runtimes Windows CUDA, CPU et DirectML validés au téléchargement (signatures, empreintes) ; calcul CUDA vérifié sur RTX 5070 Ti (WSL2). Aucun benchmark publié.',
-      en: 'Windows CUDA, CPU and DirectML runtimes validated on download (signatures, checksums); CUDA compute verified on an RTX 5070 Ti (WSL2). No benchmark published.',
+      fr: 'Installateur Windows public et fichier SHA-256 accessibles le 21/11/2026. Le code vérifie les manifestes de runtimes signés Ed25519 et les empreintes des fichiers. Le parcours d’association et les tâches durables sont présents dans le code ; leur présence ne prouve pas une génération de bout en bout. La documentation conserve une validation CUDA sur RTX 5070 Ti sous WSL2, sans qualification universelle.',
+      en: 'Public Windows installer and SHA-256 file reachable on 21 Nov 2026. Code verifies Ed25519-signed runtime manifests and file checksums. Pairing and durable jobs are present in code; their presence does not prove end-to-end generation. Documentation retains CUDA validation on an RTX 5070 Ti under WSL2, without universal qualification.',
     },
     limit: {
-      fr: 'Modèles tiers (non créés ici) ; génération non certifiée sur toutes les architectures GPU ; usage réel inconnu.',
-      en: 'Third-party models (not created here); generation not certified on every GPU architecture; real usage unknown.',
+      fr: 'Installateur Windows sans signature Authenticode. Génération publique non requalifiée ici ; image, vidéo et audio documentés, pas certifiés sur chaque GPU. DirectML reste à qualifier selon le matériel ; calcul cloud optionnel désactivé par défaut. En mode hébergé, demandes et résultats transitent par le serveur.',
+      en: 'Windows installer without an Authenticode signature. Public generation not requalified here; image, video and audio are documented, not certified on every GPU. DirectML needs hardware-specific qualification; optional cloud compute is disabled by default. In hosted mode, requests and results pass through the server.',
     },
     stack: ['Python', 'FastAPI', 'PyTorch', 'Diffusers', 'TypeScript'],
+    flow: [
+      { fr: 'Navigateur', en: 'Browser' },
+      { fr: 'API + tâches persistantes', en: 'API + persistent jobs' },
+      { fr: 'Agent local associé', en: 'Paired local agent' },
+      { fr: 'Runtime + modèles tiers', en: 'Runtime + third-party models' },
+    ],
+    links: [
+      {
+        label: {
+          fr: 'Consulter l’interface publique',
+          en: 'View the public interface',
+        },
+        href: 'https://app.adrianguichard.dev/',
+      },
+    ],
     note: {
-      fr: 'Code privé ; présentation sans comptes, chemins ni configuration privée.',
-      en: 'Private code; presented without accounts, paths or private configuration.',
+      fr: 'AIGen est le nom produit ; l’ancre historique imagegeneratorlocal est conservée. Dépôt privé, sans lien public vers son code.',
+      en: 'AIGen is the product name; the historical imagegeneratorlocal anchor is retained. Private repository, with no public code link.',
     },
   },
 ];

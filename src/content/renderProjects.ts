@@ -287,6 +287,8 @@ export function renderStudies(mount: HTMLElement): void {
     const name = el('h3', 'study__name', study.name);
     const status = el('span', 'study__status', '');
     registerDynamic(status, () => tl(study.status));
+    name.id = study.id + '-title';
+    article.setAttribute('aria-labelledby', name.id);
     head.append(name, status);
 
     const summary = el('p', 'study__summary', '');
@@ -294,6 +296,31 @@ export function renderStudies(mount: HTMLElement): void {
     const highlight = el('p', 'study__highlight', '');
     registerDynamic(highlight, () => tl(study.highlight));
 
+    const decision = el('p', 'study__decision', '');
+    registerDynamic(decision, () => tl(study.decision));
+    const flow = document.createElement('figure');
+    flow.className = 'study__flow';
+    const caption = el('figcaption', 'study__label', t('studies.architecture'));
+    caption.dataset.i18n = 'studies.architecture';
+    const steps = document.createElement('ol');
+    study.flow.forEach((step) => {
+      const item = el('li', '', '');
+      registerDynamic(item, () => tl(step));
+      steps.append(item);
+    });
+    flow.append(caption, steps);
+    const limit = el('p', 'study__limit', '');
+    registerDynamic(limit, () => `${t('project.limit')} — ${tl(study.limit)}`);
+    const links = el('nav', 'study__links', '');
+    links.setAttribute('aria-label', study.name);
+    study.links.forEach((link) => {
+      const anchor = document.createElement('a');
+      anchor.href = link.href;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      registerDynamic(anchor, () => tl(link.label));
+      links.append(anchor);
+    });
     const details = document.createElement('details');
     details.className = 'study__details';
     const toggle = el('summary', 'study__toggle', t('studies.more'));
@@ -305,9 +332,7 @@ export function renderStudies(mount: HTMLElement): void {
       [
         ['problem', study.problem],
         ['role', study.role],
-        ['decision', study.decision],
         ['evidence', study.evidence],
-        ['limit', study.limit],
       ] as const
     ).forEach(([key, value]) => {
       const row = document.createElement('div');
@@ -328,7 +353,16 @@ export function renderStudies(mount: HTMLElement): void {
     registerDynamic(note, () => tl(study.note));
 
     details.append(toggle, rows, stack, note);
-    article.append(head, summary, highlight, details);
+    article.append(
+      head,
+      summary,
+      decision,
+      flow,
+      highlight,
+      limit,
+      links,
+      details
+    );
     frag.appendChild(article);
   });
   mount.appendChild(frag);

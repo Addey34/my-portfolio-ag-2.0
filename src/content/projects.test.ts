@@ -45,10 +45,41 @@ describe('project catalogue', () => {
         study.evidence,
         study.limit,
         study.note,
+        ...study.flow,
+        ...study.links.map((link) => link.label),
       ].forEach((value) => {
         expect(value.fr.trim()).not.toBe('');
         expect(value.en.trim()).not.toBe('');
       });
     });
+  });
+  it('preserves legacy anchors while presenting AIGen and safe public access', () => {
+    expect(CASE_STUDIES.map(({ id, name }) => [id, name])).toEqual([
+      ['siteguardian', 'SiteGuardian'],
+      ['imagegeneratorlocal', 'AIGen'],
+    ]);
+    expect(
+      CASE_STUDIES.flatMap((study) => study.links.map((link) => link.href))
+    ).toEqual([
+      'https://siteguardian.adrianguichard.dev/',
+      'https://app.adrianguichard.dev/',
+    ]);
+  });
+
+  it('keeps qualification separate from public availability in both languages', () => {
+    const [guardian, aigen] = CASE_STUDIES;
+    expect(guardian.flow).toHaveLength(6);
+    expect(aigen.flow).toHaveLength(4);
+    for (const locale of ['fr', 'en'] as const) {
+      expect(guardian.evidence[locale]).toMatch(/2026/);
+      expect(guardian.limit[locale]).toMatch(/ficti/);
+      expect(aigen.limit[locale]).toContain('Authenticode');
+      expect(aigen.limit[locale]).toContain('DirectML');
+      expect(aigen.limit[locale]).toMatch(/désactivé|disabled/);
+      expect(aigen.highlight[locale]).toMatch(
+        /non requalifiée|not requalified/
+      );
+      expect(aigen.role[locale]).toMatch(/tiers|third-party/);
+    }
   });
 });
