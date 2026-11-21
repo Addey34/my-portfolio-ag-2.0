@@ -6614,3 +6614,11 @@ button:focus-visible {
     padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   }
 }
+
+/* MagNotes : le registre et son titre précèdent les preuves détaillées sur mobile. */
+@media (max-width: 860px) {
+  #magnotes .chapter__inner {
+    padding-top: 28svh;
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}

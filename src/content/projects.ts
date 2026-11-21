@@ -182,8 +182,8 @@ export const PROJECTS: Project[] = [
     status: live,
     visual: 'immersive',
     thesis: {
-      fr: 'Transformer le chaos en produit.',
-      en: 'Turning chaos into a product.',
+      fr: 'Des idées libres, une structure commune.',
+      en: 'Free ideas, one shared structure.',
     },
     tagline: {
       fr: 'Un espace de travail visuel qui transforme les mêmes notes en canvas, Kanban, agenda ou timeline.',
