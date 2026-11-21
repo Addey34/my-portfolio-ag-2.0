@@ -6705,3 +6705,10 @@ button:focus-visible {
     margin-inline: auto;
   }
 }
+
+@media (max-width: 980px) {
+  .studies__title,
+  .studies__lead {
+    background-color: var(--bg);
+  }
+}
