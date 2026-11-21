@@ -114,16 +114,35 @@ function whenIdle(task: () => void): void {
 
 /**
  * Écran d'attente : retiré quand la scène 3D est entièrement installée (événement `world-settled`),
- * ou au plus tard après 12 s, ou tout de suite si la 3D est indisponible.
+ * ou sur demande, après 12 s au plus tard, ou si la 3D est indisponible.
  */
 function initBootLoader(hasWorld: boolean): () => void {
   const loader = document.getElementById('boot-loader');
   if (!loader) return () => {};
+  const skip = loader.querySelector<HTMLButtonElement>('[data-boot-skip]');
+  const focusContent = () =>
+    document.querySelector<HTMLAnchorElement>('.hero__cta--primary')?.focus();
   const dismiss = (): void => {
     if (loader.classList.contains('is-done')) return;
+    const restoreFocus = loader.contains(document.activeElement);
     loader.classList.add('is-done');
+    if (skip) skip.disabled = true;
+    if (restoreFocus) focusContent();
+    loader.setAttribute('aria-hidden', 'true');
     window.setTimeout(() => loader.remove(), 700);
   };
+  // L'accès au HTML ne supprime ni la préparation 3D, ni sa fermeture automatique.
+  if (skip) {
+    skip.disabled = false;
+    skip.addEventListener(
+      'click',
+      () => {
+        dismiss();
+        focusContent();
+      },
+      { once: true }
+    );
+  }
   if (!hasWorld) {
     dismiss();
     return dismiss;
@@ -228,6 +247,8 @@ function boot(): void {
       void import('@/visual/StoryWorld3D')
         .then(({ StoryWorld3D }) => {
           visual.attachField(new StoryWorld3D(canvas));
+          // Un contexte indisponible masque le canvas sans lever d'erreur.
+          if (canvas.hidden) dismissLoader();
         })
         .catch(() => {
           // Une erreur de chargement laisse le récit HTML utilisable.
