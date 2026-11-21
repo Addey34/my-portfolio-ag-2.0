@@ -6606,3 +6606,11 @@ button:focus-visible {
     background: linear-gradient(to bottom, transparent, #03050a 2rem);
   }
 }
+
+/* Ludora : l'automate précède le catalogue, sans repousser le titre sous le rail. */
+@media (max-width: 860px) {
+  #ludora .chapter__inner {
+    padding-top: 28svh;
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}

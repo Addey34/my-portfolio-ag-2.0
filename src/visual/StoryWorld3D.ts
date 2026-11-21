@@ -2414,6 +2414,12 @@ export class StoryWorld3D {
       material.roughness = 0.08;
       material.envMapIntensity = 1.1;
     }
+    // Ludora : le titane reste lisible sans éclairage supplémentaire.
+    if (name.startsWith('DICE') && name.includes('titanium')) {
+      material.color.set('#94a4b4');
+      material.roughness = 0.43;
+      material.bumpScale = 0.012;
+    }
     if (name.includes('energy')) {
       material.emissiveIntensity = 1.3;
       material.envMapIntensity = 0.2;
@@ -2673,21 +2679,25 @@ export class StoryWorld3D {
     const board = this.craftedNodes.get('DICE__board_pivot');
     if (!group || !die || !board) return;
     group.scale.setScalar((this.compact ? 0.98 : 0.95) * (0.7 + 0.3 * appear));
-    group.rotation.set(0.32, -0.35, 0);
+    group.rotation.set(0.42, -0.35, 0);
     // Le dé ancien roule en arrivant, puis se pose sur une lente rotation.
     const tumble = (1 - appear) * Math.PI * 2.5;
-    die.rotation.set(tumble + time * 0.25, time * 0.4 + tumble, time * 0.15);
-    die.position.y = Math.sin(time * 0.9) * 0.06;
+    die.rotation.set(
+      0.12 + tumble + Math.sin(time * 0.22) * 0.06,
+      0.25 + tumble + Math.sin(time * 0.18) * 0.12,
+      0.08
+    );
+    die.position.y = Math.sin(time * 0.65) * 0.018;
     // Les tuiles du plateau viennent se placer en couronne autour du dé.
-    board.rotation.y = time * 0.18 - (1 - appear) * 1.6;
+    board.rotation.y = Math.sin(time * 0.18) * 0.035 - (1 - appear) * 1.6;
     for (let k = 1; k <= 6; k += 1) {
       const tile = this.craftedNodes.get(`DICE__tile_${k}_pivot`);
       const base = this.craftedBase.get(`DICE__tile_${k}_pivot`);
       if (!tile || !base) continue;
-      const spread = 1 + (1 - appear) * 0.7;
+      const spread = 1 + (1 - appear) * (0.4 + k * 0.05);
       tile.position.set(
         base.x * spread,
-        base.y + Math.sin(time * 1.1 + k) * 0.03,
+        base.y + Math.sin(time * 0.65 + k) * 0.008,
         base.z * spread
       );
     }
