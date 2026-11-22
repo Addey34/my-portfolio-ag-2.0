@@ -26,7 +26,9 @@ for (const [locale, label] of [
     });
     const started = Date.now();
     try {
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await page.goto(locale === 'en' ? '/en/' : '/', {
+        waitUntil: 'domcontentloaded',
+      });
       const skip = page.getByRole('button', { name: label, exact: true });
       await expect(skip).toBeEnabled();
       await expect(skip).toBeVisible();

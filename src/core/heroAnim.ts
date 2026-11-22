@@ -32,7 +32,7 @@ export function initHero(scroll: SmoothScroll): void {
         if (
           a.closest('.hero__projects, .stack-proof, .project-threshold__list')
         ) {
-          window.history.replaceState(null, '', a.hash);
+          window.history.replaceState(window.history.state, '', a.hash);
         }
       });
     });

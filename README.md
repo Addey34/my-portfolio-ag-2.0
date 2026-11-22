@@ -4,6 +4,32 @@ Portfolio scrollytelling **Vite + TypeScript strict**. Une scène Three.js persi
 
 **🌐 Site :** [www.adrianguichard.dev](https://www.adrianguichard.dev/)
 
+## Documents français et anglais
+
+`index.html` est le gabarit commun. Le plugin Vite utilise `tools/localizedHtml.ts`
+et parse5 (build uniquement) pour produire `dist/index.html` en français et
+`dist/en/index.html` en anglais, avec les mêmes bundles et assets. Les textes
+viennent de `src/i18n/dictionary.ts` et `src/content/projects.ts` ; les métadonnées,
+l’identité Person et les URLs sont centralisées dans `src/i18n/seo.ts`.
+Le sitemap est généré depuis cette même configuration, sans fichier public concurrent.
+Le serveur de développement rend également les deux documents explicitement.
+
+L’URL fait autorité sur le stockage et la langue du navigateur. Le lien FR/EN
+fonctionne sans JavaScript ; son amélioration progressive conserve le monde 3D,
+les réglages et une position dans le récit. Précédent/suivant suit la langue de l’URL.
+
+Cloudflare Pages doit recevoir tout `dist/`, y compris `en/index.html` et `404.html`.
+Les chemins inconnus disposent ainsi d’une vraie 404 plutôt que du fallback SPA.
+Aucune règle `_redirects` ajoutée : la normalisation native de `/en`, `/en/` et
+`/en/index.html` reste à qualifier sur Cloudflare avant publication. Vite Preview
+ne reproduit pas toutes ses règles. Les tests CSP appliquent localement la politique
+existante de `public/_headers` ; ils ne prouvent pas la prise en compte du JSON-LD
+par un moteur de recherche.
+
+Validation ciblée : `pnpm verify`, puis `pnpm exec playwright test
+e2e/seo-i18n.spec.ts e2e/visitor-entry.spec.ts --workers=1`. Pour contrôler le build,
+servir `dist` avec `pnpm preview` et définir `E2E_BASE_URL` sur son URL exacte.
+
 ## Le parti pris technique : un scroll coordonné
 
 La fluidité dépend notamment de l'appareil et du coût de la scène. Deux choix structurent le parcours :

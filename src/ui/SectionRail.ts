@@ -211,7 +211,7 @@ export class SectionRail {
   private updateHash(item: RailItem): void {
     const hash = `#${item.id}`;
     if (window.location.hash !== hash) {
-      window.history.replaceState(null, '', hash);
+      window.history.replaceState(window.history.state, '', hash);
     }
   }
 

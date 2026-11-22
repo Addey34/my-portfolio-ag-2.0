@@ -16,6 +16,8 @@ export type Localized = Record<Locale, string>;
 type Dict = Record<string, string>;
 
 const fr: Dict = {
+  'contact.subject': 'Projet',
+  'contact.signals': 'Repères de collaboration',
   'boot.skip': 'Voir le portfolio',
   'github.loading': 'GitHub · chargement…',
   'github.fallback': 'Voir le profil GitHub',
@@ -152,6 +154,8 @@ const fr: Dict = {
 };
 
 const en: Dict = {
+  'contact.subject': 'Project',
+  'contact.signals': 'Collaboration at a glance',
   'boot.skip': 'View the portfolio',
   'github.loading': 'GitHub · loading…',
   'github.fallback': 'View GitHub profile',

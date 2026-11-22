@@ -65,9 +65,9 @@ jobs:
               console.log("Chromium image : " + executable);
             '
       - run:
-          name: Confidentialite du formulaire sur Chromium desktop et Android emule
+          name: SEO bilingue et confidentialite du formulaire sur Chromium desktop et Android emule
           command: >-
-            timeout --kill-after=30s 10m pnpm exec playwright test e2e/contact-security.spec.ts e2e/contact-qualification.spec.ts
+            timeout --kill-after=30s 10m pnpm exec playwright test e2e/seo-i18n.spec.ts e2e/contact-security.spec.ts e2e/contact-qualification.spec.ts
             --project=desktop-chromium --project=android-chromium --workers=1
             --trace=off --output=/tmp/portfolio-playwright-results
 
