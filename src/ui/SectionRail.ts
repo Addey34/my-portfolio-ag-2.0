@@ -1,6 +1,6 @@
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROJECTS } from '@/content/projects';
-import { t, onLocaleChange } from '@/i18n';
+import { t, onLocaleChange, replaceStoryHash } from '@/i18n';
 import type { SmoothScroll } from '@/core/SmoothScroll';
 import type { VisualDirector } from '@/visual/VisualDirector';
 import type { VisualScene } from '@/visual/types';
@@ -211,7 +211,7 @@ export class SectionRail {
   private updateHash(item: RailItem): void {
     const hash = `#${item.id}`;
     if (window.location.hash !== hash) {
-      window.history.replaceState(window.history.state, '', hash);
+      replaceStoryHash(hash);
     }
   }
 

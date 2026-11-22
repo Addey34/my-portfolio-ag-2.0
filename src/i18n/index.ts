@@ -194,6 +194,12 @@ function syncLanguageLink(): void {
   link.setAttribute('lang', other);
 }
 
+/** Synchronise immédiatement l'adresse partageable, sans entrée d'historique supplémentaire. */
+export function replaceStoryHash(hash: string): void {
+  history.replaceState(history.state, '', hash);
+  syncLanguageLink();
+}
+
 /** Seul raccord au défilement ; aucun nouveau montage du monde ou de ses abonnés. */
 export function initLocaleNavigation(
   restore: (position: StoryPosition) => void

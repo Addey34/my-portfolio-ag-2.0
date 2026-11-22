@@ -29,6 +29,8 @@ par un moteur de recherche.
 Validation ciblée : `pnpm verify`, puis `pnpm exec playwright test
 e2e/seo-i18n.spec.ts e2e/visitor-entry.spec.ts --workers=1`. Pour contrôler le build,
 servir `dist` avec `pnpm preview` et définir `E2E_BASE_URL` sur son URL exacte.
+Les vingt captures de revue du récit sont activables avec `SEO_VISUAL_CAPTURE=1` ;
+les assertions fonctionnelles restent actives sans cette option, notamment en CI.
 
 ## Le parti pris technique : un scroll coordonné
 

@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '@/core/motion';
+import { replaceStoryHash } from '@/i18n';
 import type { SmoothScroll } from '@/core/SmoothScroll';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -32,7 +33,7 @@ export function initHero(scroll: SmoothScroll): void {
         if (
           a.closest('.hero__projects, .stack-proof, .project-threshold__list')
         ) {
-          window.history.replaceState(window.history.state, '', a.hash);
+          replaceStoryHash(a.hash);
         }
       });
     });

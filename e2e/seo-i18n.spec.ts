@@ -3,6 +3,66 @@ import { readFileSync } from 'node:fs';
 import { DICTIONARIES } from '../src/i18n/dictionary';
 import { LANGUAGE_PATHS, ORIGIN, SEO } from '../src/i18n/seo';
 
+test('href linguistique à jour avant copie, nouvel onglet et historique', async ({
+  page,
+  context,
+  isMobile,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await expect(page.locator('#boot-loader')).toHaveCount(0, {
+    timeout: 20_000,
+  });
+  await page.evaluate(() =>
+    history.replaceState({ sentinel: 'conserve' }, '', location.href)
+  );
+  const link = page.locator('#lang-toggle');
+  await page.locator('.rail__dot[data-rail="galaxy"]').focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#galaxy$/);
+  await expect(link).toHaveAttribute('href', '/en/#galaxy');
+  const copied = await link.evaluate((node: HTMLAnchorElement) => node.href);
+  const copiedPage = await context.newPage();
+  await copiedPage.goto(copied);
+  await expect(copiedPage).toHaveURL(/\/en\/#galaxy$/);
+  await expect(copiedPage.locator('html')).toHaveAttribute('lang', 'en');
+  await copiedPage.close();
+  if (!isMobile) {
+    const opened = context.waitForEvent('page');
+    await link.click({ modifiers: ['ControlOrMeta'] });
+    const popup = await opened;
+    await popup.waitForLoadState('domcontentloaded');
+    await expect(popup).toHaveURL(/\/en\/#galaxy$/);
+    await popup.close();
+  }
+  await page.locator('.rail__dot[data-rail="top"]').focus();
+  await page.keyboard.press('Enter');
+  await page.locator('.hero__projects a[href="#magnotes"]').click();
+  await expect(link).toHaveAttribute('href', '/en/#magnotes');
+  await page.locator('#palette-open').click();
+  await page.locator('.palette__input').fill('Galaxy');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#galaxy$/);
+  await expect(link).toHaveAttribute('href', '/en/#galaxy');
+  const top = await page
+    .locator('#galaxy')
+    .evaluate((node) => node.getBoundingClientRect().top);
+  await link.click();
+  await expect(page).toHaveURL(/\/en\/#galaxy$/);
+  await page.goBack();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+  await page.goForward();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  expect(await page.evaluate(() => history.state.sentinel)).toBe('conserve');
+  await expect
+    .poll(() =>
+      page
+        .locator('#galaxy')
+        .evaluate((node) => node.getBoundingClientRect().top)
+    )
+    .toBeCloseTo(top, -2);
+});
+
 for (const locale of ['fr', 'en'] as const) {
   test(`HTML initial, sans JavaScript : ${locale}`, async ({
     browser,
@@ -203,10 +263,13 @@ test('bascule au milieu du récit, historique et montage 3D unique', async ({
           () => document.documentElement.scrollWidth <= innerWidth + 1
         )
       ).toBe(true);
-      await page.screenshot({
-        path: testInfo.outputPath(`${language}-${id}.png`),
-        scale: 'css',
-      });
+      // Les captures de revue sont opt-in ; toutes les assertions restent actives en CI.
+      if (process.env.SEO_VISUAL_CAPTURE === '1') {
+        await page.screenshot({
+          path: testInfo.outputPath(`${language}-${id}.png`),
+          scale: 'css',
+        });
+      }
     }
   }
 });
