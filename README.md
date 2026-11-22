@@ -32,6 +32,25 @@ servir `dist` avec `pnpm preview` et définir `E2E_BASE_URL` sur son URL exacte.
 Les vingt captures de revue du récit sont activables avec `SEO_VISUAL_CAPTURE=1` ;
 les assertions fonctionnelles restent actives sans cette option, notamment en CI.
 
+CircleCI exécute les mêmes fichiers SEO/contact dans deux étapes successives,
+desktop puis Android, avec un worker et un plafond de dix minutes par profil.
+Le plafond Playwright de 570 secondes laisse une marge pour écrire les rapports
+avant le garde-fou GNU. Chaque campagne conserve son code de sortie ; Android
+est exécuté même après un échec desktop. Aucun job supplémentaire n’est créé.
+`E2E_REPORT_DIR` active les rapports JUnit/JSON ; les traces DOM/réseau et la
+capture automatique sont conservées seulement en cas d’échec, sans vidéo, sources Git
+ou retry automatique. Les rapports sont collectés après chaque campagne, même
+rouge. La rétention des artefacts reste celle du projet CircleCI (30 jours par
+défaut), sans modification des paramètres du compte.
+Les scénarios de liens linguistiques utilisent le bouton d’accès anticipé et gardent
+les téléchargements GLB en attente pendant leurs interactions. Le test distinct
+de bascule 3D charge les vrais modèles et contrôle le canvas et le ticker.
+Les traversées complètes FR et EN ont chacune un cas et un budget indépendants ;
+elles chargent les vrais modèles depuis Galaxy puis visitent les dix sections,
+du héros au contact. Le budget individuel de 180 secondes reste inchangé.
+Les tests du formulaire conservent le chargement 3D et leurs gardes réseau
+inchangées : chaque requête est inspectée, toute transmission synthétique bloquée.
+
 ## Le parti pris technique : un scroll coordonné
 
 La fluidité dépend notamment de l'appareil et du coût de la scène. Deux choix structurent le parcours :
@@ -47,7 +66,7 @@ Voir [`src/core/SmoothScroll.ts`](src/core/SmoothScroll.ts) — c'est la pièce 
 | -------------------- | ------------------------------------------------------- |
 | Vite                 | Bundler + dev server                                    |
 | TypeScript           | Typage strict (`noUnusedLocals` / `noUnusedParameters`) |
-| Three.js             | Un seul monde WebGL et des objets 3D par chapitre        |
+| Three.js             | Un seul monde WebGL et des objets 3D par chapitre       |
 | `VisualDirector`     | État visuel commun piloté par les sections et le scroll |
 | GSAP + ScrollTrigger | Scrub des chapitres, reveals batchés, ticker maître     |
 | Lenis                | Smooth-scroll normalisé (anti-jank)                     |
