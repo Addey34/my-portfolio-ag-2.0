@@ -63,15 +63,24 @@
   </head>
   <body>
     <!-- Écran d'attente : visible dès le premier octet, retiré quand la 3D est prête. -->
-    <div id="boot-loader" class="boot-loader" aria-hidden="true">
-      <div class="boot-loader__mark">
+    <div id="boot-loader" class="boot-loader">
+      <div class="boot-loader__mark" aria-hidden="true">
         <svg viewBox="0 0 64 64" class="boot-loader__ring" focusable="false">
           <circle cx="32" cy="32" r="28" />
           <path d="M32 8v6M32 50v6M8 32h6M50 32h6" />
         </svg>
         <span class="boot-loader__ag">AG</span>
       </div>
-      <span class="boot-loader__bar"></span>
+      <span class="boot-loader__bar" aria-hidden="true"></span>
+      <button
+        class="boot-loader__skip"
+        type="button"
+        data-boot-skip
+        data-i18n="boot.skip"
+        disabled
+      >
+        Voir le portfolio
+      </button>
     </div>
     <a class="skip-link" href="#scroll-root" data-i18n="nav.content"
       >Aller au contenu</a

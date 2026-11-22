@@ -6728,3 +6728,24 @@ button:focus-visible {
     background-color: var(--bg);
   }
 }
+
+/* Accès volontaire au contenu pendant la préparation du décor. */
+.boot-loader__skip {
+  min-height: 44px;
+  max-width: calc(100vw - 2rem);
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--brass);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+}
+.boot-loader__skip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.boot-loader__skip:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 4px;
+}
