@@ -6752,3 +6752,232 @@ button:focus-visible {
   outline: 2px solid var(--brass);
   outline-offset: 4px;
 }
+
+/* Direction éditoriale : une même hiérarchie, du nom aux preuves et au contact.
+   Les réservations de scène et les seuils de scroll restent ceux du récit. */
+:root {
+  --reading-size: 1rem;
+  --label-size: 0.875rem;
+  --editorial-rule: rgba(180, 190, 198, 0.24);
+}
+
+.hero__title,
+.intro__title,
+.stack__title,
+.section-copy h2,
+.project-threshold__title,
+.chapter__name,
+.studies__title,
+.study__name,
+.contact__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.hero__tag {
+  padding: 0;
+  font-family: var(--font);
+  font-size: var(--label-size);
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  text-transform: none;
+  color: var(--fg-muted);
+}
+
+.hero__tag:first-child {
+  color: #e3c98f;
+}
+
+.hero__tag::before,
+.hero__tag::after {
+  content: none;
+}
+
+.hero__lead,
+.stack__lead,
+.section-copy > p,
+.project-threshold__lead,
+.studies__lead,
+.contact__lead {
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.intro__kicker,
+.project-threshold__kicker,
+.contact__kicker {
+  font-size: var(--label-size);
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+}
+
+.hero__cta,
+.chapter__links .chapter__link--primary,
+.contact__form-toggle {
+  border-radius: 0.4rem;
+  min-height: 3rem;
+}
+
+.hero__cta--primary {
+  background: #d8b875;
+  color: #16120b;
+  box-shadow: none;
+}
+
+.hero__cta--primary:hover {
+  background: #e6cb95;
+  box-shadow: none;
+}
+
+.hero__cta--ghost {
+  backdrop-filter: none;
+}
+
+.chapter__links .chapter__link--primary::after {
+  content: none;
+}
+
+.hero__projects-label {
+  font-size: var(--label-size);
+  letter-spacing: 0.04em;
+}
+
+.section--offers .offer-card {
+  border-bottom-color: var(--editorial-rule);
+}
+
+.section--offers .offer-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.section--offers .offer-card > p:not(.story-note),
+.chapter__proof-value,
+.study__value,
+.study__limit {
+  font-size: var(--reading-size);
+  line-height: 1.65;
+}
+
+.chapter__panel,
+#galaxy .chapter__panel {
+  background: #0a0f16;
+  backdrop-filter: none;
+}
+
+.chapter__panel::after,
+.study::after {
+  content: none;
+}
+
+.chapter__meta {
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.chapter__status,
+.chapter__proof-label,
+.chapter__highlights li,
+.study__status,
+.study__label,
+.study__flow li {
+  font-size: var(--label-size);
+  line-height: 1.5;
+}
+
+.chapter__proof-label,
+.study__label {
+  letter-spacing: 0.06em;
+}
+
+.chapter__proof-item {
+  padding: 0.25rem 0 0.25rem 0.85rem;
+  border-left-color: var(--editorial-rule);
+}
+
+.chapter__more-toggle,
+.chapter__links a,
+.chapter__links button,
+.study__toggle,
+.study__links a,
+.contact__copy {
+  min-height: 44px;
+  font-size: var(--label-size);
+}
+
+.study {
+  border-radius: 0.35rem;
+  border-color: var(--editorial-rule);
+  border-left-color: var(--study-accent);
+  background: #0a0f16;
+  box-shadow: none;
+}
+
+.study__highlight {
+  font-size: var(--reading-size);
+  line-height: 1.6;
+}
+
+.contact__signals span,
+.contact__form-note {
+  font-size: var(--label-size);
+  line-height: 1.6;
+}
+
+.contact__links > [data-contact-email] {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--brass-soft);
+  text-underline-offset: 0.3em;
+}
+
+@media (min-width: 981px) {
+  .hero__tags {
+    gap: 0.5rem 1rem;
+  }
+
+  .project-threshold__list a {
+    min-height: 6rem;
+    padding: 1rem 0.75rem;
+  }
+
+  .project-threshold__name {
+    font-size: 1.125rem;
+  }
+
+  .project-threshold__thesis {
+    font-size: var(--label-size);
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 980px) {
+  .hero__tag {
+    font-size: 0.8125rem;
+  }
+
+  .hero__tags {
+    gap: 0.35rem 0.75rem;
+  }
+
+  .contact__signals {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+
+  /* Le texte peut traverser le décor persistant pendant un geste tactile. */
+  .intro__title,
+  .stack__title,
+  .stack__lead,
+  .project-threshold__title,
+  .project-threshold__lead,
+  .contact__title,
+  .contact__lead {
+    position: relative;
+    background-color: var(--bg);
+  }
+}
