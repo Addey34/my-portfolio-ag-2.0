@@ -37,26 +37,15 @@ test('aperçu Galaxy visible, accessible, traduit et lié au produit', async ({
   await page.keyboard.press('Enter');
   await expect(exhibit).toHaveAttribute('data-tested-click', 'yes');
 
-  const preview = page.locator('#galaxy .chapter__preview');
-  const toggle = preview.locator('summary');
-  await expect(toggle).toHaveText('Agrandir la capture du produit');
-  await toggle.click();
-  await expect(preview).toHaveAttribute('open', '');
-  await expect(preview.locator('img')).toBeVisible();
-  await expect(preview.locator('img')).toHaveAttribute(
-    'alt',
-    'Vue du système solaire interactif Galaxy.'
+  // Le résultat et la preuve (limites comprises) sont visibles sans panneau replié.
+  await expect(page.locator('#galaxy .chapter__beat--outcome')).toContainText(
+    'Pas de mesure FPS publiée'
   );
   await page.locator('#lang-toggle').click();
   await expect(image).toHaveAttribute(
     'alt',
     'View of the interactive Galaxy solar system.'
   );
-  await expect(preview.locator('img')).toHaveAttribute(
-    'alt',
-    'View of the interactive Galaxy solar system.'
-  );
-  await expect(toggle).toHaveText('Enlarge the product screenshot');
   await expect(exhibit).toContainText('Open live demo');
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)

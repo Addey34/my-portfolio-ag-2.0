@@ -288,15 +288,11 @@ export class SectionTransitions {
             // Un détail ouvert peut dépasser l'écran : conserver les liens
             // lisibles jusqu'à ce que le bas de la fiche quitte le viewport.
             start: () =>
-              act.trigger.querySelector(
-                '.chapter__more[open], .chapter__preview[open]'
-              )
+              act.trigger.querySelector('.chapter__more[open]')
                 ? 'bottom 15%'
                 : 'bottom 72%',
             end: () =>
-              act.trigger.querySelector(
-                '.chapter__more[open], .chapter__preview[open]'
-              )
+              act.trigger.querySelector('.chapter__more[open]')
                 ? 'bottom -15%'
                 : 'bottom 40%',
             scrub: true,
