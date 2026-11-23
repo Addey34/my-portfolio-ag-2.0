@@ -4,6 +4,15 @@ import { DICTIONARIES } from '../src/i18n/dictionary';
 import { LANGUAGE_PATHS, ORIGIN, SEO } from '../src/i18n/seo';
 import { openPortfolioUI, uiTest } from './entry-module';
 
+/**
+ * Budgets des scénarios qui montent le vrai monde 3D en rendu logiciel.
+ * Mesures en conteneur Playwright verrouillé, serveur de dev, sur 2 CPU puis 1 CPU :
+ * world-settled en 21 s puis 68 s, parcours complet en 70 s puis 134 s.
+ * Les limites valent environ deux fois la mesure la plus lente.
+ */
+const WORLD_SETTLED_TIMEOUT = 140_000;
+const WORLD_JOURNEY_TIMEOUT = 300_000;
+
 uiTest(
   'href linguistique à jour avant copie et nouvel onglet',
   async ({ page, context }) => {
@@ -169,7 +178,7 @@ for (const locale of ['fr', 'en'] as const) {
 test('bascule au milieu du récit, historique et montage 3D unique', async ({
   page,
 }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(WORLD_JOURNEY_TIMEOUT);
   await page.route(
     /\/(?:assets\/index-[^/]+\.js|src\/main\.ts)(?:\?.*)?$/,
     async (route) => {
@@ -216,7 +225,7 @@ test('bascule au milieu du récit, historique et montage 3D unique', async ({
   await expect(page.locator('html')).toHaveAttribute(
     'data-seo-settled',
     'true',
-    { timeout: 60_000 }
+    { timeout: WORLD_SETTLED_TIMEOUT }
   );
   await expect(page.locator('#boot-loader')).toHaveCount(0);
   const before = await page.evaluate(() => {
@@ -268,7 +277,7 @@ for (const language of ['en', 'fr'] as const) {
   test(`parcours 3D complet et débordement : ${language}`, async ({
     page,
   }, testInfo) => {
-    test.setTimeout(180_000);
+    test.setTimeout(WORLD_JOURNEY_TIMEOUT);
     await page.addInitScript(() => {
       addEventListener('world-settled', () => {
         document.documentElement.dataset.seoSettled = 'true';
@@ -278,7 +287,7 @@ for (const language of ['en', 'fr'] as const) {
     await expect(page.locator('html')).toHaveAttribute(
       'data-seo-settled',
       'true',
-      { timeout: 60_000 }
+      { timeout: WORLD_SETTLED_TIMEOUT }
     );
     await expect(page.locator('#boot-loader')).toHaveCount(0);
     await expect(page.locator('#world-3d')).toBeVisible();
@@ -425,25 +434,21 @@ test('JSON-LD sous la CSP existante, sans exception de sécurité', async ({
   ).toEqual([]);
 });
 
-test('clic modifié ouvre le document anglais sans changer la scène source', async ({
-  page,
-  context,
-  isMobile,
-}) => {
-  test.skip(isMobile, 'Interaction clavier de bureau');
-  await page.goto('/#magnotes');
-  await expect(page.locator('#boot-loader')).toHaveCount(0, {
-    timeout: 20_000,
-  });
-  const popupPromise = context.waitForEvent('page');
-  await page.locator('#lang-toggle').click({ modifiers: ['ControlOrMeta'] });
-  const popup = await popupPromise;
-  await popup.waitForLoadState('domcontentloaded');
-  await expect(popup).toHaveURL(/\/en\/#magnotes$/);
-  await expect(popup.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
-  await popup.close();
-});
+uiTest(
+  'clic modifié ouvre le document anglais sans changer la scène source',
+  async ({ page, context, isMobile }) => {
+    test.skip(isMobile, 'Interaction clavier de bureau');
+    await openPortfolioUI(page, '/#magnotes');
+    const popupPromise = context.waitForEvent('page');
+    await page.locator('#lang-toggle').click({ modifiers: ['ControlOrMeta'] });
+    const popup = await popupPromise;
+    await popup.waitForLoadState('domcontentloaded');
+    await expect(popup).toHaveURL(/\/en\/#magnotes$/);
+    await expect(popup.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+    await popup.close();
+  }
+);
 
 test('réglages, formulaire ouvert et commande de langue conservés', async ({
   page,
