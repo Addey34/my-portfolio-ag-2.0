@@ -76,9 +76,14 @@ describe('project catalogue', () => {
       expect(aigen.limit[locale]).toContain('Authenticode');
       expect(aigen.limit[locale]).toContain('DirectML');
       expect(aigen.limit[locale]).toMatch(/désactivé|disabled/);
-      expect(aigen.highlight[locale]).toMatch(
-        /non requalifiée|not requalified/
-      );
+      expect(aigen.highlight[locale]).toContain('386');
+      expect(aigen.evidence[locale]).toContain('DreamShaper LCM');
+      expect(aigen.evidence[locale]).toContain('512 × 512');
+      expect(aigen.evidence[locale]).toContain('828 s');
+      expect(aigen.evidence[locale]).toMatch(/local/);
+      expect(aigen.evidence[locale]).toContain('PNG');
+      expect(aigen.limit[locale]).toMatch(/périmée|stale/);
+      expect(aigen.limit[locale]).toMatch(/service public|public service/);
       expect(aigen.role[locale]).toMatch(/tiers|third-party/);
     }
   });

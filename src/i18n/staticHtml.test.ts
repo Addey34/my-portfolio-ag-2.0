@@ -75,10 +75,12 @@ describe('documents localisés', () => {
           project.proof.evidence[locale]
         );
       }
-      for (const study of CASE_STUDIES)
-        expect(textContent(find('id', study.id))).toContain(
-          study.limit[locale]
-        );
+      for (const study of CASE_STUDIES) {
+        const content = textContent(find('id', study.id));
+        expect(content).toContain(study.highlight[locale]);
+        expect(content).toContain(study.evidence[locale]);
+        expect(content).toContain(study.limit[locale]);
+      }
       const person = JSON.parse(serialize(find('type', 'application/ld+json')));
       expect(person['@id']).toBe(ORIGIN + '/#person');
       expect(person.url).toBe(ORIGIN + '/');

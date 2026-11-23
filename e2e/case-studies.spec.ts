@@ -29,7 +29,7 @@ test('dossiers bilingues : décisions, preuves, limites et détails accessibles'
   }
   await expect(
     page.locator('#imagegeneratorlocal .study__highlight')
-  ).toContainText('Génération de bout en bout non requalifiée');
+  ).toContainText('Lanceur Windows 386 publié');
   await page.locator('#lang-toggle').click();
   await expect(page.locator('#siteguardian .study__flow')).toContainText(
     'Acknowledgement'
