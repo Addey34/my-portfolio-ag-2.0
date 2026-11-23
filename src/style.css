@@ -2219,7 +2219,8 @@ button:focus-visible {
   }
 
   .chapter__inner {
-    padding-top: 48svh;
+    /* Avec le décalage des ancres, l'objet et le titre partagent le premier écran. */
+    padding-top: 30svh;
     padding-bottom: 15svh;
   }
 
@@ -6527,9 +6528,6 @@ button:focus-visible {
   }
 }
 @media (max-width: 860px) {
-  #galaxy .chapter__inner {
-    padding-top: 19svh;
-  }
   #galaxy .chapter__beat--outcome {
     margin-top: 6svh;
   }
@@ -6617,7 +6615,6 @@ button:focus-visible {
 /* Ludora : l'automate précède le catalogue, sans repousser le titre sous le rail. */
 @media (max-width: 860px) {
   #ludora .chapter__inner {
-    padding-top: 28svh;
     padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   }
 }
@@ -6625,7 +6622,6 @@ button:focus-visible {
 /* MagNotes : le registre et son titre précèdent les preuves détaillées sur mobile. */
 @media (max-width: 860px) {
   #magnotes .chapter__inner {
-    padding-top: 28svh;
     padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   }
 }
