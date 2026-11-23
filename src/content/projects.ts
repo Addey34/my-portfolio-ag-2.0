@@ -342,8 +342,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       en: 'Connect a web interface to an AI engine on your computer: install, select a runtime and orchestrate jobs.',
     },
     highlight: {
-      fr: 'Lanceur Windows et empreinte publiés · interface accessible le 21/11/2026. Génération de bout en bout non requalifiée.',
-      en: 'Windows launcher and checksum published · interface reachable on 21 Nov 2026. End-to-end generation not requalified.',
+      fr: 'Lanceur Windows 386 publié · image réelle 512 × 512 obtenue sur CPU dans une VM Windows 11, avec un site de test local.',
+      en: 'Windows launcher 386 published · a real 512 × 512 image obtained on CPU in a Windows 11 VM, using a local test site.',
     },
     problem: {
       fr: 'L’accès aux modèles ne suffit pas : il faut installer leurs dépendances, choisir un moteur compatible et relier calcul local et interface.',
@@ -358,12 +358,12 @@ export const CASE_STUDIES: CaseStudy[] = [
       en: 'Separate the small launcher, hardware-specific runtime and models. Each machine downloads its engine without imposing CUDA on everyone.',
     },
     evidence: {
-      fr: 'Installateur Windows public et fichier SHA-256 accessibles le 21/11/2026. Le code vérifie les manifestes de runtimes signés Ed25519 et les empreintes des fichiers. Le parcours d’association et les tâches durables sont présents dans le code ; leur présence ne prouve pas une génération de bout en bout. La documentation conserve une validation CUDA sur RTX 5070 Ti sous WSL2, sans qualification universelle.',
-      en: 'Public Windows installer and SHA-256 file reachable on 21 Nov 2026. Code verifies Ed25519-signed runtime manifests and file checksums. Pairing and durable jobs are present in code; their presence does not prove end-to-end generation. Documentation retains CUDA validation on an RTX 5070 Ti under WSL2, without universal qualification.',
+      fr: 'Le 22/11/2026, le lanceur publié 386 a produit une image réelle 512 × 512 avec DreamShaper LCM dans une VM Windows 11 restaurée à un état vierge, sans GPU. Du clic à l’image : environ 828 s, démarrage du moteur et téléchargements compris. Le site était construit localement et son navigateur tournait sur le PC de test ; le calcul CPU était effectué dans la VM. Le 23/11/2026, un second essai local a vérifié le téléchargement de l’original et sa réouverture en PNG 512 × 512. Le code vérifie les manifestes de runtimes signés Ed25519 et les empreintes des fichiers.',
+      en: 'On 22 Nov 2026, published launcher 386 produced a real 512 × 512 image with DreamShaper LCM in a Windows 11 VM restored to a clean snapshot, without a GPU. From click to image: about 828 s, including engine startup and downloads. The site was built locally and its browser ran on the test PC; CPU computation ran in the VM. On 23 Nov 2026, a second local run verified downloading the original and reopening it as a 512 × 512 PNG. Code verifies Ed25519-signed runtime manifests and file checksums.',
     },
     limit: {
-      fr: 'Installateur Windows sans signature Authenticode. Génération publique non requalifiée ici ; image, vidéo et audio documentés, pas certifiés sur chaque GPU. DirectML reste à qualifier selon le matériel ; calcul cloud optionnel désactivé par défaut. En mode hébergé, demandes et résultats transitent par le serveur.',
-      en: 'Windows installer without an Authenticode signature. Public generation not requalified here; image, video and audio are documented, not certified on every GPU. DirectML needs hardware-specific qualification; optional cloud compute is disabled by default. In hosted mode, requests and results pass through the server.',
+      fr: 'Ces essais locaux ne qualifient pas le service public ni toutes les installations ou tous les GPU. Lors du second essai, l’indication de présence du modèle est restée périmée après l’image. Les nouvelles étapes de progression ne sont pas intégrées au lanceur 386 publié. Vidéo, audio et DirectML restent à qualifier selon le matériel. Installateur sans signature Authenticode ; calcul cloud optionnel désactivé par défaut. En mode hébergé, demandes et résultats transitent par le serveur.',
+      en: 'These local runs do not qualify the public service, every installation or every GPU. In the second run, the model availability notice remained stale after the image. The new progress stages are not included in published launcher 386. Video, audio and DirectML still need hardware-specific qualification. Installer without an Authenticode signature; optional cloud compute is disabled by default. In hosted mode, requests and results pass through the server.',
     },
     stack: ['Python', 'FastAPI', 'PyTorch', 'Diffusers', 'TypeScript'],
     flow: [
