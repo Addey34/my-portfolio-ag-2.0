@@ -261,8 +261,18 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
   await page.screenshot({ path: testInfo.outputPath('stacks-fr.png') });
   await page.locator('#stack .stack-proof').scrollIntoViewIfNeeded();
   if (page.viewportSize()!.width <= 980) {
-    await page.evaluate(() => window.scrollBy(0, innerHeight * 0.25));
-    await page.waitForTimeout(350);
+    // Le décalage ne sert que si le bloc reste sous le rail : le défilement
+    // lissé peut sinon le pousser hors de l'écran et le faire disparaître.
+    const hiddenByRail = await page.evaluate(() => {
+      const proof = document.querySelector('#stack .stack-proof');
+      return proof
+        ? proof.getBoundingClientRect().bottom > innerHeight * 0.85
+        : false;
+    });
+    if (hiddenByRail) {
+      await page.evaluate(() => window.scrollBy(0, innerHeight * 0.25));
+      await page.waitForTimeout(350);
+    }
   }
   await expect(page.locator('#stack .stack-proof')).toBeInViewport();
   await page.screenshot({ path: testInfo.outputPath('stacks-proofs-fr.png') });
