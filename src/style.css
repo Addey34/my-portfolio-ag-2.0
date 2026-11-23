@@ -5850,8 +5850,10 @@ button:focus-visible {
     margin-block-start: 0;
   }
 
+  /* L'enveloppe occupe le tiers haut : le texte remonte pour que le titre et
+     l'introduction restent au-dessus du rail sur un écran court. */
   .section--contact {
-    padding-top: clamp(18rem, 58svh, 32rem);
+    padding-top: clamp(15rem, 46svh, 32rem);
   }
 }
 
