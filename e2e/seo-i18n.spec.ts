@@ -7,8 +7,8 @@ import { openPortfolioUI, uiTest } from './entry-module';
 /**
  * Budgets des scénarios qui montent le vrai monde 3D en rendu logiciel.
  * Mesures en conteneur Playwright verrouillé, serveur de dev, sur 2 CPU puis 1 CPU :
- * world-settled en 21 s puis 68 s, parcours complet en 70 s puis 134 s.
- * Les limites valent environ deux fois la mesure la plus lente.
+ * world-settled en 21 s puis 68 s ; parcours complet de 70 s à 134 s (sonde) et
+ * 258 s pour le scénario Playwright à 1 CPU, pire cas retenu comme borne.
  */
 const WORLD_SETTLED_TIMEOUT = 140_000;
 const WORLD_JOURNEY_TIMEOUT = 300_000;
