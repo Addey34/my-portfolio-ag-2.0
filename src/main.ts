@@ -1,4 +1,3 @@
-import '@/style.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SmoothScroll } from '@/core/SmoothScroll';
@@ -15,7 +14,7 @@ import {
   renderProjects,
   renderStudies,
 } from '@/content/renderProjects';
-import { initI18n, initLocaleToggle, t } from '@/i18n';
+import { initI18n, initLocaleNavigation, initLocaleToggle, t } from '@/i18n';
 import { CommandPalette } from '@/ui/CommandPalette';
 import { ControlPanel } from '@/ui/ControlPanel';
 import { SectionRail } from '@/ui/SectionRail';
@@ -55,9 +54,9 @@ function initContactForm(): void {
       (name ? messageInput : nameInput).focus();
       return;
     }
-    const subject = encodeURIComponent(`Projet — ${name}`);
+    const subject = encodeURIComponent(`${t('contact.subject')} — ${name}`);
     const body = encodeURIComponent(
-      `Nom : ${name}\nEmail : ${email}\n\n${message}`
+      `${t('contact.form.name')} : ${name}\nEmail : ${email}\n\n${message}`
     );
 
     const link = document.createElement('a');
@@ -200,6 +199,17 @@ function boot(): void {
 
   // 3. Scroll lissé (installe Lenis sur le ticker GSAP, sauf reduced-motion).
   const scroll = new SmoothScroll();
+  initLocaleNavigation(({ id, fraction }) => {
+    ScrollTrigger.refresh();
+    const section = document.getElementById(id);
+    if (!section) return;
+    const position =
+      window.scrollY +
+      section.getBoundingClientRect().top +
+      fraction * section.offsetHeight;
+    scroll.scrollTo(position, 0, { immediate: true });
+    ScrollTrigger.update();
+  });
 
   // 3a. Diaporama intelligent : les chapitres s'aimantent quand le scroll se
   // pose à proximité — jamais pendant que l'utilisateur bouge.

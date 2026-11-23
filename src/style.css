@@ -6139,10 +6139,17 @@ button:focus-visible {
   display: none;
 }
 
-.no-js .hud,
 .no-js .contact__disclosure,
 .no-js .contact__copy {
   display: none;
+}
+
+.no-js .hud > :not(#lang-toggle) {
+  display: none;
+}
+
+#lang-toggle {
+  text-decoration: none;
 }
 
 .no-js-content {

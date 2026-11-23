@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import { resolve } from 'node:path';
 
 const previewURL = process.env.E2E_BASE_URL;
+const reportDirectory = process.env.E2E_REPORT_DIR;
 
 export default defineConfig({
   testDir: './e2e',
@@ -8,12 +10,22 @@ export default defineConfig({
   timeout: 45_000,
   fullyParallel: true,
   workers: 3,
-  reporter: 'list',
+  retries: 0,
+  captureGitInfo: { commit: false, diff: false },
+  reporter: reportDirectory
+    ? [
+        ['list'],
+        ['junit', { outputFile: resolve(reportDirectory, 'junit.xml') }],
+        ['json', { outputFile: resolve(reportDirectory, 'report.json') }],
+      ]
+    : 'list',
   use: {
     baseURL: previewURL ?? 'http://127.0.0.1:43127',
     locale: 'fr-FR',
-    trace: 'retain-on-failure',
+    // DOM et réseau conservés en cas d'échec, sans sources privées ni film vidéo.
+    trace: { mode: 'retain-on-failure', sources: false, screenshots: false },
     screenshot: 'only-on-failure',
+    video: 'off',
   },
   projects: [
     { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },

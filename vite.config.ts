@@ -1,75 +1,101 @@
-import { fileURLToPath } from 'url';
+﻿import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import { readFile } from 'node:fs/promises';
 import { defineConfig } from 'vite';
-import { PROJECTS, CASE_STUDIES } from './src/content/projects';
-import { CONTACT_EMAIL } from './src/content/contact';
+import { localizedHtml, localizedSitemap } from './tools/localizedHtml';
+import { localeFromPath } from './src/i18n/seo';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [
     {
-      name: 'contenu-sans-javascript',
-      transformIndexHtml(html) {
-        const escape = (value: string): string =>
-          value.replace(
-            /[&<>"']/g,
-            (char) =>
-              ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;',
-              })[char] ?? char
-          );
-        const projects = PROJECTS.map(
-          (project) =>
-            `<article id="${escape(project.id)}"><h3>${escape(project.name)}</h3><p>${escape(project.tagline.fr)}</p><p>${escape(project.proof.result.fr)}</p><details class="chapter__preview"><summary>Voir un aperçu du produit</summary><img src="${escape(project.preview.src)}" alt="${escape(project.preview.alt.fr)}" width="1280" height="${project.preview.height}" loading="lazy" decoding="async"></details><ul>${project.links.map((link) => `<li><a href="${escape(link.href)}">${escape(link.label.fr)}</a></li>`).join('')}</ul></article>`
-        ).join('');
-        const studies = CASE_STUDIES.map(
-          (study) =>
-            `<article id="${escape(study.id)}"><h3>${escape(study.name)}</h3><p>${escape(study.summary.fr)}</p><p>${escape(study.highlight.fr)}</p></article>`
-        ).join('');
-        return html
-          .replace(
-            '<!-- PROJETS STATIQUES -->',
-            `<div class="no-js-content"><h2>Projets</h2>${projects}</div>`
-          )
-          .replace(
-            '<!-- ÉTUDES STATIQUES -->',
-            `<div class="no-js-content">${studies}</div>`
-          )
-          .replace('<!-- ADRESSE STATIQUE -->', escape(CONTACT_EMAIL))
-          .replace(
-            'href="mailto:" data-contact-email',
-            `href="mailto:${escape(CONTACT_EMAIL)}" data-contact-email`
-          );
+      name: 'html-bilingue',
+      configureServer(server) {
+        server.middlewares.use(async (req, res, next) => {
+          const path = new URL(req.url ?? '/', 'http://localhost').pathname;
+          if (
+            !['/', '/index.html', '/en', '/en/', '/en/index.html'].includes(
+              path
+            )
+          ) {
+            if (path === '/sitemap.xml') {
+              res.setHeader('Content-Type', 'application/xml');
+              res.end(localizedSitemap());
+              return;
+            }
+            next();
+            return;
+          }
+          try {
+            const template = await readFile(
+              resolve(__dirname, 'index.html'),
+              'utf8'
+            );
+            const html = await server.transformIndexHtml(path, template);
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.end(html);
+          } catch (error) {
+            next(error);
+          }
+        });
+      },
+      transformIndexHtml: {
+        order: 'post',
+        handler(html, context) {
+          // Le build conserve le gabarit compilé ; generateBundle crée les variantes.
+          return context.server
+            ? localizedHtml(html, localeFromPath(context.path))
+            : html;
+        },
+      },
+      generateBundle: {
+        order: 'post',
+        handler(_options, bundle) {
+          const entry = bundle['index.html'];
+          if (
+            !entry ||
+            entry.type !== 'asset' ||
+            typeof entry.source !== 'string'
+          ) {
+            this.error('Entrée HTML compilée absente');
+          }
+          const template = entry.source;
+          entry.source = localizedHtml(template, 'fr');
+          this.emitFile({
+            type: 'asset',
+            fileName: 'en/index.html',
+            source: localizedHtml(template, 'en'),
+          });
+          this.emitFile({
+            type: 'asset',
+            fileName: 'sitemap.xml',
+            source: localizedSitemap(),
+          });
+        },
       },
     },
   ],
   base: '/',
   publicDir: 'public',
-  resolve: {
-    // Alias @/ → src/ : imports absolus, résilients aux déplacements de fichiers.
-    alias: { '@': resolve(__dirname, 'src') },
-  },
+  resolve: { alias: { '@': resolve(__dirname, 'src') } },
   server: {
-    watch: { ignored: ['**/.lighthouseci/**'] },
+    watch: {
+      ignored: [
+        '**/.lighthouseci/**',
+        '**/docs/private/**',
+        '**/test-results/**',
+        '**/playwright-report/**',
+      ],
+    },
   },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
       output: {
-        // Sépare les grosses libs tierces du code applicatif : elles changent
-        // rarement (meilleur cache navigateur) et allègent le chunk principal.
-        // Three.js porte le monde 3D et bénéficie du même cache séparé.
-        manualChunks: {
-          gsap: ['gsap'],
-          lenis: ['lenis'],
-          three: ['three'],
-        },
+        // Bibliothèques communes aux deux documents, mises en cache indépendamment.
+        manualChunks: { gsap: ['gsap'], lenis: ['lenis'], three: ['three'] },
       },
     },
   },

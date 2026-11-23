@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/style.css" />
     <title>Adrian Guichard — Développeur full-stack TypeScript</title>
     <meta
       name="description"
@@ -97,7 +98,13 @@
     </div>
 
     <!-- Wordmark fixe haut-gauche, retour en haut. -->
-    <a class="wordmark" href="#top" aria-label="Retour en haut">AG</a>
+    <a
+      class="wordmark"
+      href="#top"
+      data-i18n-aria="nav.hero"
+      aria-label="Retour en haut"
+      >AG</a
+    >
 
     <!-- HUD fixe : reglages visuels, langue et palette. -->
     <div class="hud">
@@ -113,7 +120,15 @@
       >
         &#9881;
       </button>
-      <button id="lang-toggle" class="hud__btn" type="button"></button>
+      <a
+        id="lang-toggle"
+        class="hud__btn"
+        href="/en/"
+        hreflang="en"
+        lang="en"
+        aria-label="Passer le site en anglais"
+        >EN</a
+      >
       <button
         id="palette-open"
         class="hud__btn hud__btn--cmd"
@@ -363,7 +378,9 @@
       </section>
 
       <!-- PROJETS : chapitres immersifs injectes depuis src/content/projects.ts. -->
-      <section id="projects" class="chapters"><!-- PROJETS STATIQUES --></section>
+      <section id="projects" class="chapters">
+        <!-- PROJETS STATIQUES -->
+      </section>
 
       <!-- ETUDES COMPLEMENTAIRES : hors chapitres, avant la conclusion. -->
       <section id="studies" class="section section--studies">
@@ -377,7 +394,9 @@
           Des projets au code privé, présentés par leurs décisions, leurs
           preuves datées et leurs limites connues.
         </p>
-        <div id="studies-list" class="studies__list"><!-- ÉTUDES STATIQUES --></div>
+        <div id="studies-list" class="studies__list">
+          <!-- ÉTUDES STATIQUES -->
+        </div>
       </section>
 
       <!-- CONTACT -->
@@ -394,6 +413,7 @@
         </p>
         <ul
           class="contact__signals"
+          data-i18n-aria="contact.signals"
           aria-label="Repères de collaboration"
           data-reveal
         >
@@ -423,40 +443,47 @@
           <div class="contact__form-shell">
             <form id="contact-form" class="contact__form">
               <fieldset class="contact__fields" disabled>
-              <p class="contact__form-label" data-i18n="contact.form.label">
-                Contact / brief
-              </p>
-              <div class="contact__form-grid">
+                <p class="contact__form-label" data-i18n="contact.form.label">
+                  Contact / brief
+                </p>
+                <div class="contact__form-grid">
+                  <label>
+                    <span data-i18n="contact.form.name">Nom</span>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      autocomplete="name"
+                      required
+                    />
+                  </label>
+                  <label>
+                    <span data-i18n="contact.form.email">Email</span>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      autocomplete="email"
+                      required
+                    />
+                  </label>
+                </div>
                 <label>
-                  <span data-i18n="contact.form.name">Nom</span>
-                  <input id="contact-name" type="text" autocomplete="name" required />
+                  <span data-i18n="contact.form.message"
+                    >Projet ou contexte</span
+                  >
+                  <textarea id="contact-message" rows="4" required></textarea>
                 </label>
-                <label>
-                  <span data-i18n="contact.form.email">Email</span>
-                  <input
-                    id="contact-email"
-                    type="email"
-                    autocomplete="email"
-                    required
-                  />
-                </label>
-              </div>
-              <label>
-                <span data-i18n="contact.form.message">Projet ou contexte</span>
-                <textarea id="contact-message" rows="4" required></textarea>
-              </label>
-              <button
-                class="contact__cta"
-                type="submit"
-                data-i18n="contact.form.submit"
-              >
-                Préparer le message
-              </button>
-              <p class="contact__form-note" data-i18n="contact.form.note">
-                Le message s’ouvre dans votre client email. Sans client installé
-                (webmail), copiez l’adresse ci-dessous et écrivez-moi
-                directement.
-              </p>
+                <button
+                  class="contact__cta"
+                  type="submit"
+                  data-i18n="contact.form.submit"
+                >
+                  Préparer le message
+                </button>
+                <p class="contact__form-note" data-i18n="contact.form.note">
+                  Le message s’ouvre dans votre client email. Sans client
+                  installé (webmail), copiez l’adresse ci-dessous et écrivez-moi
+                  directement.
+                </p>
               </fieldset>
             </form>
           </div>
@@ -465,7 +492,9 @@
           <p class="contact__availability" data-i18n="contact.availability">
             Ouvert aux opportunités · Montpellier, France
           </p>
-          <a href="mailto:contact@adrianguichard.dev" data-contact-email>contact@adrianguichard.dev</a>
+          <a href="mailto:contact@adrianguichard.dev" data-contact-email
+            >contact@adrianguichard.dev</a
+          >
           <button
             type="button"
             class="contact__copy"
@@ -497,6 +526,7 @@
             rel="noopener"
             target="_blank"
             data-github-summary
+            data-i18n="github.loading"
             >GitHub · chargement…</a
           >
           <a
@@ -505,6 +535,7 @@
             target="_blank"
             data-github-latest
             hidden
+            data-i18n="github.latest"
             >Dernière activité GitHub</a
           >
         </div>

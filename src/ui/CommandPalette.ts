@@ -1,7 +1,7 @@
 import type { SmoothScroll } from '@/core/SmoothScroll';
 import { CONTACT_EMAIL } from '@/content/contact';
 import { CASE_STUDIES, PROJECTS } from '@/content/projects';
-import { onLocaleChange, t, toggleLocale } from '@/i18n';
+import { onLocaleChange, replaceStoryHash, t, toggleLocale } from '@/i18n';
 
 /**
  * Command palette: keyboard navigation in a Raycast-like style.
@@ -320,5 +320,7 @@ export class CommandPalette {
 
   private go(target: string | number): void {
     this.scroll.scrollTo(target);
+    if (typeof target === 'string' && target.startsWith('#'))
+      replaceStoryHash(target);
   }
 }
