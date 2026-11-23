@@ -19,9 +19,10 @@ gsap.registerPlugin(ScrollTrigger);
 export type TransitionStyle =
   'rise' | 'slide' | 'depth' | 'tilt' | 'drift' | 'skew' | 'fade';
 
-export type TransitionMode = TransitionStyle | 'random';
+export type TransitionMode = TransitionStyle | 'random' | 'story';
 
 export const TRANSITION_MODES: TransitionMode[] = [
+  'story',
   'random',
   'rise',
   'slide',
@@ -33,6 +34,24 @@ export const TRANSITION_MODES: TransitionMode[] = [
 ];
 
 const STORAGE_KEY = 'ag-transition';
+
+/**
+ * Mode par défaut : une intention par frontière, dans l'ordre de l'histoire.
+ * horloge → compétences : profondeur (le cadran s'ouvre) ; compétences →
+ * solutions : bascule (une face se retourne) ; solutions → produits : montée
+ * (le seuil se franchit) ; produits → Galaxy : profondeur (on entre dans un
+ * monde) ; Galaxy → Ludora : glissé (l'orbite devient grille) ; Ludora →
+ * MagNotes : dérive (les notes se détachent) ; sortie finale : montée.
+ */
+const STORY_STYLES: TransitionStyle[] = [
+  'depth',
+  'tilt',
+  'rise',
+  'depth',
+  'slide',
+  'drift',
+  'rise',
+];
 
 /** Styles tirés au sort en mode aléatoire (le fondu simple reste un choix explicite). */
 const RANDOM_POOL: TransitionStyle[] = [
@@ -159,7 +178,7 @@ function readStoredMode(): TransitionMode {
   } catch {
     /* stockage indisponible → montée stable */
   }
-  return 'rise';
+  return 'story';
 }
 
 /** Tire `count` styles au hasard, sans deux fois le même d'affilée. */
@@ -219,10 +238,15 @@ export class SectionTransitions {
     this.drawn =
       this.mode === 'random'
         ? drawStyles(acts.length + 1)
-        : Array.from(
-            { length: acts.length + 1 },
-            () => this.mode as TransitionStyle
-          );
+        : this.mode === 'story'
+          ? Array.from(
+              { length: acts.length + 1 },
+              (_, i) => STORY_STYLES[Math.min(i, STORY_STYLES.length - 1)]
+            )
+          : Array.from(
+              { length: acts.length + 1 },
+              () => this.mode as TransitionStyle
+            );
     const amp = window.innerWidth < 860 ? 0.6 : 1;
 
     this.context = gsap.context(() => {

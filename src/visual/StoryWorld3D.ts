@@ -782,7 +782,7 @@ export class StoryWorld3D {
     const heroPresence = medallionOpening
       ? identityPresence * (1 - smooth((clockAgProgress - 0.03) / 0.22))
       : 0;
-    this.heroStage?.update(heroPresence);
+    this.heroStage?.update(heroPresence, motionTime, this.pointer.x);
     this.world.rotation.y =
       (this.pointer.x - 0.5) * 0.11 +
       galaxyPresence * 0.3 +
