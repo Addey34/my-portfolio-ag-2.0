@@ -782,7 +782,7 @@ export class StoryWorld3D {
     const heroPresence = medallionOpening
       ? identityPresence * (1 - smooth((clockAgProgress - 0.03) / 0.22))
       : 0;
-    this.heroStage?.update(heroPresence);
+    this.heroStage?.update(heroPresence, motionTime, this.pointer.x);
     this.world.rotation.y =
       (this.pointer.x - 0.5) * 0.11 +
       galaxyPresence * 0.3 +
@@ -2679,7 +2679,7 @@ export class StoryWorld3D {
     const die = this.craftedNodes.get('DICE__die_pivot');
     const board = this.craftedNodes.get('DICE__board_pivot');
     if (!group || !die || !board) return;
-    group.scale.setScalar((this.compact ? 0.98 : 0.95) * (0.7 + 0.3 * appear));
+    group.scale.setScalar((this.compact ? 0.98 : 1.12) * (0.7 + 0.3 * appear));
     group.rotation.set(0.42, -0.35, 0);
     // Le dé ancien roule en arrivant, puis se pose sur une lente rotation.
     const tumble = (1 - appear) * Math.PI * 2.5;
@@ -2718,7 +2718,7 @@ export class StoryWorld3D {
     const book = this.craftedNodes.get('BOOK__book_pivot');
     if (!group || !book) return;
     group.scale.setScalar(
-      (this.compact ? 0.94 : 0.88) * (0.75 + 0.25 * appear)
+      (this.compact ? 0.94 : 1.04) * (0.75 + 0.25 * appear)
     );
     group.rotation.set(0.42, 0.28, 0);
     book.position.y =
