@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForScrollEnd } from './scroll-settle';
 
 // Même build optimisé, mêmes profils et gestes pour les deux états de revue.
 const phase = process.env.VISUAL_PHASE ?? 'after';
@@ -26,6 +27,7 @@ test('composition aux entrées depuis le rail', async ({
     else await link.click();
     await expect(link).toHaveClass(/is-current/);
     await page.waitForTimeout(2000);
+    await waitForScrollEnd(page);
     const heading = page.locator(`#${id}`).getByRole('heading').first();
     await expect(heading).toBeInViewport();
     if (isMobile && ['galaxy', 'ludora', 'magnotes'].includes(id)) {

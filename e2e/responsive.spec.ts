@@ -1,4 +1,5 @@
 import { expect, test as base } from '@playwright/test';
+import { waitForScrollEnd } from './scroll-settle';
 
 /**
  * Les parcours mesurent des positions 3D : l'écran d'attente, qui couvre la page
@@ -104,7 +105,7 @@ test('les réglages retiennent le focus et le rendent au bouton', async ({
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
   await expect(
-    page.locator('.offer-card[tabindex], .chapter__proof-item[tabindex]')
+    page.locator('.offer-card[tabindex], .ledger__row[tabindex]')
   ).toHaveCount(0);
 });
 
@@ -112,13 +113,7 @@ test('Galaxy distingue ses échelles et donne accès à la méthodologie en FR e
   page,
 }, testInfo) => {
   await page.goto('/#galaxy');
-  const details = page.locator('#galaxy .chapter__more');
-  const toggle = details.locator('summary');
-  await toggle.scrollIntoViewIfNeeded();
-  if (testInfo.project.name === 'desktop-chromium') await toggle.click();
-  else await toggle.tap();
-  await expect(details).toHaveAttribute('open', '');
-  await expect(details).toContainText(
+  await expect(page.locator('#galaxy .ledger__row--decision')).toContainText(
     'distances compressées en mode pédagogique'
   );
   const methodology = page
@@ -129,7 +124,7 @@ test('Galaxy distingue ses échelles et donne accès à la méthodologie en FR e
     'https://galaxy.adrianguichard.dev/methodology/'
   );
   await methodology.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(1500);
+  await waitForScrollEnd(page);
   await expect(methodology).toBeVisible();
   await expect(methodology).toBeInViewport();
   await expect
@@ -146,7 +141,7 @@ test('Galaxy distingue ses échelles et donne accès à la méthodologie en FR e
   });
   await expect(methodology).toBeInViewport();
   await page.locator('#lang-toggle').click();
-  await expect(details).toContainText(
+  await expect(page.locator('#galaxy .ledger__row--decision')).toContainText(
     'compressed distances in educational mode'
   );
   await expect(
@@ -181,7 +176,7 @@ test('les aperçus des produits sont visibles, accessibles et traduits', async (
     'alt',
     'View of the interactive Galaxy solar system.'
   );
-  await expect(page.locator('#galaxy .chapter__exhibit span')).toHaveText(
+  await expect(page.locator('#galaxy .chapter__exhibit-cta')).toHaveText(
     'Open live demo'
   );
   expect(
@@ -246,9 +241,13 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
   test.setTimeout(120_000);
   await page.goto('/#stack');
   // Le masque d'entrée verrouille le défilement : on attend sa fermeture avant tout geste.
-  await page.waitForFunction(() => !document.getElementById('boot-loader'), null, {
-    timeout: 90_000,
-  });
+  await page.waitForFunction(
+    () => !document.getElementById('boot-loader'),
+    null,
+    {
+      timeout: 90_000,
+    }
+  );
   const stacks = page.locator('#stack .stack-node');
   await expect(stacks).toHaveCount(24);
   await expect(stacks.filter({ hasText: 'WebXR' })).toHaveCount(1);
@@ -260,6 +259,7 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
   await page.locator('#stack .stack-graph').scrollIntoViewIfNeeded();
   await page.screenshot({ path: testInfo.outputPath('stacks-fr.png') });
   await page.locator('#stack .stack-proof').scrollIntoViewIfNeeded();
+  await waitForScrollEnd(page);
   if (page.viewportSize()!.width <= 980) {
     // Le décalage ne sert que si le bloc reste sous le rail : le défilement
     // lissé peut sinon le pousser hors de l'écran et le faire disparaître.
@@ -271,7 +271,7 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
     });
     if (hiddenByRail) {
       await page.evaluate(() => window.scrollBy(0, innerHeight * 0.25));
-      await page.waitForTimeout(350);
+      await waitForScrollEnd(page);
     }
   }
   await expect(page.locator('#stack .stack-proof')).toBeInViewport();
@@ -287,7 +287,7 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
   await page.screenshot({ path: testInfo.outputPath('stacks-en.png') });
   if (page.viewportSize()!.width <= 980) {
     await page.locator('#stack .stack-proof').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(400);
+    await waitForScrollEnd(page);
     await expect(page.locator('#stack .stack-proof')).toBeInViewport();
   }
   await page.locator('#stack .stack-proof a').first().click();
