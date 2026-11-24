@@ -107,11 +107,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .	oolslender.ps1 export
 
 Chaque script recrée sa source : ne pas le relancer sur un `.blend` retouché à la main. Les pièces de même matière sont fusionnées par pivot (`join_by_material`) pour limiter les appels de rendu ; les pivots animés par `StoryWorld3D` restent séparés.
 
-Contrat d'intégration, vérifié par `src/visual/craftedAssets.test.ts` (noms de pivots, matières, budgets de triangles et d'octets, aucune texture embarquée) :
+Contrat d'intégration, vérifié par `src/visual/craftedAssets.test.ts` (noms de pivots, matières, budgets de triangles et d'octets, aucune texture embarquée : les exports n'ont pas d'UV, le détail de matière est procédural dans `src/visual/materialDetail.ts`) :
 
 - Galaxy : `ASTRO / ring 1..3 spin` ; matières `aged brass`, `sun`, `energy ring`, `rune`.
-- Ludora : `DICE / die pivot`, `DICE / board pivot`, `DICE / tile 1..6 pivot` (rayon de base 1,2) ; matières `titanium`, `cyan index`, `indigo enamel`.
-- MagNotes : `BOOK / book pivot`, `NOTE / 01..06 pivot` centrés sur leur fiche, face visible vers -Y.
+- Ludora : `DICE / die pivot`, `DICE / board pivot`, `DICE / tile 1..6 pivot` (rayon de base 1,2) ; matières `titanium`, `cyan index`, `indigo enamel` ; pignon central `blued steel`, douilles et filets `polished edge`.
+- MagNotes : `BOOK / book pivot`, `NOTE / 01..06 pivot` centrés sur leur fiche, face visible vers -Y ; matières `oxblood leather` (couverture et supports de fiches), `champagne` (ferrures, dorure), `ivory paper`, `oiled strap`.
+
+Matière procédurale : `materialDetail.ts` choisit par nom de matière un détail (titane brossé, laiton guilloché, métal poli, émail, cuir, papier, graphite) calculé en espace objet dans le shader, sans image ni mémoire GPU. Le motif s'efface quand il devient sous-pixel ; sur petits écrans seuls la patine et l'usure des arêtes restent. Nommer une nouvelle matière d'après son identité (`leather`, `brass`, `enamel`…) suffit à la couvrir ; `materialDetail.test.ts` échoue si une matière non émissive n'a pas d'identité.
 
 ## Travail à deux dans Blender
 

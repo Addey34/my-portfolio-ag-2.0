@@ -20,6 +20,7 @@ OUTPUT = kit.ROOT / "assets" / "blender" / "ludora_dice.blend"
 kit.reset_scene()
 m = kit.standard_materials("DICE")
 m["panel"] = kit.material("DICE / indigo enamel", (0.035, 0.065, 0.16), 0.55, 0.38)
+m["steel"] = craft.detail_materials("DICE")["steel"]
 m["signal"] = kit.material("DICE / cyan index", (0.12, 0.55, 0.61), 0.35, 0.3, (0.2, 0.7, 0.85), 0.65)
 
 SIZE = 1.0
@@ -84,7 +85,7 @@ for axis, sign, count in FACES:
     craft.lathe("DICE / face panel", [panel_profile], m["panel"], die_root, 4, at(0, 0, 0.0), tuple(square))
     craft.lathe("DICE / face brass frame", [frame_ring], m["brass"], die_root, 4, at(0, 0, 0.0), tuple(square))
     for u, v in PIPS[count]:
-        craft.lathe("DICE / pip socket", [pip_ring], m["brass"], die_root, 12, at(u, v, 0.02), tuple(rot))
+        craft.lathe("DICE / pip socket", [pip_ring], m["rhodium"], die_root, 12, at(u, v, 0.02), tuple(rot))
         craft.lathe("DICE / pip lens", [pip_dome], m["signal"], die_root, 12, at(u, v, 0.03), tuple(rot))
 
 # Coins : capuchons de laiton coniques pointant vers l'extérieur, avec une vis fine.
@@ -106,11 +107,11 @@ for cx in (-1, 1):
 
 # Filets de laiton sur les douze arêtes : liseré affleurant.
 for a, b, axis in [(sx, sy, "z") for sx in (-1, 1) for sy in (-1, 1)]:
-    kit.box("DICE / edge inlay", (0.026, 0.026, 0.68), (a * HALF * 0.985, b * HALF * 0.985, 0), m["brass"], die_root, 0.004)
+    kit.box("DICE / edge inlay", (0.026, 0.026, 0.68), (a * HALF * 0.985, b * HALF * 0.985, 0), m["rhodium"], die_root, 0.004)
 for a, b in [(sx, sz) for sx in (-1, 1) for sz in (-1, 1)]:
-    kit.box("DICE / edge inlay", (0.026, 0.68, 0.026), (a * HALF * 0.985, 0, b * HALF * 0.985), m["brass"], die_root, 0.004)
+    kit.box("DICE / edge inlay", (0.026, 0.68, 0.026), (a * HALF * 0.985, 0, b * HALF * 0.985), m["rhodium"], die_root, 0.004)
 for a, b in [(sy, sz) for sy in (-1, 1) for sz in (-1, 1)]:
-    kit.box("DICE / edge inlay", (0.68, 0.026, 0.026), (0, a * HALF * 0.985, b * HALF * 0.985), m["brass"], die_root, 0.004)
+    kit.box("DICE / edge inlay", (0.68, 0.026, 0.026), (0, a * HALF * 0.985, b * HALF * 0.985), m["rhodium"], die_root, 0.004)
 
 # Plateau : moyeu étagé, couronne dentée, six rails et six modules numérotés.
 board = kit.pivot("DICE / board pivot", (0, 0, -0.55))
@@ -128,7 +129,7 @@ hub = [
     (0.0, 0.095),
 ]
 craft.lathe("DICE / common hub", [hub], m["titanium"], board, 40)
-craft.gear("DICE / hub gear", 36, 0.69, 0.76, 0.045, m["brass"], board, location=(0, 0, -0.045), bevel=0.004)
+craft.gear("DICE / hub gear", 36, 0.69, 0.76, 0.045, m["steel"], board, location=(0, 0, -0.045), bevel=0.004)
 craft.ring_section("DICE / hub collar", 0.52, craft.closed([(-0.02, -0.012), (0.02, -0.012), (0.02, 0.012), (-0.02, 0.012)]), m["brass"], board, 40, location=(0, 0, 0.036))
 craft.gear("DICE / hub spindle", 12, 0.07, 0.095, 0.05, m["rhodium"], board, location=(0, 0, 0.12), bevel=0.003)
 

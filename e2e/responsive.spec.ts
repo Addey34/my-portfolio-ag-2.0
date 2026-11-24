@@ -245,6 +245,10 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
 }, testInfo) => {
   test.setTimeout(120_000);
   await page.goto('/#stack');
+  // Le masque d'entrée verrouille le défilement : on attend sa fermeture avant tout geste.
+  await page.waitForFunction(() => !document.getElementById('boot-loader'), null, {
+    timeout: 90_000,
+  });
   const stacks = page.locator('#stack .stack-node');
   await expect(stacks).toHaveCount(24);
   await expect(stacks.filter({ hasText: 'WebXR' })).toHaveCount(1);
