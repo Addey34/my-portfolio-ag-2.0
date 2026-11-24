@@ -68,7 +68,7 @@ panel_profile = [
     (0.0, 0.02),
 ]
 pip_ring = [(0.0, 0.0), (PIP * 1.45, 0.0), (PIP * 1.2, 0.02), (PIP * 1.1, 0.032), (0.0, 0.032)]
-pip_dome = [(0.0, 0.0), (PIP * 0.95, 0.0), (PIP * 0.9, 0.012), (PIP * 0.7, 0.026), (PIP * 0.36, 0.034), (0.0, 0.036)]
+pip_dome = [(0.0, 0.0), (PIP * 0.95, 0.0), (PIP * 0.78, 0.022), (PIP * 0.4, 0.034), (0.0, 0.036)]
 frame_ring = [
     (0.405, 0.0),
     (0.45, 0.0),
@@ -84,11 +84,11 @@ for axis, sign, count in FACES:
     craft.lathe("DICE / face panel", [panel_profile], m["panel"], die_root, 4, at(0, 0, 0.0), tuple(square))
     craft.lathe("DICE / face brass frame", [frame_ring], m["brass"], die_root, 4, at(0, 0, 0.0), tuple(square))
     for u, v in PIPS[count]:
-        craft.lathe("DICE / pip socket", [pip_ring], m["brass"], die_root, 16, at(u, v, 0.02), tuple(rot))
-        craft.lathe("DICE / pip lens", [pip_dome], m["signal"], die_root, 16, at(u, v, 0.03), tuple(rot))
+        craft.lathe("DICE / pip socket", [pip_ring], m["brass"], die_root, 12, at(u, v, 0.02), tuple(rot))
+        craft.lathe("DICE / pip lens", [pip_dome], m["signal"], die_root, 12, at(u, v, 0.03), tuple(rot))
 
 # Coins : capuchons de laiton coniques pointant vers l'extérieur, avec une vis fine.
-cap = [(0.0, 0.0), (0.085, 0.0), (0.095, 0.012), (0.075, 0.04), (0.05, 0.066), (0.0, 0.082)]
+cap = [(0.0, 0.0), (0.09, 0.0), (0.08, 0.04), (0.045, 0.07), (0.0, 0.082)]
 for cx in (-1, 1):
     for cy in (-1, 1):
         for cz in (-1, 1):
@@ -99,7 +99,7 @@ for cx in (-1, 1):
                 [cap],
                 m["brass"],
                 die_root,
-                14,
+                10,
                 (cx * HALF * 0.9, cy * HALF * 0.9, cz * HALF * 0.9),
                 (rot.x, rot.y, rot.z),
             )
@@ -127,9 +127,9 @@ hub = [
     (0.17, 0.095),
     (0.0, 0.095),
 ]
-craft.lathe("DICE / common hub", [hub], m["titanium"], board, 56)
+craft.lathe("DICE / common hub", [hub], m["titanium"], board, 40)
 craft.gear("DICE / hub gear", 36, 0.69, 0.76, 0.045, m["brass"], board, location=(0, 0, -0.045), bevel=0.004)
-craft.ring_section("DICE / hub collar", 0.52, craft.closed([(-0.02, -0.012), (0.02, -0.012), (0.02, 0.012), (-0.02, 0.012)]), m["brass"], board, 64, location=(0, 0, 0.036))
+craft.ring_section("DICE / hub collar", 0.52, craft.closed([(-0.02, -0.012), (0.02, -0.012), (0.02, 0.012), (-0.02, 0.012)]), m["brass"], board, 40, location=(0, 0, 0.036))
 craft.gear("DICE / hub spindle", 12, 0.07, 0.095, 0.05, m["rhodium"], board, location=(0, 0, 0.12), bevel=0.003)
 
 tile_cap = [(0.0, 0.0), (0.205, 0.0), (0.2, 0.012), (0.0, 0.012)]
@@ -147,7 +147,7 @@ for k in range(6):
             [[(0.0, 0.0), (0.04, 0.0), (0.034, 0.012), (0.0, 0.014)]],
             m["brass"],
             tile,
-            12,
+            10,
             (u * 0.46, v * 0.46, 0.077),
         )
         craft.lathe(
@@ -155,7 +155,7 @@ for k in range(6):
             [[(0.0, 0.0), (0.028, 0.0), (0.02, 0.012), (0.0, 0.015)]],
             m["signal"],
             tile,
-            12,
+            10,
             (u * 0.46, v * 0.46, 0.087),
         )
     # Boulons de fixation aux trois sommets orientés vers l'extérieur du plateau.

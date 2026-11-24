@@ -269,11 +269,11 @@ def hex_pad(name, radius, thickness, chamfer, mat, parent, location=(0, 0, 0)):
     return lathe(name, [profile], mat, parent, 6, location, (0, 0, math.pi / 6))
 
 
-def join_by_material(pivot, small=0.22):
+def join_by_material(pivot, small=0.22, thin=0.06):
     """Fusionne les enfants de même matière d'un pivot, après application des modificateurs.
 
-    Les chanfreins des petites pièces passent à un segment : même arête usinée visible,
-    mais une fraction des triangles.
+    Les chanfreins des petites pièces et des pièces minces (filets, lignes, fiches) passent à
+    un segment : la même arête usinée reste visible, pour une fraction des triangles.
     """
     groups = {}
     for obj in list(pivot.children):
@@ -283,7 +283,7 @@ def join_by_material(pivot, small=0.22):
         for obj in objects:
             bpy.context.view_layer.objects.active = obj
             for modifier in list(obj.modifiers):
-                if modifier.type == "BEVEL" and max(obj.dimensions) < small:
+                if modifier.type == "BEVEL" and (max(obj.dimensions) < small or min(obj.dimensions) < thin):
                     modifier.segments = 1
                 bpy.ops.object.modifier_apply(modifier=modifier.name)
         if len(objects) > 1:
