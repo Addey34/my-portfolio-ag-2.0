@@ -162,10 +162,10 @@
           <!-- Badges identite animes par heroAnim.ts -->
           <div class="hero__tags">
             <span class="hero__tag" data-i18n="hero.tag.1"
-              >Développeur full-stack</span
+              >Développeur full-stack JS/TS</span
             >
             <span class="hero__tag" data-i18n="hero.tag.2"
-              >TypeScript · 3D interactive</span
+              >Autodidacte · Three.js &amp; WebGL</span
             >
           </div>
 
@@ -176,8 +176,9 @@
           </h1>
 
           <p class="hero__lead" data-i18n="hero.lead">
-            Je conçois des produits web complets, de l’interface aux données, au
-            temps réel et au déploiement.
+            Développeur autodidacte, je construis des applications web, des
+            systèmes backend et des expériences 3D temps réel, de l’interface au
+            déploiement.
           </p>
 
           <!-- CTAs smoothscroll via heroAnim.ts + effet magnetique -->
@@ -211,6 +212,43 @@
           Je pars d’un usage et je construis le système qui le rend simple,
           fiable et vivant.
         </h2>
+        <ul
+          class="intro__facts"
+          data-reveal
+          data-i18n-aria="intro.facts.aria"
+          aria-label="Ce qui me distingue"
+        >
+          <li data-story-focus>
+            <strong data-i18n="intro.fact.1.title"
+              >Formé en construisant</strong
+            >
+            <span data-i18n="intro.fact.1.text"
+              >Autodidacte : chaque compétence renvoie à un produit en ligne ou
+              à un dépôt public.</span
+            >
+          </li>
+          <li data-story-focus>
+            <strong data-i18n="intro.fact.2.title"
+              >JS/TS de bout en bout</strong
+            >
+            <span data-i18n="intro.fact.2.text"
+              >Interface, API, temps réel et données dans un même langage,
+              vérifiés par des tests.</span
+            >
+          </li>
+          <li data-story-focus>
+            <strong data-i18n="intro.fact.3.title"
+              >Livré, pas seulement montré</strong
+            >
+            <span data-i18n="intro.fact.3.text"
+              >Docker, Cloudflare Pages et Oracle Cloud : les produits sont
+              déployés et contrôlés.</span
+            >
+          </li>
+        </ul>
+        <a class="intro__link" href="#projects" data-i18n="intro.link"
+          >Voir les trois produits</a
+        >
       </section>
 
       <!-- STACKS : les pièces de l'horloge se séparent en quatre familles. -->
@@ -231,68 +269,140 @@
         <!-- Les quatre familles restent lisibles sans WebGL et au clavier. -->
         <div class="stack-viz">
           <ul
-            class="stack-graph"
+            class="stack-graph stack-families"
             data-i18n-aria="stack.techs"
             aria-label="Technologies utilisées"
           >
-            <li class="stack-node" data-layer="interface" data-weight="primary">
-              TypeScript
+            <li class="stack-family" data-layer="interface" data-story-focus>
+              <h3 class="stack-family__name" data-i18n="stack.part.interface">
+                Module · Interface
+              </h3>
+              <p
+                class="stack-family__decision"
+                data-i18n="stack.family.interface"
+              >
+                TypeScript strict et Vite : des interfaces rapides, typées de
+                bout en bout, accessibles et traduites.
+              </p>
+              <ul class="stack-family__chips">
+                <li
+                  class="stack-node"
+                  data-layer="interface"
+                  data-weight="primary"
+                >
+                  TypeScript
+                </li>
+                <li
+                  class="stack-node"
+                  data-layer="interface"
+                  data-weight="primary"
+                >
+                  React
+                </li>
+                <li
+                  class="stack-node"
+                  data-layer="interface"
+                  data-weight="primary"
+                >
+                  Vite
+                </li>
+                <li class="stack-node" data-layer="interface">HTML / CSS</li>
+                <li class="stack-node" data-layer="interface">GSAP</li>
+                <li class="stack-node" data-layer="interface">i18n</li>
+              </ul>
+              <p class="stack-family__proof">
+                <span data-i18n="stack.family.proof">Mis en pratique dans</span>
+                <a href="#magnotes">MagNotes</a>,
+                <a href="#ludora">Ludora</a>
+              </p>
             </li>
-            <li class="stack-node" data-layer="interface" data-weight="primary">
-              React
+            <li class="stack-family" data-layer="realtime" data-story-focus>
+              <h3 class="stack-family__name" data-i18n="stack.part.realtime">
+                Module · 3D &amp; interaction
+              </h3>
+              <p
+                class="stack-family__decision"
+                data-i18n="stack.family.realtime"
+              >
+                Échelle réelle, niveaux de détail et éphémérides : rendre une
+                scène complexe lisible en temps réel.
+              </p>
+              <ul class="stack-family__chips">
+                <li
+                  class="stack-node"
+                  data-layer="realtime"
+                  data-weight="primary"
+                >
+                  Three.js
+                </li>
+                <li class="stack-node" data-layer="realtime">WebGL</li>
+                <li class="stack-node" data-layer="realtime">WebXR</li>
+                <li class="stack-node" data-layer="realtime">GLSL</li>
+                <li class="stack-node" data-layer="realtime">Canvas 2D</li>
+                <li class="stack-node" data-layer="realtime">
+                  astronomy-engine
+                </li>
+              </ul>
+              <p class="stack-family__proof">
+                <span data-i18n="stack.family.proof">Mis en pratique dans</span>
+                <a href="#galaxy">Galaxy</a>,
+                <a href="#ludora">Ludora</a>
+              </p>
             </li>
-            <li class="stack-node" data-layer="interface" data-weight="primary">
-              Vite
+            <li class="stack-family" data-layer="data" data-story-focus>
+              <h3 class="stack-family__name" data-i18n="stack.part.data">
+                Module · Services &amp; données
+              </h3>
+              <p class="stack-family__decision" data-i18n="stack.family.data">
+                Un modèle par usage : MongoDB pour les notes, PostgreSQL pour
+                les incidents, Nakama pour le multijoueur.
+              </p>
+              <ul class="stack-family__chips">
+                <li class="stack-node" data-layer="data" data-weight="primary">
+                  Node.js
+                </li>
+                <li class="stack-node" data-layer="data">MongoDB</li>
+                <li class="stack-node" data-layer="data">Nakama</li>
+                <li class="stack-node" data-layer="data">Express</li>
+                <li class="stack-node" data-layer="data">PostgreSQL</li>
+                <li class="stack-node" data-layer="data">Python</li>
+              </ul>
+              <p class="stack-family__proof">
+                <span data-i18n="stack.family.proof">Mis en pratique dans</span>
+                <a href="#magnotes">MagNotes</a>, <a href="#ludora">Ludora</a>,
+                <a href="#siteguardian">SiteGuardian</a>
+              </p>
             </li>
-            <li class="stack-node" data-layer="interface">HTML / CSS</li>
-            <li class="stack-node" data-layer="interface">GSAP</li>
-            <li class="stack-node" data-layer="interface">i18n</li>
-            <li class="stack-node" data-layer="realtime" data-weight="primary">
-              Three.js
+            <li class="stack-family" data-layer="deploy" data-story-focus>
+              <h3 class="stack-family__name" data-i18n="stack.part.deploy">
+                Module · Livraison &amp; qualité
+              </h3>
+              <p class="stack-family__decision" data-i18n="stack.family.deploy">
+                Livrer avec des preuves : tests Playwright, audit
+                d’accessibilité, Docker et contrôle de production.
+              </p>
+              <ul class="stack-family__chips">
+                <li
+                  class="stack-node"
+                  data-layer="deploy"
+                  data-weight="primary"
+                >
+                  Docker
+                </li>
+                <li class="stack-node" data-layer="deploy">Playwright</li>
+                <li class="stack-node" data-layer="deploy">GitHub Actions</li>
+                <li class="stack-node" data-layer="deploy">Vitest</li>
+                <li class="stack-node" data-layer="deploy">ESLint</li>
+                <li class="stack-node" data-layer="deploy">pnpm</li>
+              </ul>
+              <p class="stack-family__proof">
+                <span data-i18n="stack.family.proof">Mis en pratique dans</span>
+                <a href="#magnotes">MagNotes</a>, <a href="#galaxy">Galaxy</a>,
+                <a href="#siteguardian">SiteGuardian</a>
+              </p>
             </li>
-            <li class="stack-node" data-layer="realtime">WebGL</li>
-            <li class="stack-node" data-layer="realtime">WebXR</li>
-            <li class="stack-node" data-layer="realtime">GLSL</li>
-            <li class="stack-node" data-layer="realtime">Canvas 2D</li>
-            <li class="stack-node" data-layer="realtime">astronomy-engine</li>
-            <li class="stack-node" data-layer="data" data-weight="primary">
-              Node.js
-            </li>
-            <li class="stack-node" data-layer="data">MongoDB</li>
-            <li class="stack-node" data-layer="data">Nakama</li>
-            <li class="stack-node" data-layer="data">Express</li>
-            <li class="stack-node" data-layer="data">PostgreSQL</li>
-            <li class="stack-node" data-layer="data">Python</li>
-            <li class="stack-node" data-layer="deploy" data-weight="primary">
-              Docker
-            </li>
-            <li class="stack-node" data-layer="deploy">Playwright</li>
-            <li class="stack-node" data-layer="deploy">GitHub Actions</li>
-            <li class="stack-node" data-layer="deploy">Vitest</li>
-            <li class="stack-node" data-layer="deploy">ESLint</li>
-            <li class="stack-node" data-layer="deploy">pnpm</li>
           </ul>
 
-          <ul class="stack-legend">
-            <li data-layer="interface">
-              <span data-i18n="stack.part.interface">Module · Interface</span>
-            </li>
-            <li data-layer="realtime">
-              <span data-i18n="stack.part.realtime"
-                >Module · 3D &amp; interaction</span
-              >
-            </li>
-            <li data-layer="data">
-              <span data-i18n="stack.part.data"
-                >Module · Services &amp; données</span
-              >
-            </li>
-            <li data-layer="deploy">
-              <span data-i18n="stack.part.deploy"
-                >Module · Livraison &amp; qualité</span
-              >
-            </li>
-          </ul>
           <p class="stack-proof">
             <span data-i18n="stack.proof">Voir ces stacks en action :</span>
             <a href="#galaxy">Galaxy</a>, <a href="#ludora">Ludora</a>,
@@ -304,18 +414,18 @@
         </div>
       </section>
 
-      <!-- SOLUTIONS -->
+      <!-- SOLUTIONS : missions concrètes, chacune reliée à une preuve et au contact. -->
       <section id="freelance" class="section section--offers">
         <div class="section-copy">
           <p class="intro__kicker" data-reveal data-i18n="freelance.kicker">
-            Intervenir là où le produit bloque
+            Missions et postes
           </p>
           <h2 class="stack__title" data-reveal data-i18n="freelance.title">
-            Construire la bonne brique.
+            Ce que je construis pour vous.
           </h2>
           <p class="stack__lead" data-reveal data-i18n="freelance.lead">
-            J’interviens sur une séquence précise : cadrer, construire,
-            fiabiliser ou livrer, avec un résultat visible à chaque étape.
+            Quatre types de missions, chacune avec un résultat concret et une
+            preuve en ligne.
           </p>
         </div>
 
@@ -326,24 +436,53 @@
               Interfaces &amp; sites web
             </h3>
             <p data-i18n="freelance.card.product.text">
-              Sites vitrines, refontes et interfaces rapides, responsives et
-              accessibles. Objectif : présenter, convertir, faciliter l’usage.
+              Une interface rapide, accessible et bilingue qui présente
+              clairement votre activité et amène le visiteur à vous écrire.
             </p>
             <p class="story-note" data-i18n="freelance.card.product.note">
               Contenu → design → mise en ligne.
+            </p>
+            <p class="offer-card__foot">
+              <span class="offer-card__proof"
+                ><span data-i18n="freelance.proof">Preuves :</span>
+                <a href="#magnotes">MagNotes</a>,
+                <a href="#ludora">Ludora</a>
+              </span>
+              <a
+                class="offer-card__cta"
+                href="#contact"
+                data-contact-intent="mission"
+                data-i18n="freelance.cta"
+                >Parler de ce besoin</a
+              >
             </p>
           </article>
           <article class="offer-card" data-story-focus data-reveal>
             <span>02</span>
             <h3 data-i18n="freelance.card.system.title">
-              Applications &amp; outils métiers
+              Applications full-stack
             </h3>
             <p data-i18n="freelance.card.system.text">
-              Dashboards, espaces clients, MVP SaaS et automatisations. Objectif
-              : réduire le travail manuel et centraliser les opérations.
+              Un outil sur mesure (tableau de bord, espace client, MVP) qui
+              remplace tableurs et tâches manuelles, de l’interface à la base de
+              données.
             </p>
             <p class="story-note" data-i18n="freelance.card.system.note">
               Besoin → interface → API → données.
+            </p>
+            <p class="offer-card__foot">
+              <span class="offer-card__proof"
+                ><span data-i18n="freelance.proof">Preuves :</span>
+                <a href="#magnotes">MagNotes</a>,
+                <a href="#siteguardian">SiteGuardian</a>
+              </span>
+              <a
+                class="offer-card__cta"
+                href="#contact"
+                data-contact-intent="mission"
+                data-i18n="freelance.cta"
+                >Parler de ce besoin</a
+              >
             </p>
           </article>
           <article class="offer-card" data-story-focus data-reveal>
@@ -352,27 +491,66 @@
               Expériences 3D &amp; interactives
             </h3>
             <p data-i18n="freelance.card.automation.text">
-              Visualisations WebGL, configurateurs, expériences immersives et
-              mini-jeux. Objectif : visualiser, expliquer ou engager.
+              Une visualisation, un configurateur ou un jeu temps réel qui rend
+              une donnée complexe lisible et donne envie d’explorer.
             </p>
             <p class="story-note" data-i18n="freelance.card.automation.note">
               Données → scène → interaction.
+            </p>
+            <p class="offer-card__foot">
+              <span class="offer-card__proof"
+                ><span data-i18n="freelance.proof">Preuves :</span>
+                <a href="#galaxy">Galaxy</a>,
+                <a href="#ludora">Ludora</a>
+              </span>
+              <a
+                class="offer-card__cta"
+                href="#contact"
+                data-contact-intent="mission"
+                data-i18n="freelance.cta"
+                >Parler de ce besoin</a
+              >
             </p>
           </article>
           <article class="offer-card" data-story-focus data-reveal>
             <span>04</span>
             <h3 data-i18n="freelance.card.delivery.title">
-              APIs, intégration &amp; déploiement
+              Systèmes backend &amp; déploiement
             </h3>
             <p data-i18n="freelance.card.delivery.text">
-              Connexion de services, persistance, CI et mise en production.
-              Objectif : relier les systèmes et rendre l’application
-              exploitable.
+              APIs, persistance, temps réel et mise en production : un service
+              fiable, testé et déployé, que votre équipe peut exploiter.
             </p>
             <p class="story-note" data-i18n="freelance.card.delivery.note">
               Service → test → production.
             </p>
+            <p class="offer-card__foot">
+              <span class="offer-card__proof"
+                ><span data-i18n="freelance.proof">Preuves :</span>
+                <a href="#ludora">Ludora</a>,
+                <a href="#siteguardian">SiteGuardian</a>
+              </span>
+              <a
+                class="offer-card__cta"
+                href="#contact"
+                data-contact-intent="mission"
+                data-i18n="freelance.cta"
+                >Parler de ce besoin</a
+              >
+            </p>
           </article>
+          <p class="offer-aside" data-reveal>
+            <span data-i18n="freelance.role.text"
+              >Vous recrutez plutôt ? Le parcours technique est là, du code aux
+              preuves.</span
+            >
+            <a
+              href="#contact"
+              data-contact-intent="role"
+              data-i18n="freelance.role.cta"
+              >Parler d’un poste</a
+            >
+          </p>
         </div>
       </section>
 
@@ -426,6 +604,18 @@
             <span data-i18n="contact.signal.3">Échange direct par email</span>
           </li>
         </ul>
+        <p class="contact__primary" data-reveal>
+          <a
+            class="contact__cta contact__cta--email"
+            href="mailto:contact@adrianguichard.dev"
+            data-contact-primary
+            data-i18n="contact.cta"
+            >Écrire à Adrian</a
+          >
+          <span class="contact__reply" data-i18n="contact.reply"
+            >Réponse personnelle, sans intermédiaire.</span
+          >
+        </p>
         <details class="contact__disclosure" data-reveal>
           <summary class="contact__form-toggle">
             <span class="contact__form-open" data-i18n="contact.form.open"
@@ -442,6 +632,40 @@
                 <p class="contact__form-label" data-i18n="contact.form.label">
                   Contact / brief
                 </p>
+                <div
+                  class="contact__intents"
+                  role="group"
+                  data-i18n-aria="contact.intent.aria"
+                  aria-label="Nature de la demande"
+                >
+                  <button
+                    type="button"
+                    class="contact__intent"
+                    data-intent="mission"
+                    aria-pressed="false"
+                    data-i18n="contact.intent.mission"
+                  >
+                    Mission
+                  </button>
+                  <button
+                    type="button"
+                    class="contact__intent"
+                    data-intent="role"
+                    aria-pressed="false"
+                    data-i18n="contact.intent.role"
+                  >
+                    Poste
+                  </button>
+                  <button
+                    type="button"
+                    class="contact__intent"
+                    data-intent="other"
+                    aria-pressed="false"
+                    data-i18n="contact.intent.other"
+                  >
+                    Autre
+                  </button>
+                </div>
                 <div class="contact__form-grid">
                   <label>
                     <span data-i18n="contact.form.name">Nom</span>
@@ -479,6 +703,11 @@
                   Le message s’ouvre dans votre client email. Sans client
                   installé (webmail), copiez l’adresse ci-dessous et écrivez-moi
                   directement.
+                </p>
+                <p class="contact__form-note" data-i18n="contact.privacy">
+                  Ce formulaire n’envoie rien à un serveur et ne conserve pas
+                  vos saisies : le message n’est transmis que si vous l’envoyez
+                  depuis votre client email.
                 </p>
               </fieldset>
             </form>

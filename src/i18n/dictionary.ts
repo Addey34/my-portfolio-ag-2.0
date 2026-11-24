@@ -26,16 +26,27 @@ const fr: Dict = {
   'github.follower.one': 'abonné',
   'github.follower.other': 'abonnés',
   'github.latest': 'Dernière activité',
-  'hero.tag.1': 'Développeur full-stack',
-  'hero.tag.2': 'TypeScript · 3D interactive',
+  'hero.tag.1': 'Développeur full-stack JS/TS',
+  'hero.tag.2': 'Autodidacte · Three.js & WebGL',
   'hero.cta.projects': 'Explorer les produits',
   'hero.projects': 'Accès direct aux projets',
   'hero.cta.contact': 'Parler d’un projet',
   'hero.lead':
-    'Je conçois des produits web complets, de l’interface aux données, au temps réel et au déploiement.',
+    'Développeur autodidacte, je construis des applications web, des systèmes backend et des expériences 3D temps réel, de l’interface au déploiement.',
   'intro.kicker': 'Des produits réels, pas seulement des écrans',
   'intro.title':
     'Je pars d’un usage et je construis le système qui le rend simple, fiable et vivant.',
+  'intro.facts.aria': 'Ce qui me distingue',
+  'intro.fact.1.title': 'Formé en construisant',
+  'intro.fact.1.text':
+    'Autodidacte : chaque compétence renvoie à un produit en ligne ou à un dépôt public.',
+  'intro.fact.2.title': 'JS/TS de bout en bout',
+  'intro.fact.2.text':
+    'Interface, API, temps réel et données dans un même langage, vérifiés par des tests.',
+  'intro.fact.3.title': 'Livré, pas seulement montré',
+  'intro.fact.3.text':
+    'Docker, Cloudflare Pages et Oracle Cloud : les produits sont déployés et contrôlés.',
+  'intro.link': 'Voir les trois produits',
   'project.label': 'Étude de cas',
   'project.problem': 'Contexte',
   'project.role': 'Contribution',
@@ -61,22 +72,36 @@ const fr: Dict = {
   'stack.part.deploy': 'Module · Livraison & qualité',
   'stack.proof': 'Voir ces stacks en action :',
   'stack.studies': 'études complémentaires',
-  'freelance.kicker': 'Intervenir là où le produit bloque',
-  'freelance.title': 'Construire la bonne brique.',
+  'stack.family.interface':
+    'TypeScript strict et Vite : des interfaces rapides, typées de bout en bout, accessibles et traduites.',
+  'stack.family.realtime':
+    'Échelle réelle, niveaux de détail et éphémérides : rendre une scène complexe lisible en temps réel.',
+  'stack.family.data':
+    'Un modèle par usage : MongoDB pour les notes, PostgreSQL pour les incidents, Nakama pour le multijoueur.',
+  'stack.family.deploy':
+    'Livrer avec des preuves : tests Playwright, audit d’accessibilité, Docker et contrôle de production.',
+  'stack.family.proof': 'Mis en pratique dans',
+  'freelance.kicker': 'Missions et postes',
+  'freelance.title': 'Ce que je construis pour vous.',
   'freelance.lead':
-    'J’interviens sur une séquence précise : cadrer, construire, fiabiliser ou livrer, avec un résultat visible à chaque étape.',
+    'Quatre types de missions, chacune avec un résultat concret et une preuve en ligne.',
+  'freelance.proof': 'Preuves :',
+  'freelance.cta': 'Parler de ce besoin',
+  'freelance.role.text':
+    'Vous recrutez plutôt ? Le parcours technique est là, du code aux preuves.',
+  'freelance.role.cta': 'Parler d’un poste',
   'freelance.card.product.title': 'Interfaces & sites web',
   'freelance.card.product.text':
-    'Sites vitrines, refontes et interfaces rapides, responsives et accessibles. Objectif : présenter, convertir, faciliter l’usage.',
-  'freelance.card.system.title': 'Applications & outils métiers',
+    'Une interface rapide, accessible et bilingue qui présente clairement votre activité et amène le visiteur à vous écrire.',
+  'freelance.card.system.title': 'Applications full-stack',
   'freelance.card.system.text':
-    'Dashboards, espaces clients, MVP SaaS et automatisations. Objectif : réduire le travail manuel et centraliser les opérations.',
+    'Un outil sur mesure (tableau de bord, espace client, MVP) qui remplace tableurs et tâches manuelles, de l’interface à la base de données.',
   'freelance.card.automation.title': 'Expériences 3D & interactives',
   'freelance.card.automation.text':
-    'Visualisations WebGL, configurateurs, expériences immersives et mini-jeux. Objectif : visualiser, expliquer ou engager.',
-  'freelance.card.delivery.title': 'APIs, intégration & déploiement',
+    'Une visualisation, un configurateur ou un jeu temps réel qui rend une donnée complexe lisible et donne envie d’explorer.',
+  'freelance.card.delivery.title': 'Systèmes backend & déploiement',
   'freelance.card.delivery.text':
-    'Connexion de services, persistance, CI et mise en production. Objectif : relier les systèmes et rendre l’application exploitable.',
+    'APIs, persistance, temps réel et mise en production : un service fiable, testé et déployé, que votre équipe peut exploiter.',
   'projects.threshold.kicker': 'Sélection actuelle',
   'projects.threshold.title': 'Des produits choisis pour leurs systèmes.',
   'projects.threshold.lead':
@@ -87,6 +112,16 @@ const fr: Dict = {
   'contact.lead':
     'Parlez-moi de l’usage, du problème et du niveau d’avancement. Je vous dirai honnêtement par où je commencerais.',
   'contact.cta': 'Écrire à Adrian',
+  'contact.reply': 'Réponse personnelle, sans intermédiaire.',
+  'contact.intent.aria': 'Nature de la demande',
+  'contact.intent.mission': 'Mission',
+  'contact.intent.role': 'Poste',
+  'contact.intent.other': 'Autre',
+  'contact.subject.mission': 'Mission',
+  'contact.subject.role': 'Poste',
+  'contact.subject.other': 'Contact',
+  'contact.privacy':
+    'Ce formulaire n’envoie rien à un serveur et ne conserve pas vos saisies : le message n’est transmis que si vous l’envoyez depuis votre client email.',
   'contact.form.open': 'Déplier le formulaire',
   'contact.form.close': 'Replier le formulaire',
   'contact.form.label': 'Contact / brief',
@@ -163,16 +198,27 @@ const en: Dict = {
   'github.follower.one': 'follower',
   'github.follower.other': 'followers',
   'github.latest': 'Latest activity',
-  'hero.tag.1': 'Full-stack developer',
-  'hero.tag.2': 'TypeScript · interactive 3D',
+  'hero.tag.1': 'Full-stack JS/TS developer',
+  'hero.tag.2': 'Self-taught · Three.js & WebGL',
   'hero.cta.projects': 'Explore the products',
   'hero.projects': 'Jump to a project',
   'hero.cta.contact': 'Discuss a project',
   'hero.lead':
-    'I design complete web products, from interface to data, real-time systems and deployment.',
+    'Self-taught developer building web applications, backend systems and real-time 3D experiences, from interface to deployment.',
   'intro.kicker': 'Real products, not just screens',
   'intro.title':
     'I start with a use case and build the system that makes it simple, reliable and alive.',
+  'intro.facts.aria': 'What sets me apart',
+  'intro.fact.1.title': 'Learned by building',
+  'intro.fact.1.text':
+    'Self-taught: every skill points to a live product or a public repository.',
+  'intro.fact.2.title': 'JS/TS end to end',
+  'intro.fact.2.text':
+    'Interface, API, real time and data in one language, backed by tests.',
+  'intro.fact.3.title': 'Shipped, not just shown',
+  'intro.fact.3.text':
+    'Docker, Cloudflare Pages and Oracle Cloud: the products are deployed and checked.',
+  'intro.link': 'See the three products',
   'project.label': 'Case study',
   'project.problem': 'Context',
   'project.role': 'Contribution',
@@ -198,22 +244,36 @@ const en: Dict = {
   'stack.part.deploy': 'Module · Delivery & quality',
   'stack.proof': 'See these stacks in action:',
   'stack.studies': 'additional studies',
-  'freelance.kicker': 'Stepping in where the product gets stuck',
-  'freelance.title': 'Build the right brick.',
+  'stack.family.interface':
+    'Strict TypeScript and Vite: fast interfaces, typed end to end, accessible and translated.',
+  'stack.family.realtime':
+    'True scale, levels of detail and ephemerides: keeping a complex scene legible in real time.',
+  'stack.family.data':
+    'One data model per use: MongoDB for notes, PostgreSQL for incidents, Nakama for multiplayer.',
+  'stack.family.deploy':
+    'Shipping with evidence: Playwright tests, accessibility audit, Docker and a production check.',
+  'stack.family.proof': 'Put into practice in',
+  'freelance.kicker': 'Projects and roles',
+  'freelance.title': 'What I build for you.',
   'freelance.lead':
-    'I step into a specific sequence: frame, build, harden or ship, with a visible result at each stage.',
+    'Four kinds of engagements, each with a concrete outcome and public proof.',
+  'freelance.proof': 'Proof:',
+  'freelance.cta': 'Discuss this need',
+  'freelance.role.text':
+    'Hiring instead? The technical track record is here, from code to evidence.',
+  'freelance.role.cta': 'Discuss a role',
   'freelance.card.product.title': 'Interfaces & websites',
   'freelance.card.product.text':
-    'Showcase sites, redesigns and fast, responsive, accessible interfaces. Goal: present, convert, make things easy to use.',
-  'freelance.card.system.title': 'Business apps & tools',
+    'A fast, accessible, bilingual interface that presents your business clearly and gets visitors to write to you.',
+  'freelance.card.system.title': 'Full-stack applications',
   'freelance.card.system.text':
-    'Dashboards, client areas, SaaS MVPs and automations. Goal: cut manual work and centralise operations.',
+    'A custom tool (dashboard, client area, MVP) that replaces spreadsheets and manual tasks, from interface to database.',
   'freelance.card.automation.title': '3D & interactive experiences',
   'freelance.card.automation.text':
-    'WebGL visualisations, configurators, immersive experiences and mini-games. Goal: visualise, explain or engage.',
-  'freelance.card.delivery.title': 'APIs, integration & deployment',
+    'A visualisation, configurator or real-time game that makes complex data legible and invites exploration.',
+  'freelance.card.delivery.title': 'Backend systems & deployment',
   'freelance.card.delivery.text':
-    'Service integration, persistence, CI and production releases. Goal: connect systems and make the app operable.',
+    'APIs, persistence, real time and production release: a reliable, tested, deployed service your team can operate.',
   'projects.threshold.kicker': 'Current selection',
   'projects.threshold.title': 'Products chosen for their systems.',
   'projects.threshold.lead':
@@ -224,6 +284,16 @@ const en: Dict = {
   'contact.lead':
     'Tell me about the use case, the problem and the current stage. I’ll tell you honestly where I would start.',
   'contact.cta': 'Write to Adrian',
+  'contact.reply': 'A personal reply, no middleman.',
+  'contact.intent.aria': 'Type of request',
+  'contact.intent.mission': 'Project',
+  'contact.intent.role': 'Role',
+  'contact.intent.other': 'Other',
+  'contact.subject.mission': 'Project',
+  'contact.subject.role': 'Role',
+  'contact.subject.other': 'Contact',
+  'contact.privacy':
+    'This form sends nothing to a server and does not keep what you type: the message is only transmitted if you send it from your email client.',
   'contact.form.open': 'Open the contact form',
   'contact.form.close': 'Close the contact form',
   'contact.form.label': 'Contact / brief',

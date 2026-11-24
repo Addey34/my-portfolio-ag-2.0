@@ -6949,3 +6949,270 @@ button:focus-visible {
     background-color: var(--bg);
   }
 }
+
+/* =========================================================================
+   Impact professionnel — identité, familles de compétences, missions, contact
+   ========================================================================= */
+.intro__facts {
+  list-style: none;
+  display: grid;
+  gap: 0;
+  width: min(36rem, 100%);
+  margin: clamp(1.4rem, 3.5svh, 2.2rem) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.intro__facts li {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.85rem 0 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.intro__facts li:nth-child(2) {
+  border-left-color: color-mix(in srgb, var(--ag-cyan) 55%, transparent);
+}
+
+.intro__facts li:nth-child(3) {
+  border-left-color: color-mix(in srgb, var(--accent-warm) 60%, transparent);
+}
+
+.intro__facts strong {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  line-height: 1.2;
+}
+
+.intro__facts span {
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.intro__link {
+  width: fit-content;
+  margin-top: 1.3rem;
+  padding: 0.35rem 0;
+  color: var(--fg);
+  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-warm);
+  text-underline-offset: 0.35em;
+}
+
+.intro__link::after {
+  content: ' ↘';
+  color: var(--accent-warm);
+}
+
+/* Familles de compétences : décision technique + preuve, au lieu d'un catalogue. */
+.stack-families {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.stack-family {
+  --node-color: var(--ag-cobalt);
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--node-color);
+  border-radius: 0.4rem;
+  background: rgba(5, 8, 17, 0.8);
+}
+
+.stack-family[data-layer='interface'] {
+  --node-color: var(--ag-cobalt);
+}
+.stack-family[data-layer='realtime'] {
+  --node-color: var(--ag-cyan);
+}
+.stack-family[data-layer='data'] {
+  --node-color: var(--ag-violet);
+}
+.stack-family[data-layer='deploy'] {
+  --node-color: var(--ag-amber);
+}
+
+.stack-family__name {
+  margin: 0;
+  color: var(--node-color);
+  font:
+    650 0.72rem ui-monospace,
+    monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.stack-family__decision {
+  margin: 0;
+  color: var(--fg);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.stack-family__chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+}
+
+.stack-family__chips .stack-node {
+  padding: 0.22rem 0.6rem;
+  font-size: 0.74rem;
+}
+
+.stack-family__chips .stack-node[data-weight='primary'] {
+  padding: 0.28rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.stack-family__proof {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+
+.stack-family__proof a {
+  color: var(--fg);
+  font-weight: 600;
+  text-underline-offset: 0.2em;
+}
+
+/* Missions : résultat, livrable, preuves et appel à l'action dans chaque carte. */
+.section--offers .offer-card .story-note {
+  opacity: 1;
+  transform: none;
+}
+
+.section--offers .offer-card .offer-card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+}
+
+.offer-card__proof {
+  color: var(--fg-muted);
+}
+
+.offer-card__proof a {
+  color: var(--fg);
+  font-weight: 600;
+  text-underline-offset: 0.2em;
+}
+
+.offer-card__cta {
+  color: var(--accent-warm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.offer-card__cta::after {
+  content: ' →';
+}
+
+.offer-card__cta:hover,
+.offer-card__cta:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.offer-aside {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  padding: 1rem 0 0;
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+
+.offer-aside a {
+  color: var(--accent-warm);
+  font-weight: 700;
+  text-underline-offset: 0.3em;
+}
+
+/* Contact : l'email reste le chemin principal ; le formulaire prépare le même message. */
+.contact__primary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.1rem;
+  margin: 1.3rem 0 0;
+}
+
+.contact__reply {
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+}
+
+.contact__intents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.contact__intent {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contact__intent[aria-pressed='true'] {
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 16%, transparent);
+  color: var(--fg);
+}
+
+.contact__intent:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .offer-aside {
+    padding-top: 0.8rem;
+  }
+
+  .section--offers .offer-card .offer-card__foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Les missions se lisent en rangées : le résultat, le livrable, la preuve et l'action. */
+.section--offers .offer-grid {
+  grid-template-columns: minmax(0, 1fr);
+  width: min(36rem, 100%);
+}
+
+.stack-families {
+  width: min(34rem, 100%);
+}
+
+.section--offers .offer-card .offer-card__foot span {
+  grid-row: auto;
+  display: inline;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+}

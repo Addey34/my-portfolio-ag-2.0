@@ -8,7 +8,15 @@ import tseslint from 'typescript-eslint';
  */
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', '.lighthouseci/**', 'test-results/**', 'playwright-report/**'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      // Worktrees Git locaux : copies d'autres branches, jamais des sources de ce dépôt.
+      '.worktrees/**',
+      '.lighthouseci/**',
+      'test-results/**',
+      'playwright-report/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

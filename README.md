@@ -33,8 +33,8 @@ Les vingt captures de revue du récit sont activables avec `SEO_VISUAL_CAPTURE=1
 les assertions fonctionnelles restent actives sans cette option, notamment en CI.
 
 CircleCI exécute les mêmes fichiers SEO/contact dans deux étapes successives,
-desktop puis Android, avec un worker et un plafond de dix minutes par profil.
-Le plafond Playwright de 570 secondes laisse une marge pour écrire les rapports
+desktop puis Android, avec un worker et un plafond de vingt minutes par profil.
+Le plafond Playwright de 1 170 secondes laisse une marge pour écrire les rapports
 avant le garde-fou GNU. Chaque campagne conserve son code de sortie ; Android
 est exécuté même après un échec desktop. Aucun job supplémentaire n’est créé.
 `E2E_REPORT_DIR` active les rapports JUnit/JSON ; les traces DOM/réseau et la
