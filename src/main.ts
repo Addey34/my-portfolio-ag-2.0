@@ -44,6 +44,38 @@ function initContactForm(): void {
   )
     return;
 
+  // Nature de la demande : simple libellé de l'objet du mail, sans donnée envoyée.
+  type Intent = 'mission' | 'role' | 'other';
+  let intent: Intent | null = null;
+  const intentButtons = Array.from(
+    form.querySelectorAll<HTMLButtonElement>('[data-intent]')
+  );
+  const selectIntent = (next: Intent | null): void => {
+    intent = next;
+    intentButtons.forEach((button) =>
+      button.setAttribute(
+        'aria-pressed',
+        String(button.dataset.intent === next)
+      )
+    );
+  };
+  intentButtons.forEach((button) =>
+    button.addEventListener('click', () => {
+      const value = button.dataset.intent as Intent;
+      selectIntent(intent === value ? null : value);
+    })
+  );
+  // Les appels à l'action des solutions préparent le formulaire avant le défilement.
+  document
+    .querySelectorAll<HTMLAnchorElement>('[data-contact-intent]')
+    .forEach((link) =>
+      link.addEventListener('click', () => {
+        selectIntent(link.dataset.contactIntent as Intent);
+        const disclosure = form.closest('details');
+        if (disclosure) disclosure.open = true;
+      })
+    );
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -54,7 +86,9 @@ function initContactForm(): void {
       (name ? messageInput : nameInput).focus();
       return;
     }
-    const subject = encodeURIComponent(`${t('contact.subject')} — ${name}`);
+    const subject = encodeURIComponent(
+      `${t(intent ? `contact.subject.${intent}` : 'contact.subject')} — ${name}`
+    );
     const body = encodeURIComponent(
       `${t('contact.form.name')} : ${name}\nEmail : ${email}\n\n${message}`
     );
@@ -80,6 +114,10 @@ function initContactEmail(): void {
     '[data-contact-email]'
   );
   const copy = document.querySelector<HTMLButtonElement>('[data-copy-email]');
+  const primary = document.querySelector<HTMLAnchorElement>(
+    '[data-contact-primary]'
+  );
+  if (primary) primary.href = `mailto:${CONTACT_EMAIL}`;
   if (link) {
     link.href = `mailto:${CONTACT_EMAIL}`;
     link.textContent = CONTACT_EMAIL;

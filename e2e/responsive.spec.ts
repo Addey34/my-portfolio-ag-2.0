@@ -277,9 +277,9 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
   await expect(page.locator('#stack .stack__title')).toHaveText(
     'From browser to deployment.'
   );
-  await expect(page.locator('#stack .stack-legend')).toContainText(
-    'Delivery & quality'
-  );
+  await expect(
+    page.locator('#stack .stack-family[data-layer="deploy"]')
+  ).toContainText('Delivery & quality');
   await page.screenshot({ path: testInfo.outputPath('stacks-en.png') });
   if (page.viewportSize()!.width <= 980) {
     await page.locator('#stack .stack-proof').scrollIntoViewIfNeeded();
@@ -746,6 +746,10 @@ test('captures des trois aiguilles aux repères réels du cadran', async ({
 test('atelier 3D local : repères précis et retour', async ({
   page,
 }, testInfo) => {
+  test.skip(
+    Boolean(process.env.E2E_BASE_URL),
+    'Atelier scene-lab : outil du serveur de développement, absent d’un build.'
+  );
   test.setTimeout(180_000);
   await page.goto('/?scene-lab=1');
   const lab = page.locator('.scene-lab');
@@ -778,6 +782,10 @@ test('atelier 3D local : repères précis et retour', async ({
 test('comparaison des deux ouvertures avec retour au cadran', async ({
   page,
 }, testInfo) => {
+  test.skip(
+    Boolean(process.env.E2E_BASE_URL),
+    'Atelier scene-lab : outil du serveur de développement, absent d’un build.'
+  );
   test.setTimeout(240_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));

@@ -24,14 +24,16 @@ export function initHero(scroll: SmoothScroll): void {
   // Les CTAs ancres, le lien Contact du HUD + le wordmark utilisent scrollTo de Lenis pour un défilement lissé.
   document
     .querySelectorAll<HTMLAnchorElement>(
-      '.hero__cta[href^="#"], .hero__projects a[href^="#"], .hud__btn--link[href^="#"], .stack-proof a[href^="#"], .project-threshold__list a[href^="#"]'
+      '.hero__cta[href^="#"], .hero__projects a[href^="#"], .hud__btn--link[href^="#"], .stack-proof a[href^="#"], .stack-family__proof a[href^="#"], .offer-card a[href^="#"], .offer-aside a[href^="#"], .intro__link, .project-threshold__list a[href^="#"]'
     )
     .forEach((a) => {
       a.addEventListener('click', (e) => {
         e.preventDefault();
         scroll.scrollTo(a.getAttribute('href')!);
         if (
-          a.closest('.hero__projects, .stack-proof, .project-threshold__list')
+          a.closest(
+            '.hero__projects, .stack-proof, .stack-family__proof, .offer-card, .offer-aside, .intro__link, .project-threshold__list'
+          )
         ) {
           replaceStoryHash(a.hash);
         }

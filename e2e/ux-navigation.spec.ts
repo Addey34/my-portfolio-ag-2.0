@@ -25,7 +25,7 @@ for (const [width, height] of [
       }
 
       for (const selector of [
-        '.stack-legend li:last-child',
+        '.stack-family:last-child',
         '.offer-card:nth-child(2)',
         '.study:first-child',
         '.contact__form-toggle',
