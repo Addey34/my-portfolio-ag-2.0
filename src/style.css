@@ -7233,3 +7233,94 @@ button:focus-visible {
     display: none;
   }
 }
+
+/* =========================================================================
+   Cartel de galerie — nom et intention de la sculpture exposée
+   ========================================================================= */
+.exhibit-plaque {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  gap: 0.15rem;
+  width: min(15rem, 40vw);
+  margin: 0;
+  padding: 0.55rem 0 0 0.85rem;
+  border-left: 1px solid color-mix(in srgb, var(--accent-warm) 70%, transparent);
+  color: var(--fg-muted);
+  pointer-events: none;
+  transition: opacity 0.35s var(--ease-out);
+}
+
+.exhibit-plaque__no {
+  color: var(--accent-warm);
+  font:
+    650 0.68rem ui-monospace,
+    monospace;
+  letter-spacing: 0.14em;
+}
+
+.exhibit-plaque__name {
+  color: var(--fg);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.exhibit-plaque__note {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 981px) {
+  .exhibit-plaque {
+    left: 66%;
+    bottom: 9svh;
+  }
+}
+
+/* Mobile : le cartel occupe l'espace entre la sculpture et le dossier du chapitre. */
+@media (max-width: 980px) {
+  .exhibit-plaque {
+    left: 50%;
+    top: 43svh;
+    width: min(17rem, 78vw);
+    transform: translateX(-50%);
+    text-align: left;
+    opacity: 0;
+  }
+
+  .exhibit-plaque[data-scene='galaxy'],
+  .exhibit-plaque[data-scene='ludora'],
+  .exhibit-plaque[data-scene='magnotes'] {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exhibit-plaque {
+    transition: none;
+  }
+}
+
+.stack-family {
+  background: rgba(5, 8, 17, 0.95);
+}
+
+.exhibit-plaque__no:empty {
+  display: none;
+}
+
+/* Mobile : numéro et nom sur une ligne, pour que le cartel reste au-dessus du dossier. */
+@media (max-width: 980px) {
+  .exhibit-plaque {
+    top: 41svh;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 0.6rem;
+    padding-top: 0.35rem;
+  }
+
+  .exhibit-plaque__note {
+    grid-column: 1 / -1;
+  }
+}

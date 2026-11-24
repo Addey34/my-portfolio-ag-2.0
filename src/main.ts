@@ -18,6 +18,7 @@ import { initI18n, initLocaleNavigation, initLocaleToggle, t } from '@/i18n';
 import { CommandPalette } from '@/ui/CommandPalette';
 import { ControlPanel } from '@/ui/ControlPanel';
 import { SectionRail } from '@/ui/SectionRail';
+import { initExhibitPlaque } from '@/ui/ExhibitPlaque';
 import { CONTACT_EMAIL } from '@/content/contact';
 import { initGitHubProfile } from '@/integrations/githubProfile';
 
@@ -266,6 +267,7 @@ function boot(): void {
   const stopStudyComposition = visual.onSceneChange((scene) => {
     storyRoot?.classList.toggle('is-reading-studies', scene === 'studies');
   });
+  const stopPlaque = initExhibitPlaque(visual);
   let sceneLab: SceneLab | null = null;
   if (
     import.meta.env.DEV &&
@@ -377,6 +379,7 @@ function boot(): void {
     transitions.destroy();
     choreographer.destroy();
     stopStudyComposition();
+    stopPlaque();
     visual.destroy();
     sceneLab?.destroy();
     rail?.destroy();
