@@ -52,6 +52,7 @@ import {
 import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { prefersReducedMotion } from '@/core/motion';
 import { clockHandAngles } from '@/visual/clockHands';
+import { createLightShaft } from '@/visual/LightShaft';
 import { GalaxySignature } from '@/visual/GalaxySignature';
 import { TextureWarmupCache } from '@/visual/TextureWarmupCache';
 import { HeroStage } from '@/visual/HeroStage';
@@ -249,6 +250,7 @@ export class StoryWorld3D {
   private readonly pendantTrim = new Group();
   private readonly lampSwing = new Group();
   private readonly bulbLight = new PointLight('#ffc08a', 30, 11, 2);
+  private readonly lightShaft = createLightShaft();
   private readonly reflectorBounce = new SpotLight(
     '#ffd3a1',
     22,
@@ -1148,6 +1150,8 @@ export class StoryWorld3D {
       lampDepth
     );
     this.lampSwing.scale.setScalar(heroScale);
+    // Sur mobile la sculpture est proche : le faisceau s'éteint avant le texte.
+    this.lightShaft.mesh.scale.set(1, lampCompact ? 0.7 : 1, 1);
     this.world.position.set(
       compact ? 0 : this.desktopFormCenterX,
       compact ? 3.3 : 0,
@@ -1176,6 +1180,7 @@ export class StoryWorld3D {
     this.lampMaterials.forEach((material) => material.dispose());
     this.filamentGlowTexture.dispose();
     this.filamentGlowMaterial.dispose();
+    this.lightShaft.dispose();
     this.liquid.geometry.dispose();
     this.liquidMaterial.dispose();
     this.features.forEach(({ group, materials }) => {
@@ -2482,7 +2487,8 @@ export class StoryWorld3D {
   private updateGalaxyAstrolabe(time: number, appear: number): void {
     const group = this.features.get('galaxy')?.group;
     if (!group || this.galaxyRingSpins.length === 0) return;
-    group.scale.setScalar((this.compact ? 1.14 : 1.2) * (0.6 + 0.4 * appear));
+    group.scale.setScalar((this.compact ? 1.45 : 1.2) * (0.6 + 0.4 * appear));
+    group.position.y = this.compact ? -0.3 : 0;
     group.rotation.set(-0.28, 0.5 + Math.sin(time * 0.25) * 0.2, 0);
     // Les anneaux tournent autour de leur axe, plus vite à l'apparition.
     this.galaxyRingSpins.forEach((spin, index) => {
@@ -2679,7 +2685,8 @@ export class StoryWorld3D {
     const die = this.craftedNodes.get('DICE__die_pivot');
     const board = this.craftedNodes.get('DICE__board_pivot');
     if (!group || !die || !board) return;
-    group.scale.setScalar((this.compact ? 0.98 : 1.12) * (0.7 + 0.3 * appear));
+    group.scale.setScalar((this.compact ? 1.25 : 1.12) * (0.7 + 0.3 * appear));
+    group.position.y = this.compact ? -0.3 : 0;
     group.rotation.set(0.42, -0.35, 0);
     // Le dé ancien roule en arrivant, puis se pose sur une lente rotation.
     const tumble = (1 - appear) * Math.PI * 2.5;
@@ -2717,9 +2724,8 @@ export class StoryWorld3D {
     const group = this.features.get('magnotes')?.group;
     const book = this.craftedNodes.get('BOOK__book_pivot');
     if (!group || !book) return;
-    group.scale.setScalar(
-      (this.compact ? 0.94 : 1.04) * (0.75 + 0.25 * appear)
-    );
+    group.scale.setScalar((this.compact ? 1.2 : 1.04) * (0.75 + 0.25 * appear));
+    group.position.y = this.compact ? -0.3 : 0;
     group.rotation.set(0.42, 0.28, 0);
     book.position.y =
       (this.craftedBase.get('BOOK__book_pivot')?.y ?? 0) +
@@ -2816,11 +2822,13 @@ export class StoryWorld3D {
   private updateSolutionsMonolith(time: number, visibility: number): void {
     const group = this.features.get('solutions')?.group;
     if (!group || this.solutionsMonolithPivots.length !== 4) return;
+    // Sur téléphone, la tour tient en entier entre la lampe et le titre.
+    const phone = innerWidth <= 600;
     group.scale.setScalar(
-      (this.compact ? 0.84 : 1.05) * (0.8 + 0.2 * visibility)
+      (this.compact ? (phone ? 0.62 : 0.84) : 1.05) * (0.8 + 0.2 * visibility)
     );
     // Dégager la pièce du texte sur téléphone et sous le texte sur tablette.
-    group.position.y = this.compact ? (innerWidth <= 600 ? 0.45 : -0.45) : 0;
+    group.position.y = this.compact ? (phone ? 0.5 : -0.45) : 0;
     group.rotation.set(
       -0.08,
       0.5 + (this.reduced ? 0 : Math.sin(time * 0.4) * 0.18),
@@ -3357,6 +3365,10 @@ export class StoryWorld3D {
     this.filamentGlow.scale.set(1.05, 1.05, 1);
     this.filamentGlow.layers.set(1);
     this.lampSwing.add(this.filamentGlow);
+    // Faisceau visible sous le réflecteur : la lampe éclaire l'atelier.
+    this.lightShaft.mesh.position.set(0, -1.5, 0);
+    this.lightShaft.mesh.layers.set(1);
+    this.lampSwing.add(this.lightShaft.mesh);
     new GLTFLoader(this.loadingManager).load('/models/lamp.glb', (asset) => {
       if (this.destroyed) return;
       const materials = new Set<MeshStandardMaterial>();
@@ -3645,6 +3657,9 @@ export class StoryWorld3D {
       this.lampLab.power *
       (1 - 0.28 * galaxyPresence) *
       (1 - 0.18 * heroPresence);
+    this.lightShaft.setIntensity(
+      this.lampLab.power * (1 - 0.3 * galaxyPresence) * (1 - 0.2 * heroPresence)
+    );
     this.reflectorBounce.intensity =
       (this.compact || this.heroTablet ? 17 : 22) *
       this.lampLab.power *
