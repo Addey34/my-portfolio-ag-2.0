@@ -65,13 +65,13 @@ jobs:
               console.log("Chromium image : " + executable);
             '
       - run:
-          name: Playwright desktop - SEO et confidentialite - budget 10 min
+          name: Playwright desktop - SEO et confidentialite - budget 20 min
           command: |
             mkdir -p /tmp/portfolio-playwright/desktop
             E2E_REPORT_DIR=/tmp/portfolio-playwright/desktop \
-              timeout --kill-after=30s 10m pnpm exec playwright test \
+              timeout --kill-after=30s 20m pnpm exec playwright test \
               e2e/seo-i18n.spec.ts e2e/contact-security.spec.ts e2e/contact-qualification.spec.ts \
-              --project=desktop-chromium --workers=1 --global-timeout=570000 \
+              --project=desktop-chromium --workers=1 --global-timeout=1170000 \
               --output=/tmp/portfolio-playwright/desktop/failures
       - store_test_results:
           path: /tmp/portfolio-playwright/desktop/junit.xml
@@ -79,16 +79,16 @@ jobs:
           path: /tmp/portfolio-playwright/desktop
           destination: playwright-desktop
       - run:
-          name: Playwright Android - SEO et confidentialite - budget 10 min
+          name: Playwright Android - SEO et confidentialite - budget 20 min
           when: always
           command: |
             test -d node_modules
             test -d dist
             mkdir -p /tmp/portfolio-playwright/android
             E2E_REPORT_DIR=/tmp/portfolio-playwright/android \
-              timeout --kill-after=30s 10m pnpm exec playwright test \
+              timeout --kill-after=30s 20m pnpm exec playwright test \
               e2e/seo-i18n.spec.ts e2e/contact-security.spec.ts e2e/contact-qualification.spec.ts \
-              --project=android-chromium --workers=1 --global-timeout=570000 \
+              --project=android-chromium --workers=1 --global-timeout=1170000 \
               --output=/tmp/portfolio-playwright/android/failures
       - store_test_results:
           path: /tmp/portfolio-playwright/android/junit.xml

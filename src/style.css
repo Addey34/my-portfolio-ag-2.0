@@ -5354,8 +5354,7 @@ button:focus-visible {
 }
 
 /* Détail technique dépliable : le panneau reste lisible sans défilement. */
-.chapter__more,
-.chapter__preview {
+.chapter__more {
   margin-top: 1rem;
   border-top: 1px solid var(--line);
   padding-top: 0.6rem;
@@ -5385,7 +5384,7 @@ button:focus-visible {
   line-height: 1;
 }
 
-:is(.chapter__more, .chapter__preview)[open] > .chapter__more-toggle::after {
+.chapter__more[open] > .chapter__more-toggle::after {
   content: '–';
 }
 
@@ -5398,15 +5397,6 @@ button:focus-visible {
 .chapter__more > .chapter__proof {
   grid-template-columns: 1fr;
   margin-top: 0.4rem;
-}
-
-.chapter__preview img {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin: 0.75rem 0 1rem;
-  border: 1px solid color-mix(in srgb, var(--chapter-accent) 45%, transparent);
-  border-radius: 0.5rem;
 }
 
 /* Variante locale de rythme mobile, activée uniquement par le mode développement. */
@@ -5426,7 +5416,7 @@ button:focus-visible {
 
 /* Ouvert, le panneau peut dépasser l'écran : il défile alors sur lui-même. */
 @media (min-width: 861px) {
-  .chapter__panel:has(.chapter__more[open], .chapter__preview[open]) {
+  .chapter__panel:has(.chapter__more[open]) {
     max-height: calc(100svh - 6rem);
     overflow-y: auto;
   }
@@ -6163,6 +6153,12 @@ button:focus-visible {
   margin: 2rem 0;
 }
 
+.no-js-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .boot-loader {
   position: fixed;
   inset: 0;
@@ -6406,45 +6402,60 @@ button:focus-visible {
   }
 }
 
-/* Galaxy : l'objet, puis une fenêtre directe sur le véritable produit. */
+/* Fenêtre sur le véritable produit : capture réelle, lien direct vers la démo. */
 .chapter__exhibit {
-  display: none;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--chapter-accent) 55%, transparent);
+  border-radius: 0.45rem;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.chapter__exhibit img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s ease;
+}
+
+.chapter__exhibit span {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0.5rem 0.8rem;
+  background: rgba(5, 7, 14, 0.92);
+  color: var(--chapter-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.chapter__exhibit span::after {
+  content: ' ↗';
+}
+
+.chapter__exhibit:is(:hover, :focus-visible) img {
+  transform: scale(1.03);
+}
+
+.chapter__exhibit:focus-visible {
+  outline: 2px solid var(--chapter-accent);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter__exhibit img {
+    transition: none;
+  }
+  .chapter__exhibit:is(:hover, :focus-visible) img {
+    transform: none;
+  }
 }
 
 @media (max-width: 860px) {
-  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit {
-    display: block;
-    position: relative;
-    overflow: hidden;
-    margin: 1.2rem 0 1.3rem;
-    border: 1px solid color-mix(in srgb, var(--chapter-accent) 45%, transparent);
-    border-radius: 0.45rem;
-    color: #fff;
-    text-decoration: none;
-  }
-
-  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit span {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 0.5rem 0.7rem;
-    background: rgba(5, 7, 14, 0.9);
-    color: var(--chapter-accent);
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-
-  :is(#galaxy, #ludora, #magnotes) .chapter__exhibit:focus-visible {
-    outline: 2px solid var(--chapter-accent);
-    outline-offset: 4px;
-  }
-
   #galaxy .chapter__beat--outcome {
     margin-top: 10svh;
   }
@@ -6475,52 +6486,8 @@ button:focus-visible {
   border: 0;
 }
 
-/* Galaxy : l'instrument et le produit partagé dans une même composition. */
+/* Galaxy : panneau en métal sombre, aligné sur l'instrument. */
 @media (min-width: 861px) {
-  #galaxy .chapter__beat--context {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    column-gap: 1.25rem;
-    align-items: start;
-  }
-  #galaxy .chapter__meta,
-  #galaxy .chapter__thesis,
-  #galaxy .chapter__name,
-  #galaxy .chapter__tagline {
-    grid-column: 1;
-  }
-  #galaxy .chapter__exhibit {
-    display: block;
-    position: relative;
-    grid-column: 2;
-    grid-row: 1 / 5;
-    overflow: hidden;
-    border: 1px solid rgba(197, 164, 115, 0.6);
-    border-radius: 0.35rem;
-    text-decoration: none;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-  }
-  #galaxy .chapter__exhibit img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  #galaxy .chapter__exhibit span {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 0.5rem 0.7rem;
-    background: rgba(8, 9, 13, 0.92);
-    color: #eeeae2;
-    font-size: 0.8rem;
-  }
-  #galaxy .chapter__exhibit:focus-visible {
-    outline: 2px solid #e9b84c;
-    outline-offset: 4px;
-  }
-  #galaxy .chapter__beat--context > .chapter__proof {
-    grid-column: 1 / -1;
-  }
   #galaxy .chapter__panel {
     background: linear-gradient(
       125deg,
@@ -6536,8 +6503,7 @@ button:focus-visible {
 }
 
 @media (max-width: 860px) {
-  #galaxy .chapter__exhibit {
-    margin-block: 0.65rem 0.8rem;
+  .chapter__exhibit {
     scroll-margin-block: 5.5rem;
   }
   #galaxy .chapter__tagline {

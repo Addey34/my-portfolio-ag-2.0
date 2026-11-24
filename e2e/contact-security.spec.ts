@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { blockEntryModule, openPortfolioUI } from './entry-module';
+import { blockEntryModule, openPortfolioUI, uiTest } from './entry-module';
 
 const marker = 'SYNTHETIC_PORT_SEC_001';
 const address = 'synthetic@example.invalid';
@@ -17,7 +17,8 @@ async function guard(page: Page) {
       leaks.push(value);
       await route.abort();
     } else {
-      await route.continue();
+      // fallback laisse aussi s'appliquer la retenue des modèles du contexte (uiTest).
+      await route.fallback();
     }
   });
   return leaks;
@@ -45,54 +46,57 @@ async function checkFallback(page: Page) {
   await expect(page.locator('#contact-form [name]')).toHaveCount(0);
 }
 
-test('parcours normal FR et EN, bouton et clavier sans envoi réel', async ({
-  page,
-}) => {
-  test.setTimeout(120_000);
-  page.setDefaultTimeout(25_000);
-  const leaks = await guard(page);
-  await page.addInitScript(() => {
-    const original = HTMLAnchorElement.prototype.click;
-    HTMLAnchorElement.prototype.click = function () {
-      if (this.href.startsWith('mailto:')) {
-        document.documentElement.dataset.testMailto = this.href;
-        return;
-      }
-      original.call(this);
-    };
-  });
-  await openPortfolioUI(page, '/#contact');
-  const summary = page.locator('.contact__form-toggle');
-  await expect(async () => {
-    await summary.evaluate((node) => node.scrollIntoView({ block: 'center' }));
-    await expect(summary).toBeInViewport({ timeout: 1000 });
-  }).toPass({ timeout: 25_000 });
-  await summary.click();
-  const form = page.locator('#contact-form');
-  await expect(form.locator('#contact-name')).toBeEnabled();
-  await form.locator('#contact-name').fill(marker);
-  await form.locator('#contact-email').fill(address);
-  await form.locator('#contact-message').fill(marker);
-  await form.locator('button[type=submit]').click();
-  let mail = await page.locator('html').getAttribute('data-test-mailto');
-  expect(mail).toContain('mailto:contact@adrianguichard.dev?');
-  expect(decodeURIComponent(mail ?? '')).toContain(marker);
-  expect(decodeURIComponent(mail ?? '')).toContain(address);
-  await page.locator('#lang-toggle').click();
-  await expect(form.locator('button[type=submit]')).toHaveText(
-    'Prepare the message'
-  );
-  await page.evaluate(() => {
-    delete document.documentElement.dataset.testMailto;
-  });
-  await form.locator('#contact-name').focus();
-  await test.step('Validation clavier', () => page.keyboard.press('Enter'), {
-    timeout: 25_000,
-  });
-  mail = await page.locator('html').getAttribute('data-test-mailto');
-  expect(decodeURIComponent(mail ?? '')).toContain(marker);
-  expect(leaks).toEqual([]);
-});
+uiTest(
+  'parcours normal FR et EN, bouton et clavier sans envoi réel',
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    page.setDefaultTimeout(25_000);
+    const leaks = await guard(page);
+    await page.addInitScript(() => {
+      const original = HTMLAnchorElement.prototype.click;
+      HTMLAnchorElement.prototype.click = function () {
+        if (this.href.startsWith('mailto:')) {
+          document.documentElement.dataset.testMailto = this.href;
+          return;
+        }
+        original.call(this);
+      };
+    });
+    await openPortfolioUI(page, '/#contact');
+    const summary = page.locator('.contact__form-toggle');
+    await expect(async () => {
+      await summary.evaluate((node) =>
+        node.scrollIntoView({ block: 'center' })
+      );
+      await expect(summary).toBeInViewport({ timeout: 1000 });
+    }).toPass({ timeout: 25_000 });
+    await summary.click();
+    const form = page.locator('#contact-form');
+    await expect(form.locator('#contact-name')).toBeEnabled();
+    await form.locator('#contact-name').fill(marker);
+    await form.locator('#contact-email').fill(address);
+    await form.locator('#contact-message').fill(marker);
+    await form.locator('button[type=submit]').click();
+    let mail = await page.locator('html').getAttribute('data-test-mailto');
+    expect(mail).toContain('mailto:contact@adrianguichard.dev?');
+    expect(decodeURIComponent(mail ?? '')).toContain(marker);
+    expect(decodeURIComponent(mail ?? '')).toContain(address);
+    await page.locator('#lang-toggle').click();
+    await expect(form.locator('button[type=submit]')).toHaveText(
+      'Prepare the message'
+    );
+    await page.evaluate(() => {
+      delete document.documentElement.dataset.testMailto;
+    });
+    await form.locator('#contact-name').focus();
+    await test.step('Validation clavier', () => page.keyboard.press('Enter'), {
+      timeout: 25_000,
+    });
+    mail = await page.locator('html').getAttribute('data-test-mailto');
+    expect(decodeURIComponent(mail ?? '')).toContain(marker);
+    expect(leaks).toEqual([]);
+  }
+);
 
 for (const mode of [
   'no-js',

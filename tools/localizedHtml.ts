@@ -83,7 +83,7 @@ export function localizedHtml(html: string, locale: Locale): string {
     if (attr(node, 'id') === 'projects')
       content(
         node,
-        `<div class="no-js-content"><h2>${escape(tr('nav.projects'))}</h2>${PROJECTS.map((project) => `<article id="${escape(project.id)}"><h3>${escape(project.name)}</h3>${p(project.thesis[locale])}${p(project.tagline[locale])}${rows(project.proof)}<ul>${project.highlights.map((item) => `<li>${escape(item[locale])}</li>`).join('')}</ul>${p(project.stack.join(' · '))}<details class="chapter__preview"><summary>${escape(tr('project.preview'))}</summary><img src="${escape(project.preview.src)}" alt="${escape(project.preview.alt[locale])}" width="1280" height="${project.preview.height}" loading="lazy" decoding="async"></details>${links(project.links)}${project.linkNote ? p(project.linkNote[locale]) : ''}</article>`).join('')}</div>`
+        `<div class="no-js-content"><h2>${escape(tr('nav.projects'))}</h2>${PROJECTS.map((project) => `<article id="${escape(project.id)}"><h3>${escape(project.name)}</h3>${p(project.thesis[locale])}${p(project.tagline[locale])}${rows(project.proof)}<ul>${project.highlights.map((item) => `<li>${escape(item[locale])}</li>`).join('')}</ul>${p(project.stack.join(' · '))}<img src="${escape(project.preview.src)}" alt="${escape(project.preview.alt[locale])}" width="1280" height="${project.preview.height}" loading="lazy" decoding="async">${links(project.links)}${project.linkNote ? p(project.linkNote[locale]) : ''}</article>`).join('')}</div>`
       );
     if (attr(node, 'id') === 'studies-list')
       content(

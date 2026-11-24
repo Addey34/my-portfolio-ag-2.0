@@ -161,32 +161,28 @@ test('Galaxy distingue ses échelles et donne accès à la méthodologie en FR e
   ).toBeLessThanOrEqual(1);
 });
 
-test('les aperçus des produits sont accessibles et traduits', async ({
+test('les aperçus des produits sont visibles, accessibles et traduits', async ({
   page,
 }, testInfo) => {
   test.setTimeout(120_000);
   await page.goto('/');
   for (const id of ['galaxy', 'ludora', 'magnotes']) {
-    const preview = page.locator(`#${id} .chapter__preview`);
-    const summary = preview.locator('summary');
-    await summary.scrollIntoViewIfNeeded();
-    await summary.click();
-    const image = preview.locator('img');
+    const exhibit = page.locator(`#${id} .chapter__exhibit`);
+    await exhibit.scrollIntoViewIfNeeded();
+    const image = exhibit.locator('img');
     await expect(image).toBeVisible();
     await expect
       .poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth))
       .toBeGreaterThan(0);
-    await image.scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath(`preview-${id}.png`) });
-    await summary.click();
   }
   await page.locator('#lang-toggle').click();
-  await expect(page.locator('#galaxy .chapter__preview img')).toHaveAttribute(
+  await expect(page.locator('#galaxy .chapter__exhibit img')).toHaveAttribute(
     'alt',
     'View of the interactive Galaxy solar system.'
   );
-  await expect(page.locator('#galaxy .chapter__preview summary')).toHaveText(
-    'Enlarge the product screenshot'
+  await expect(page.locator('#galaxy .chapter__exhibit span')).toHaveText(
+    'Open live demo'
   );
   expect(
     await page.evaluate(
@@ -261,8 +257,18 @@ test('stacks visibles et reliées aux projets en FR et EN', async ({
   await page.screenshot({ path: testInfo.outputPath('stacks-fr.png') });
   await page.locator('#stack .stack-proof').scrollIntoViewIfNeeded();
   if (page.viewportSize()!.width <= 980) {
-    await page.evaluate(() => window.scrollBy(0, innerHeight * 0.25));
-    await page.waitForTimeout(350);
+    // Le décalage ne sert que si le bloc reste sous le rail : le défilement
+    // lissé peut sinon le pousser hors de l'écran et le faire disparaître.
+    const hiddenByRail = await page.evaluate(() => {
+      const proof = document.querySelector('#stack .stack-proof');
+      return proof
+        ? proof.getBoundingClientRect().bottom > innerHeight * 0.85
+        : false;
+    });
+    if (hiddenByRail) {
+      await page.evaluate(() => window.scrollBy(0, innerHeight * 0.25));
+      await page.waitForTimeout(350);
+    }
   }
   await expect(page.locator('#stack .stack-proof')).toBeInViewport();
   await page.screenshot({ path: testInfo.outputPath('stacks-proofs-fr.png') });
@@ -1077,13 +1083,12 @@ test('prototype mobile compact : parcours et captures des projets', async ({
     ).toBeLessThanOrEqual(1);
     await page.waitForTimeout(1200);
     await page.screenshot({ path: testInfo.outputPath(`compact-${id}.png`) });
-    const preview = page.locator(`#${id} .chapter__preview summary`);
-    await preview.evaluate((node) =>
+    const exhibit = page.locator(`#${id} .chapter__exhibit`);
+    await exhibit.evaluate((node) =>
       node.scrollIntoView({ block: 'center', behavior: 'instant' })
     );
     await page.waitForTimeout(1200);
-    await preview.tap();
-    await expect(page.locator(`#${id} .chapter__preview img`)).toBeVisible();
+    await expect(exhibit.locator('img')).toBeVisible();
   }
 });
 

@@ -119,13 +119,17 @@ function buildChapter(project: Project, index: number): HTMLElement {
   const tagline = el('p', 'chapter__tagline', '');
   registerDynamic(tagline, () => tl(project.tagline));
 
-  // Hiérarchie : contexte et contribution, puis résultat ; le défi, le choix
-  // technique et les preuves vérifiées sont à un clic (détail dépliable).
+  // Hiérarchie : contexte et contribution, puis produit réel, résultat et preuves
+  // vérifiées (limites comprises), toujours visibles ; le défi et le choix technique
+  // restent à un clic (détail dépliable).
   const contextProof = buildProof([
     ['problem', project.proof.problem],
     ['role', project.proof.role],
   ]);
-  const outcomeProof = buildProof([['result', project.proof.result]]);
+  const outcomeProof = buildProof([
+    ['result', project.proof.result],
+    ['evidence', project.proof.evidence],
+  ]);
   const highlights = document.createElement('ul');
   highlights.className = 'chapter__highlights';
   project.highlights.forEach((highlight) => {
@@ -144,31 +148,12 @@ function buildChapter(project: Project, index: number): HTMLElement {
     buildProof([
       ['challenge', project.proof.challenge],
       ['decision', project.proof.decision],
-      ['evidence', project.proof.evidence],
     ])
   );
 
   const stack = document.createElement('ul');
   stack.className = 'chapter__stack';
   project.stack.forEach((tech) => stack.appendChild(el('li', '', tech)));
-
-  const preview = document.createElement('details');
-  preview.className = 'chapter__preview';
-  const previewKey =
-    project.id === 'galaxy' ? 'project.previewLarge' : 'project.preview';
-  const previewToggle = el('summary', 'chapter__more-toggle', t(previewKey));
-  previewToggle.dataset.i18n = previewKey;
-  const previewImage = document.createElement('img');
-  previewImage.src = project.preview.src;
-  previewImage.alt = tl(project.preview.alt);
-  previewImage.loading = 'lazy';
-  previewImage.decoding = 'async';
-  previewImage.width = 1280;
-  previewImage.height = project.preview.height;
-  onLocaleChange(() => {
-    previewImage.alt = tl(project.preview.alt);
-  });
-  preview.append(previewToggle, previewImage);
 
   const links = document.createElement('div');
   links.className = 'chapter__links';
@@ -210,13 +195,14 @@ function buildChapter(project: Project, index: number): HTMLElement {
 
   context.append(meta, thesis, name, tagline);
   const demoLink = project.links.find((link) => link.kind === 'demo');
+  // Le véritable produit (capture réelle) mène directement à sa démonstration.
+  let exhibit: HTMLElement | null = null;
   if (demoLink) {
-    // Le véritable produit accompagne la pièce exposée sur petit écran.
-    const exhibit = document.createElement('a');
-    exhibit.className = 'chapter__exhibit';
-    exhibit.href = demoLink.href;
-    exhibit.target = '_blank';
-    exhibit.rel = 'noopener';
+    const anchor = document.createElement('a');
+    anchor.className = 'chapter__exhibit';
+    anchor.href = demoLink.href;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener';
     const image = document.createElement('img');
     image.src = project.preview.src;
     image.width = 1280;
@@ -229,11 +215,12 @@ function buildChapter(project: Project, index: number): HTMLElement {
       image.alt = tl(project.preview.alt);
     });
     image.alt = tl(project.preview.alt);
-    exhibit.append(image, caption);
-    context.appendChild(exhibit);
+    anchor.append(image, caption);
+    exhibit = anchor;
   }
   context.appendChild(contextProof);
-  outcome.append(outcomeProof, highlights, more, stack, preview, links);
+  if (exhibit) outcome.appendChild(exhibit);
+  outcome.append(outcomeProof, highlights, more, stack, links);
   panel.append(context, outcome);
   shell.appendChild(panel);
   inner.appendChild(shell);
