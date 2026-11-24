@@ -111,6 +111,10 @@ export class ScrollChoreographer {
         const rect = section.getBoundingClientRect();
         const top = rect.top + scrollY;
         let target = top + (rect.height - viewport) / 2;
+        // Section plus haute que l'écran : centrer masquerait ses deux bouts (les
+        // preuves en bas). On n'aimante que près de son début ; le reste se lit
+        // en défilement libre, sans être ramené en arrière.
+        if (rect.height > viewport) target = top;
 
         if (section.id === 'projects-intro' || section.id === 'studies') {
           target = top;

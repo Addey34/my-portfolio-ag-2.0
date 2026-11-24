@@ -19,28 +19,6 @@
     format('woff2');
 }
 
-:root {
-  --bg: #03050a;
-  --bg-soft: #09101c;
-  --fg: #f6f3ed;
-  --fg-muted: #aebbcf;
-  --ag-cobalt: #78a7ff;
-  --ag-cyan: #5de4f2;
-  --ag-violet: #a27dff;
-  --ag-amber: #ffb35f;
-  --accent: var(--ag-cobalt);
-  --accent-warm: var(--ag-amber);
-  --glow: var(--ag-violet);
-  --line: rgba(184, 207, 242, 0.12);
-
-  --maxw: 94rem;
-  --pad: clamp(1.25rem, 2.4vw, 2.75rem);
-  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 *,
 *::before,
 *::after {
@@ -535,159 +513,9 @@ button:focus-visible {
    Le décor continu est rendu par StoryWorld3D ; le texte des projets reste
    sur un panneau translucide au contraste garanti.
    ========================================================================= */
-.chapters {
-  width: 100%;
-}
-
-.chapter {
-  position: relative;
-  min-height: 134svh;
-  display: flex;
-  align-items: center;
-}
-
-.chapter__inner {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: var(--maxw);
-  margin-inline: auto;
-  padding: clamp(4rem, 10vh, 7rem) var(--pad);
-  perspective: 1000px;
-}
 
 /* Panneau texte : verre sombre + liserÃ© Ã  l'accent du projet. Lisible sur
    n'importe quel dÃ©cor â€” le contraste vient du panneau, pas du fond. */
-.chapter__panel {
-  max-width: 36rem;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  border-radius: 0.5rem;
-  background: rgba(5, 7, 14, 0.72);
-  border: 1px solid
-    color-mix(in srgb, var(--chapter-accent, var(--accent)) 35%, transparent);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
-}
-
-.chapter {
-  min-height: 108svh;
-}
-
-.chapter__index {
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--chapter-accent, var(--accent));
-}
-
-.chapter__name {
-  margin: 0.4rem 0 0;
-  font-family: var(--font-display);
-  font-size: clamp(2.25rem, 6vw, 4rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--fg);
-}
-
-.chapter__thesis {
-  margin: 0.55rem 0 0;
-  color: var(--chapter-accent, var(--accent));
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  font-weight: 600;
-}
-
-.chapter__tagline {
-  margin: 1rem 0 0;
-  font-size: clamp(0.98rem, 1.8vw, 1.1rem);
-  color: rgba(244, 246, 251, 0.88);
-}
-
-.chapter__proof {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-  margin: 1.35rem 0 0;
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
-}
-
-.chapter__proof-item {
-  min-width: 0;
-  padding: 0.75rem;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.chapter__proof-label {
-  margin: 0;
-  color: var(--chapter-accent, var(--accent));
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.chapter__proof-value {
-  margin: 0.3rem 0 0;
-  color: var(--fg-muted);
-  font-size: 0.78rem;
-  line-height: 1.45;
-}
-
-.chapter__stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 1.4rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.chapter__stack li {
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  padding: 0.32rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--fg-muted);
-}
-
-.chapter__links {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-top: 1.6rem;
-}
-
-.chapter__link-note {
-  margin: 0;
-  color: var(--fg-muted);
-  font-size: 0.875rem;
-  font-style: italic;
-}
-
-.chapter__links a,
-.chapter__links button {
-  font: inherit;
-  background: transparent;
-  cursor: pointer;
-  color: var(--fg);
-  text-decoration: none;
-  font-weight: 600;
-  border-bottom: 1px solid var(--chapter-accent, var(--accent));
-  padding-bottom: 2px;
-  transition: color 0.2s var(--ease-out);
-}
-
-.chapter__links a:hover,
-.chapter__links button:hover {
-  color: var(--chapter-accent, var(--accent));
-}
 
 /* -------------------------------------------------------------------------
    DÃ©cor GALAXY â€” espace rÃ©el : noir profond, Ã©toiles, nav planÃ¨tes Ã  halo
@@ -1746,25 +1574,6 @@ button:focus-visible {
     opacity: var(--intro-exit-opacity, 1);
   }
 
-  .chapter {
-    min-height: 125svh;
-    align-items: flex-end;
-  }
-
-  .chapter__inner {
-    padding-top: 52svh;
-    padding-bottom: 10svh;
-  }
-
-  .chapter__panel {
-    max-width: 100%;
-    background: rgba(5, 7, 14, 0.84);
-  }
-
-  .chapter__proof {
-    grid-template-columns: 1fr;
-  }
-
   .gx-nav {
     display: none;
   }
@@ -1800,14 +1609,6 @@ button:focus-visible {
   .hud {
     gap: 0.45rem;
   }
-
-  .chapter__panel {
-    padding: 1.25rem;
-  }
-
-  .chapter__proof-item {
-    padding: 0.65rem;
-  }
 }
 /* =========================================================================
    Priorités audit visuel — 2026-07-28
@@ -1815,21 +1616,7 @@ button:focus-visible {
 
 /* Seuil narratif généré depuis PROJECTS : le signal du lab annonce trois
    univers avant que le premier chapitre ne prenne le compositeur. */
-.project-threshold {
-  position: relative;
-  min-height: 92svh;
-  display: grid;
-  align-items: center;
-}
 
-.project-threshold__inner {
-  width: 100%;
-  max-width: var(--maxw);
-  margin-inline: auto;
-  padding: clamp(7rem, 14svh, 11rem) var(--pad);
-}
-
-.project-threshold__kicker,
 .contact__kicker {
   margin: 0;
   color: var(--accent-warm);
@@ -1839,100 +1626,7 @@ button:focus-visible {
   text-transform: uppercase;
 }
 
-.project-threshold__title {
-  max-width: 68rem;
-  margin: 1.2rem 0 0;
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 6.6vw, 6.6rem);
-  line-height: 0.98;
-  letter-spacing: -0.04em;
-}
-
-.project-threshold__lead {
-  max-width: 43rem;
-  margin: 1.6rem 0 0;
-  color: var(--fg-muted);
-  font-size: clamp(1rem, 1.7vw, 1.18rem);
-}
-
-.project-threshold__list {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin: clamp(2.5rem, 7vh, 4.5rem) 0 0;
-  padding: 0;
-}
-
-.project-threshold__list a {
-  position: relative;
-  min-height: 9.5rem;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-rows: auto 1fr;
-  gap: 0.8rem 1rem;
-  padding: 1.25rem;
-  color: var(--fg);
-  text-decoration: none;
-  border: 1px solid var(--line);
-  border-radius: 0.65rem;
-  background: color-mix(in srgb, var(--bg-soft) 68%, transparent);
-  backdrop-filter: blur(10px);
-  transition:
-    border-color 0.22s var(--ease-out),
-    transform 0.22s var(--ease-out),
-    background 0.22s var(--ease-out);
-}
-
-.project-threshold__list a:hover,
-.project-threshold__list a:focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
-  background: color-mix(in srgb, var(--accent) 9%, var(--bg-soft));
-  transform: translateY(-4px);
-}
-
-.project-threshold__number {
-  color: var(--accent-warm);
-  font-family: ui-monospace, monospace;
-  font-size: 0.72rem;
-}
-
-.project-threshold__name {
-  font-family: var(--font-display);
-  font-size: 1.08rem;
-  line-height: 1;
-}
-
-.project-threshold__thesis {
-  grid-column: 2 / -1;
-  align-self: end;
-  color: var(--fg-muted);
-  font-size: 0.88rem;
-  line-height: 1.45;
-}
-
-.project-threshold__arrow {
-  grid-column: 3;
-  grid-row: 1;
-  justify-self: end;
-  color: var(--accent);
-  font-size: 1.05rem;
-}
-
 /* Le shell porte la sortie scrubée ; le panneau conserve son reveal 3D. */
-.chapter__panel-shell {
-  width: 100%;
-  max-width: 36rem;
-}
-
-.chapter__panel {
-  max-width: none;
-}
-
-.chapter__beat--outcome .chapter__proof {
-  margin-top: 0;
-  border-top: 0;
-}
 
 /* Une vraie dernière diapositive : à la fin de la page, le contact remplit le
    viewport et la fin du panneau MagNotes ne reste plus coincée au-dessus. */
@@ -1980,17 +1674,13 @@ button:focus-visible {
   .section--intro,
   .section--stack,
   .section--offers,
-  .section--lab,
-  .project-threshold__inner,
-  .chapter__inner {
+  .section--lab {
     padding-left: clamp(8.75rem, 13.5vw, 10rem);
   }
 }
 
 @media (max-width: 860px) {
-  .section,
-  .chapter,
-  .project-threshold {
+  .section {
     scroll-margin-top: 4.75rem;
   }
 
@@ -2020,69 +1710,8 @@ button:focus-visible {
     padding-bottom: clamp(5rem, 10svh, 6.5rem);
   }
 
-  .project-threshold {
-    min-height: auto;
-  }
-
-  .project-threshold__inner {
-    padding-block: clamp(7rem, 16svh, 9rem);
-  }
-
-  .project-threshold__title {
-    font-size: clamp(2.4rem, 12vw, 4.4rem);
-  }
-
-  .project-threshold__list {
-    grid-template-columns: 1fr;
-    margin-top: 2.5rem;
-  }
-
-  .project-threshold__list a {
-    min-height: 7.5rem;
-  }
-
   /* Deux beats, une seule étude de cas : contexte, respiration visuelle, puis
      défi/résultat. Le décor reste donc un acteur sur petit écran. */
-  .chapter {
-    min-height: auto;
-    align-items: stretch;
-  }
-
-  .chapter__inner {
-    /* Avec le décalage des ancres, l'objet et le titre partagent le premier écran. */
-    padding-top: 30svh;
-    padding-bottom: 15svh;
-  }
-
-  .chapter__panel-shell {
-    max-width: 100%;
-  }
-
-  .chapter__panel {
-    padding: 0;
-    border: 0;
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-  }
-
-  .chapter__beat {
-    padding: 1.25rem;
-    border: 1px solid
-      color-mix(in srgb, var(--chapter-accent, var(--accent)) 35%, transparent);
-    border-radius: 0.55rem;
-    background: rgba(5, 7, 14, 0.88);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(12px);
-  }
-
-  .chapter__beat--outcome {
-    margin-top: 22svh;
-  }
-
-  .chapter__beat--outcome .chapter__proof {
-    border-top: 1px solid var(--line);
-  }
 
   .section--contact {
     min-height: 100svh;
@@ -2118,31 +1747,10 @@ button:focus-visible {
   --story-progress: 0.08;
 }
 
-[data-story-sequence]
-  :is(
-    .intro__kicker,
-    .project-threshold__kicker,
-    .chapter__index,
-    .contact__kicker
-  )::before {
-  content: '';
-  display: inline-block;
-  width: 2.25rem;
-  height: 1px;
-  margin-right: 0.75rem;
-  vertical-align: 0.28em;
-  background: currentColor;
-  transform: scaleX(var(--story-progress));
-  transform-origin: left center;
-  opacity: 0.78;
-  will-change: transform;
-}
-
 /* Les cartes importantes ne sont pas seulement décoratives : elles offrent
    un second niveau de lecture au survol et au focus clavier. */
 .offer-card,
-.lab-item,
-.chapter__proof-item {
+.lab-item {
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -2161,8 +1769,7 @@ button:focus-visible {
 }
 
 .offer-card::before,
-.lab-item::before,
-.chapter__proof-item::before {
+.lab-item::before {
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
@@ -2175,8 +1782,7 @@ button:focus-visible {
 }
 
 .offer-card::after,
-.lab-item::after,
-.chapter__proof-item::after {
+.lab-item::after {
   content: '';
   position: absolute;
   inset: -45%;
@@ -2208,9 +1814,7 @@ button:focus-visible {
 .offer-card:hover::before,
 .offer-card:focus-visible::before,
 .lab-item:hover::before,
-.lab-item:focus-visible::before,
-.chapter__proof-item:hover::before,
-.chapter__proof-item:focus-visible::before {
+.lab-item:focus-visible::before {
   transform: scaleY(1);
   transform-origin: top;
 }
@@ -2218,16 +1822,13 @@ button:focus-visible {
 .offer-card:hover::after,
 .offer-card:focus-visible::after,
 .lab-item:hover::after,
-.lab-item:focus-visible::after,
-.chapter__proof-item:hover::after,
-.chapter__proof-item:focus-visible::after {
+.lab-item:focus-visible::after {
   opacity: 1;
   transform: scale(1);
 }
 
 .offer-card:focus-visible,
-.lab-item:focus-visible,
-.chapter__proof-item:focus-visible {
+.lab-item:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
@@ -2257,62 +1858,9 @@ button:focus-visible {
   transform: none;
 }
 
-.chapter__proof-item:hover,
-.chapter__proof-item:focus-visible {
-  background: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 9%,
-    transparent
-  );
-}
-
-.chapter__proof-item:hover .chapter__proof-value,
-.chapter__proof-item:focus-visible .chapter__proof-value {
-  color: var(--fg);
-}
-
-.chapter__stack li {
-  transition:
-    color 0.22s var(--ease-out),
-    border-color 0.22s var(--ease-out),
-    background 0.22s var(--ease-out),
-    transform 0.22s var(--ease-out);
-}
-
-.chapter__stack li:hover {
-  color: var(--fg);
-  border-color: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 55%,
-    transparent
-  );
-  background: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 10%,
-    transparent
-  );
-  transform: translateY(-2px);
-}
-
-.project-threshold__list a:hover,
-.project-threshold__list a:focus-visible {
-  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.3);
-}
-
-.project-threshold__arrow {
-  transition: transform 0.28s var(--ease-out);
-}
-
-.project-threshold__list a:hover .project-threshold__arrow,
-.project-threshold__list a:focus-visible .project-threshold__arrow {
-  transform: translate(0.2rem, 0.2rem);
-}
-
 @media (hover: hover) {
   .offer-grid:has(.offer-card:hover) .offer-card:not(:hover),
-  .lab-grid:has(.lab-item:hover) .lab-item:not(:hover),
-  .chapter__proof:has(.chapter__proof-item:hover)
-    .chapter__proof-item:not(:hover) {
+  .lab-grid:has(.lab-item:hover) .lab-item:not(:hover) {
     opacity: 0.58;
   }
 }
@@ -2325,32 +1873,16 @@ button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-story-sequence]
-    :is(
-      .intro__kicker,
-      .project-threshold__kicker,
-      .chapter__index,
-      .contact__kicker
-    )::before {
-    transform: scaleX(1);
-    will-change: auto;
-  }
-
   .offer-card,
   .lab-item,
-  .chapter__proof-item,
-  .story-note,
-  .chapter__stack li,
-  .project-threshold__arrow {
+  .story-note {
     transition: none;
   }
 }
 
 /* Profil léger automatique : conserve la direction artistique sans payer les effets coûteux. */
 .lite-mode .offer-card,
-.lite-mode .lab-item,
-.lite-mode .project-threshold__list a,
-.lite-mode .chapter__beat {
+.lite-mode .lab-item {
   backdrop-filter: none;
 }
 
@@ -2362,97 +1894,9 @@ button:focus-visible {
    Hiérarchie des études de cas — contexte → décision → résultat
    ========================================================================= */
 
-.chapter__panel {
-  position: relative;
-  overflow: hidden;
-  border-top-color: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 58%,
-    transparent
-  );
-}
-
-.chapter__panel::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--chapter-accent, var(--accent)),
-    color-mix(in srgb, var(--chapter-accent, var(--accent)) 18%, transparent)
-  );
-  opacity: 0.95;
-}
-
-.chapter__beat--outcome {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--line);
-}
-
-.chapter__beat--outcome .chapter__proof {
-  border-top: 0;
-}
-
-.chapter__link-note {
-  flex-basis: 100%;
-  order: 0;
-}
-
-.project-threshold__list {
-  align-items: stretch;
-}
-
-.project-threshold__list a {
-  align-content: space-between;
-}
-
-@media (max-width: 860px) {
-  .chapter__panel::before {
-    display: none;
-  }
-
-  .chapter__beat--outcome {
-    margin-top: 22svh;
-  }
-}
-
 /* =========================================================================
    Confiance et conversion — statut réel, contact direct
    ========================================================================= */
-
-.chapter__meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-}
-
-.chapter__status {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1.45rem;
-  padding: 0.2rem 0.55rem;
-  border: 1px solid
-    color-mix(in srgb, var(--chapter-accent, var(--accent)) 48%, transparent);
-  border-radius: 999px;
-  color: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 82%,
-    var(--fg)
-  );
-  font-size: 0.63rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  text-transform: uppercase;
-  background: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 8%,
-    transparent
-  );
-}
 
 .contact__signals {
   display: grid;
@@ -3063,51 +2507,9 @@ button:focus-visible {
   letter-spacing: 0.02em;
 }
 
-.project-threshold {
-  min-height: 76svh;
-}
-
-.project-threshold__inner {
-  padding-top: clamp(5rem, 9svh, 7rem);
-  padding-bottom: clamp(5rem, 9svh, 7rem);
-}
-
-.project-threshold__title {
-  max-width: 57rem;
-  margin-top: 0.85rem;
-  font-size: clamp(2.35rem, 5.4vw, 5.25rem);
-}
-
-.project-threshold__lead {
-  max-width: 38rem;
-  margin-top: 1rem;
-}
-
-.project-threshold__list {
-  gap: 0.55rem;
-  margin-top: clamp(1.8rem, 4vh, 2.75rem);
-}
-
-.project-threshold__list a {
-  min-height: 7.5rem;
-  padding: 1rem;
-}
-
-.chapter {
-  min-height: 116svh;
-}
-
 @media (max-width: 860px) {
   .section--lab::before {
     top: 4.5rem;
-  }
-
-  .project-threshold__inner {
-    padding-block: clamp(5.5rem, 11svh, 7rem);
-  }
-
-  .chapter {
-    min-height: auto;
   }
 }
 
@@ -3122,10 +2524,6 @@ button:focus-visible {
 
   .section--lab::before {
     display: none;
-  }
-
-  .project-threshold {
-    min-height: auto;
   }
 }
 
@@ -3971,62 +3369,6 @@ button:focus-visible {
     font-size: 0.62rem;
   }
 }
-.chapter__panel {
-  width: min(50%, 40rem);
-  max-width: none;
-  padding: clamp(1.35rem, 2.4vw, 2rem);
-}
-
-@media (min-width: 981px) {
-  .chapter__panel-shell {
-    width: min(46%, 42rem);
-    max-width: none;
-  }
-
-  .chapter__panel {
-    width: 100%;
-  }
-}
-
-.chapter {
-  min-height: 108svh;
-}
-
-.chapter__tagline {
-  max-width: 32rem;
-  font-size: clamp(0.94rem, 1.5vw, 1.04rem);
-}
-
-.chapter__proof {
-  margin-top: 1.05rem;
-}
-
-.chapter__proof-item {
-  padding: 0.65rem;
-}
-
-.chapter__proof-value {
-  font-size: 0.875rem;
-}
-
-.project-threshold {
-  min-height: 68svh;
-}
-
-.project-threshold__title {
-  max-width: 50rem;
-  font-size: clamp(2.15rem, 4.6vw, 4.5rem);
-}
-
-.project-threshold__lead {
-  max-width: 34rem;
-}
-
-@media (max-width: 860px) {
-  .chapter__panel {
-    width: 100%;
-  }
-}
 
 /* =========================================================================
    Direction finale — texte et matière partagent l'écran sans se recouvrir
@@ -4080,44 +3422,6 @@ button:focus-visible {
 
 /* Les études de cas restent structurées sans ressembler à des cartes de
    dashboard. La matière peut respirer à leur droite. */
-.chapter__panel {
-  border: 0;
-  border-left: 1px solid
-    color-mix(in srgb, var(--chapter-accent, var(--accent)) 52%, transparent);
-  border-radius: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(3, 5, 11, 0.96) 0%,
-    rgba(3, 5, 11, 0.9) 84%,
-    rgba(3, 5, 11, 0.28) 100%
-  );
-  box-shadow: none;
-  backdrop-filter: blur(7px);
-}
-
-.chapter__panel::before {
-  width: 5rem;
-  right: auto;
-}
-
-.chapter__proof {
-  gap: 0.7rem;
-  border: 0;
-}
-
-.chapter__proof-item {
-  padding: 0.35rem 0.75rem;
-  border: 0;
-  border-left: 1px solid var(--line);
-}
-
-.chapter__beat--outcome {
-  border-top-color: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 20%,
-    var(--line)
-  );
-}
 
 @media (max-width: 860px) {
   .hero__inner::before {
@@ -4134,62 +3438,12 @@ button:focus-visible {
     justify-content: flex-end;
     padding-bottom: clamp(7rem, 17svh, 10rem);
   }
-
-  .chapter__panel {
-    border-left: 0;
-    background: transparent;
-    backdrop-filter: none;
-  }
-
-  .chapter__proof {
-    gap: 0;
-  }
-
-  .chapter__proof-item {
-    border-left: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .chapter__beat {
-    background: rgba(3, 5, 11, 0.94);
-    backdrop-filter: blur(8px);
-  }
 }
 
 /* La sélection reste un index compact sous son paragraphe ; la sculpture 3D
    reprend la moitié droite sans que les cartes ne deviennent une seconde scène. */
-@media (min-width: 861px) {
-  .project-threshold__list {
-    width: min(34rem, 100%);
-    gap: 0.45rem;
-    margin-top: 1.35rem;
-  }
-
-  .project-threshold__list a {
-    min-height: 5.15rem;
-    gap: 0.38rem 0.5rem;
-    padding: 0.72rem;
-  }
-
-  .project-threshold__name {
-    font-size: 0.9rem;
-  }
-
-  .project-threshold__thesis {
-    font-size: 0.67rem;
-    line-height: 1.32;
-  }
-}
 
 @media (max-width: 860px) {
-  .project-threshold__list {
-    margin-top: clamp(13rem, 28svh, 18rem);
-  }
-
-  .project-threshold__list a {
-    min-height: 5.35rem;
-  }
-
   .section--contact > .contact__signals {
     margin-top: 10rem;
   }
@@ -4349,9 +3603,7 @@ button:focus-visible {
   .section--intro,
   .section--stack,
   .section--offers,
-  .section--lab,
-  .project-threshold__inner,
-  .chapter__inner {
+  .section--lab {
     padding-left: clamp(11.5rem, 15vw, 13rem);
   }
 }
@@ -4506,22 +3758,6 @@ button:focus-visible {
 /* =========================================================================
    Rééquilibrage FHD : solutions et seuil des produits
    ========================================================================= */
-@media (min-width: 981px) {
-  .project-threshold {
-    min-height: 84svh;
-  }
-
-  .project-threshold__inner {
-    padding-top: clamp(6rem, 11svh, 8rem);
-    padding-bottom: clamp(4.5rem, 8svh, 6rem);
-  }
-
-  .project-threshold__title {
-    max-width: 48rem;
-    font-size: clamp(3.2rem, 5.65vw, 5.75rem);
-    line-height: 0.94;
-  }
-}
 
 /* =========================================================================
    Contact final : manifeste centré, formulaire à la demande
@@ -4730,33 +3966,8 @@ button:focus-visible {
 }
 
 /* Laptops bas (1366 x 768) : le panneau d'étude de cas reste entièrement visible. */
-@media (min-width: 769px) and (max-height: 820px) {
-  .chapter__panel {
-    padding: 1.15rem 1.5rem;
-  }
-
-  .chapter__name {
-    font-size: clamp(2.2rem, 4.2vw, 3rem);
-  }
-
-  .chapter__proof-item {
-    padding-block: 0.3rem;
-  }
-
-  .chapter__proof-value {
-    font-size: 0.82rem;
-    line-height: 1.4;
-  }
-}
 
 /* Etudes complementaires : preuves consultables avant la conclusion. */
-.section--studies {
-  position: relative;
-  z-index: 1;
-  background: transparent;
-  border-top: 1px solid var(--line);
-  padding: clamp(4rem, 10svh, 7rem) clamp(1rem, 5vw, 4rem);
-}
 
 .studies__title {
   margin: 0.4rem 0 0.8rem;
@@ -4778,114 +3989,9 @@ button:focus-visible {
 }
 
 @media (max-width: 860px) {
-  .section--studies {
-    scroll-margin-top: 5rem;
-  }
-
   .studies__list {
     margin-block-start: clamp(12rem, 28svh, 16rem);
   }
-}
-
-.study {
-  display: grid;
-  gap: 1rem;
-  align-content: start;
-  padding: clamp(1.1rem, 2vw, 1.6rem);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--study-accent, var(--accent));
-  border-radius: 0.9rem;
-  background: var(--bg-soft);
-}
-
-.study__head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.study__name {
-  margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-}
-
-.study__status {
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--study-accent, var(--accent));
-}
-
-.study__summary {
-  margin: 0;
-  max-width: 42ch;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.study__highlight {
-  margin: 0;
-  color: var(--study-accent, var(--accent));
-  font-size: 0.82rem;
-  line-height: 1.5;
-}
-
-.study__details {
-  border-top: 1px solid var(--line);
-  padding-top: 0.9rem;
-}
-
-.study__toggle {
-  cursor: pointer;
-  color: var(--fg);
-  font-size: 0.88rem;
-  font-weight: 600;
-  list-style: none;
-}
-
-.study__toggle::-webkit-details-marker {
-  display: none;
-}
-
-.study__toggle::after {
-  content: '+';
-  float: right;
-  color: var(--study-accent, var(--accent));
-}
-
-.study__details[open] .study__toggle::after {
-  content: '−';
-}
-
-.study__toggle:focus-visible {
-  outline: 2px solid var(--study-accent, var(--accent));
-  outline-offset: 4px;
-}
-
-.study__details .chapter__stack {
-  margin-top: 1rem;
-}
-
-.study__rows {
-  display: grid;
-  gap: 0.8rem;
-  margin: 1.1rem 0 0;
-}
-
-.study__label {
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--study-accent, var(--accent));
-}
-
-.study__value {
-  margin: 0.15rem 0 0;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--fg);
 }
 
 /* Lisibilite : petits textes un peu plus grands, panneaux de chapitre plus
@@ -4905,10 +4011,6 @@ button:focus-visible {
 
 .contact__availability {
   font-size: 0.95rem;
-}
-
-.chapter__panel {
-  background: rgba(5, 7, 14, 0.6);
 }
 
 /* Espace entre le libelle du cœur de points et le surtitre du contact. */
@@ -5006,90 +4108,18 @@ button:focus-visible {
 
   .intro__title,
   .stack__title,
-  .stack__lead,
-  .project-threshold__title,
-  .project-threshold__lead {
+  .stack__lead {
     max-width: calc(60vw - var(--copy-left) - 2rem);
   }
 
   /* Gouttière gauche réduite : seul le rail (≈ 110 px) l'occupe. */
-  .chapter__inner {
-    padding-left: clamp(8.5rem, 11vw, 10rem);
-  }
-
-  .chapter__panel-shell {
-    width: min(54%, 44rem);
-  }
 }
 
 /* Détail technique dépliable : le panneau reste lisible sans défilement. */
-.chapter__more {
-  margin-top: 1rem;
-  border-top: 1px solid var(--line);
-  padding-top: 0.6rem;
-}
-
-.chapter__more-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.35rem 0;
-  cursor: pointer;
-  list-style: none;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--chapter-accent, var(--accent));
-}
-
-.chapter__more-toggle::-webkit-details-marker {
-  display: none;
-}
-
-.chapter__more-toggle::after {
-  content: '+';
-  font-size: 1.1rem;
-  line-height: 1;
-}
-
-.chapter__more[open] > .chapter__more-toggle::after {
-  content: '–';
-}
-
-.chapter__more-toggle:focus-visible {
-  outline: 2px solid var(--chapter-accent, var(--accent));
-  outline-offset: 3px;
-  border-radius: 0.25rem;
-}
-
-.chapter__more > .chapter__proof {
-  grid-template-columns: 1fr;
-  margin-top: 0.4rem;
-}
 
 /* Variante locale de rythme mobile, activée uniquement par le mode développement. */
-@media (max-width: 860px) {
-  .compact-mobile .chapter__inner {
-    padding-top: 42svh;
-  }
-
-  .compact-mobile .chapter__beat--outcome {
-    margin-top: 16svh;
-  }
-}
-
-.chapter__beat--outcome > .chapter__proof {
-  grid-template-columns: 1fr;
-}
 
 /* Ouvert, le panneau peut dépasser l'écran : il défile alors sur lui-même. */
-@media (min-width: 861px) {
-  .chapter__panel:has(.chapter__more[open]) {
-    max-height: calc(100svh - 6rem);
-    overflow-y: auto;
-  }
-}
 
 /* Contraste : même les noms lointains du rail restent lisibles (≥ 4,5:1). */
 @media (min-width: 861px) {
@@ -5099,62 +4129,12 @@ button:focus-visible {
 }
 
 /* Bouton « Partager » : même famille que les liens, en retrait (action secondaire). */
-.chapter__links .chapter__share {
-  border: 0;
-  border-bottom: 1px dashed color-mix(in srgb, var(--fg-muted) 70%, transparent);
-  padding: 0 0 2px;
-  color: var(--fg-muted);
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-
-.chapter__links .chapter__share:hover,
-.chapter__links .chapter__share:focus-visible {
-  color: var(--chapter-accent, var(--accent));
-  border-bottom-color: var(--chapter-accent, var(--accent));
-}
-
-.chapter__links .chapter__share:focus-visible {
-  outline: 2px solid var(--chapter-accent, var(--accent));
-  outline-offset: 4px;
-}
 
 /* =========================================================================
    Audit UX, lot 2 : puces de preuves, statut du hero, textes d'aide
    ========================================================================= */
 
 /* Trois faits vérifiés, toujours visibles sous le résultat. */
-.chapter__highlights {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 0.9rem;
-  margin: 0.9rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.chapter__highlights li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--fg);
-}
-
-.chapter__highlights li::before {
-  content: '';
-  flex: none;
-  width: 7px;
-  height: 7px;
-  border: 1px solid var(--chapter-accent, var(--accent));
-  background: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 40%,
-    transparent
-  );
-  transform: rotate(45deg);
-}
 
 /* Statut du hero : disponibilité et localisation, dès le premier écran. */
 .hero__status {
@@ -5242,11 +4222,6 @@ button:focus-visible {
 
 /* Écrans bas : le panneau reste entièrement visible, les pastilles de
    technologies (secondaires) laissent la place aux preuves. */
-@media (min-width: 861px) and (max-height: 780px) {
-  .chapter__stack {
-    display: none;
-  }
-}
 
 /* Le statut reste après les boutons, y compris dans la colonne flex mobile. */
 .hero__status {
@@ -5306,33 +4281,6 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
-.chapter__links .chapter__link--primary {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.6rem;
-  padding: 0.5rem 0.9rem;
-  border: 1px solid var(--chapter-accent, var(--accent));
-  border-radius: 999px;
-  color: var(--fg);
-  background: color-mix(
-    in srgb,
-    var(--chapter-accent, var(--accent)) 17%,
-    var(--bg)
-  );
-  font-size: 0.9rem;
-}
-
-.chapter__links .chapter__link--primary::after {
-  content: '↗';
-  margin-left: 0.55rem;
-  color: var(--chapter-accent, var(--accent));
-}
-
-.chapter__links .chapter__link--primary:focus-visible {
-  outline: 2px solid var(--chapter-accent, var(--accent));
-  outline-offset: 3px;
-}
-
 @media (max-width: 860px) {
   .hero__projects {
     order: 5;
@@ -5347,24 +4295,6 @@ button:focus-visible {
 
   .hero__projects ul {
     justify-content: center;
-  }
-}
-
-@media (min-width: 861px) and (min-height: 821px) {
-  .chapter__proof-value {
-    font-size: 0.86rem;
-    line-height: 1.5;
-  }
-
-  .chapter__highlights li {
-    font-size: 0.84rem;
-  }
-}
-
-@media (max-width: 860px) {
-  .chapter__proof-value {
-    font-size: 0.9rem;
-    line-height: 1.55;
   }
 }
 .scene-lab {
@@ -5475,7 +4405,6 @@ button:focus-visible {
 /* Zone de l'objet 3D : il garde une position unique, la mise en page lui laisse
    la colonne de droite sur bureau et le haut de l'écran sur mobile. */
 @media (min-width: 981px) {
-  .section--studies,
   .section--contact {
     padding-left: clamp(11rem, 15vw, 13.5rem);
     padding-right: clamp(22rem, 38vw, 34rem);
@@ -5498,10 +4427,6 @@ button:focus-visible {
 }
 
 @media (max-width: 860px) {
-  .section--studies {
-    padding-top: clamp(18rem, 58svh, 32rem);
-  }
-
   .studies__list {
     margin-block-start: 0;
   }
@@ -5513,31 +4438,12 @@ button:focus-visible {
   }
 }
 
-@media (max-width: 860px) {
-  .project-threshold__inner {
-    padding-top: clamp(15rem, 46svh, 24rem);
-  }
-}
-
 /* =========================================================================
    Direction artistique « titane et laiton » — même charte que les objets 3D.
    Surfaces graphite, filets laiton, un seul accent par chapitre
    (--chapter-accent). Ce bloc est volontairement en fin de fichier : il
    surcharge les jetons et composants communs sans toucher au reste.
    ========================================================================= */
-:root {
-  --titanium: #b4bec6;
-  --titanium-deep: #68757f;
-  --graphite: #141a22;
-  --brass: #c9a45c;
-  --brass-soft: #9a7a3f;
-  --accent: var(--brass);
-  --accent-warm: var(--brass);
-  --glow: var(--brass-soft);
-  --bg-soft: #0a1019;
-  --fg-muted: #b3bcc6;
-  --line: rgba(201, 164, 92, 0.18);
-}
 
 /* Nom : métal brossé qui chauffe vers le laiton, au lieu du dégradé néon. */
 .hero__word--gradient,
@@ -5616,30 +4522,6 @@ button:focus-visible {
 }
 
 /* Chapitres : plaque de titane à filet laiton, repère à l'accent du chapitre. */
-.chapter__panel {
-  border-left: 1px solid rgba(201, 164, 92, 0.38);
-  background: linear-gradient(
-    90deg,
-    rgba(10, 14, 21, 0.96) 0%,
-    rgba(9, 13, 19, 0.9) 84%,
-    rgba(9, 13, 19, 0.28) 100%
-  );
-  box-shadow: inset 1px 0 0 rgba(255, 244, 214, 0.04);
-}
-
-.chapter__panel::before {
-  background: linear-gradient(
-    90deg,
-    var(--chapter-accent, var(--accent)),
-    var(--brass-soft) 60%,
-    transparent
-  );
-}
-
-.chapter__stack li,
-.chapter__proof-item {
-  border-color: rgba(180, 190, 198, 0.2);
-}
 
 /* Progression et pastille de statut : laiton chaud, comme la lampe. */
 .scroll-progress__bar {
@@ -5686,8 +4568,7 @@ button:focus-visible {
 
 /* Plaques usinées : offres de Solutions et cartes des études. Fond graphite,
    filet de laiton en tête, repères d'angle gravés en fond (sans élément DOM). */
-.offer-card,
-.study {
+.offer-card {
   border: 1px solid rgba(180, 190, 198, 0.16);
   border-top-color: rgba(201, 164, 92, 0.42);
   border-radius: 0.45rem;
@@ -5704,19 +4585,10 @@ button:focus-visible {
   box-shadow: inset 0 1px 0 rgba(255, 244, 214, 0.05);
 }
 
-.study {
-  border-left: 3px solid var(--study-accent, var(--accent));
-}
-
 /* Solutions : la liste éditoriale garde sa forme, avec numéros et filets laiton. */
 
 /* Grain de métal brossé, statique et très discret, sur les plaques. */
-:root {
-  --metal-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9 0.04' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 0.8  0 0 0 0 0.82  0 0 0 0 0.85  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
 
-.chapter__panel::after,
-.study::after,
 .palette__panel::after {
   content: '';
   position: absolute;
@@ -5728,13 +4600,7 @@ button:focus-visible {
   pointer-events: none;
 }
 
-.study {
-  position: relative;
-}
-
 /* Étiquettes gravées : capitales espacées, graisse moyenne. */
-.chapter__label,
-.study__status,
 .palette__group {
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -6027,105 +4893,10 @@ button:focus-visible {
 }
 
 /* Fenêtre sur le véritable produit : capture réelle, lien direct vers la démo. */
-.chapter__exhibit {
-  display: block;
-  position: relative;
-  overflow: hidden;
-  margin: 0 0 1.1rem;
-  border: 1px solid color-mix(in srgb, var(--chapter-accent) 55%, transparent);
-  border-radius: 0.45rem;
-  background: rgba(5, 7, 14, 0.92);
-  color: #fff;
-  text-decoration: none;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-}
 
 /* Bandeau de plaque : le produit réel est présenté comme une pièce encadrée. */
-.chapter__exhibit-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--chapter-accent) 40%, transparent);
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--chapter-accent) 16%, rgba(5, 7, 14, 0.95)),
-    rgba(5, 7, 14, 0.95)
-  );
-  color: color-mix(in srgb, var(--chapter-accent) 70%, #fff);
-  font:
-    650 0.66rem ui-monospace,
-    monospace;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.chapter__exhibit-bar::before {
-  content: '';
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: var(--chapter-accent);
-  box-shadow: 0 0 0.6rem var(--chapter-accent);
-}
-
-.chapter__exhibit img {
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: transform 0.5s ease;
-}
-
-.chapter__exhibit span {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  padding: 0.5rem 0.8rem;
-  background: rgba(5, 7, 14, 0.92);
-  color: var(--chapter-accent);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.chapter__exhibit span::after {
-  content: ' ↗';
-}
-
-.chapter__exhibit:is(:hover, :focus-visible) img {
-  transform: scale(1.03);
-}
-
-.chapter__exhibit:focus-visible {
-  outline: 2px solid var(--chapter-accent);
-  outline-offset: 4px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .chapter__exhibit img {
-    transition: none;
-  }
-  .chapter__exhibit:is(:hover, :focus-visible) img {
-    transform: none;
-  }
-}
-
-@media (max-width: 860px) {
-  #galaxy .chapter__beat--outcome {
-    margin-top: 10svh;
-  }
-}
 
 /* Chaque pièce conserve sa propre respiration mobile. */
-@media (max-width: 860px) {
-  #ludora .chapter__beat--outcome {
-    margin-top: 12svh;
-  }
-
-  #magnotes .chapter__beat--outcome {
-    margin-top: 14svh;
-  }
-}
 
 /* Le repli conserve un contact direct en absence de module. */
 .no-js .boot-loader {
@@ -6142,29 +4913,6 @@ button:focus-visible {
 }
 
 /* Galaxy : panneau en métal sombre, aligné sur l'instrument. */
-@media (min-width: 861px) {
-  #galaxy .chapter__panel {
-    background: linear-gradient(
-      125deg,
-      rgba(25, 28, 32, 0.97),
-      rgba(8, 9, 13, 0.93)
-    );
-  }
-}
-@media (max-width: 860px) {
-  #galaxy .chapter__beat--outcome {
-    margin-top: 6svh;
-  }
-}
-
-@media (max-width: 860px) {
-  .chapter__exhibit {
-    scroll-margin-block: 5.5rem;
-  }
-  #galaxy .chapter__tagline {
-    line-height: 1.4;
-  }
-}
 
 /* Le héros relie l'écriture éditoriale à l'instrument de l'atelier. */
 @media (min-width: 981px) {
@@ -6236,107 +4984,12 @@ button:focus-visible {
 }
 
 /* Ludora : l'automate précède le catalogue, sans repousser le titre sous le rail. */
-@media (max-width: 860px) {
-  #ludora .chapter__inner {
-    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
-  }
-}
 
 /* MagNotes : le registre et son titre précèdent les preuves détaillées sur mobile. */
-@media (max-width: 860px) {
-  #magnotes .chapter__inner {
-    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
-  }
-}
 
 /* Dossiers professionnels : décision lisible, chaîne métier et limites visibles. */
-.study {
-  min-width: 0;
-  scroll-margin-block: 6rem;
-}
-.study__decision {
-  margin: 0;
-  padding-inline-start: 1rem;
-  border-inline-start: 2px solid var(--study-accent);
-  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
-  line-height: 1.55;
-}
-.study__flow {
-  margin: 0;
-  padding-block: 1rem;
-  border-block: 1px solid var(--line);
-}
-.study__flow ol {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.8rem 1.1rem;
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: study-step;
-}
-.study__flow li {
-  counter-increment: study-step;
-  display: grid;
-  grid-template-columns: 1.5rem 1fr;
-  gap: 0.4rem;
-  align-items: baseline;
-  font-size: 0.86rem;
-  line-height: 1.45;
-}
-.study__flow li::before {
-  content: counter(study-step, decimal-leading-zero);
-  color: var(--study-accent);
-  font-size: 0.7rem;
-  font-variant-numeric: tabular-nums;
-}
-.study__limit {
-  margin: 0;
-  color: var(--fg-muted);
-  font-size: 0.88rem;
-  line-height: 1.6;
-}
-.study__links {
-  display: flex;
-  flex-wrap: wrap;
-}
-.study__links a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--study-accent);
-  border-radius: 0.35rem;
-  color: var(--fg);
-  font-size: 0.9rem;
-  text-underline-offset: 0.25em;
-}
-.study__links a:focus-visible {
-  outline: 2px solid var(--study-accent);
-  outline-offset: 4px;
-}
-.study__toggle {
-  min-height: 44px;
-  padding-block: 0.6rem;
-  line-height: 1.5;
-}
-@media (max-width: 600px) {
-  .section--studies {
-    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
-  }
-  .study__flow ol {
-    grid-template-columns: 1fr;
-  }
-  .study__links a,
-  .study__toggle {
-    scroll-margin-block: 6rem;
-  }
-}
 
 /* Le décor reste visible autour des dossiers, sans traverser leur texte. */
-.study {
-  background-color: #0a1019;
-}
 @media (max-width: 980px) {
   #scroll-root.is-reading-studies {
     z-index: 5;
@@ -6378,20 +5031,12 @@ button:focus-visible {
 
 /* Direction éditoriale : une même hiérarchie, du nom aux preuves et au contact.
    Les réservations de scène et les seuils de scroll restent ceux du récit. */
-:root {
-  --reading-size: 1rem;
-  --label-size: 0.875rem;
-  --editorial-rule: rgba(180, 190, 198, 0.24);
-}
 
 .hero__title,
 .intro__title,
 .stack__title,
 .section-copy h2,
-.project-threshold__title,
-.chapter__name,
 .studies__title,
-.study__name,
 .contact__title {
   font-family: var(--font-display);
   font-weight: 600;
@@ -6421,7 +5066,6 @@ button:focus-visible {
 .hero__lead,
 .stack__lead,
 .section-copy > p,
-.project-threshold__lead,
 .studies__lead,
 .contact__lead {
   line-height: 1.65;
@@ -6429,7 +5073,6 @@ button:focus-visible {
 }
 
 .intro__kicker,
-.project-threshold__kicker,
 .contact__kicker {
   font-size: var(--label-size);
   letter-spacing: 0.1em;
@@ -6437,7 +5080,6 @@ button:focus-visible {
 }
 
 .hero__cta,
-.chapter__links .chapter__link--primary,
 .contact__form-toggle {
   border-radius: 0.4rem;
   min-height: 3rem;
@@ -6458,80 +5100,19 @@ button:focus-visible {
   backdrop-filter: none;
 }
 
-.chapter__links .chapter__link--primary::after {
-  content: none;
-}
-
 .hero__projects-label {
   font-size: var(--label-size);
   letter-spacing: 0.04em;
 }
 
-.section--offers .offer-card > p:not(.story-note),
-.chapter__proof-value,
-.study__value,
-.study__limit {
+.section--offers .offer-card > p:not(.story-note) {
   font-size: var(--reading-size);
   line-height: 1.65;
 }
 
-.chapter__panel,
-#galaxy .chapter__panel {
-  background: #0a0f16;
-  backdrop-filter: none;
-}
-
-.chapter__panel::after,
-.study::after {
-  content: none;
-}
-
-.chapter__meta {
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.chapter__status,
-.chapter__proof-label,
-.chapter__highlights li,
-.study__status,
-.study__label,
-.study__flow li {
-  font-size: var(--label-size);
-  line-height: 1.5;
-}
-
-.chapter__proof-label,
-.study__label {
-  letter-spacing: 0.06em;
-}
-
-.chapter__proof-item {
-  padding: 0.25rem 0 0.25rem 0.85rem;
-  border-left-color: var(--editorial-rule);
-}
-
-.chapter__more-toggle,
-.chapter__links a,
-.chapter__links button,
-.study__toggle,
-.study__links a,
 .contact__copy {
   min-height: 44px;
   font-size: var(--label-size);
-}
-
-.study {
-  border-radius: 0.35rem;
-  border-color: var(--editorial-rule);
-  border-left-color: var(--study-accent);
-  background: #0a0f16;
-  box-shadow: none;
-}
-
-.study__highlight {
-  font-size: var(--reading-size);
-  line-height: 1.6;
 }
 
 .contact__signals span,
@@ -6550,20 +5131,6 @@ button:focus-visible {
 @media (min-width: 981px) {
   .hero__tags {
     gap: 0.5rem 1rem;
-  }
-
-  .project-threshold__list a {
-    min-height: 6rem;
-    padding: 1rem 0.75rem;
-  }
-
-  .project-threshold__name {
-    font-size: 1.125rem;
-  }
-
-  .project-threshold__thesis {
-    font-size: var(--label-size);
-    line-height: 1.5;
   }
 }
 
@@ -6585,8 +5152,6 @@ button:focus-visible {
   .intro__title,
   .stack__title,
   .stack__lead,
-  .project-threshold__title,
-  .project-threshold__lead,
   .contact__title,
   .contact__lead {
     position: relative;
