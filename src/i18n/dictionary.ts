@@ -32,20 +32,20 @@ const fr: Dict = {
   'hero.projects': 'Accès direct aux projets',
   'hero.cta.contact': 'Parler d’un projet',
   'hero.lead':
-    'Développeur autodidacte, je construis des applications web, des systèmes backend et des expériences 3D temps réel, de l’interface au déploiement.',
+    'Je construis des applications web, des systèmes backend et des expériences 3D temps réel, de l’interface au déploiement.',
   'intro.kicker': 'Des produits réels, pas seulement des écrans',
   'intro.title':
     'Je pars d’un usage et je construis le système qui le rend simple, fiable et vivant.',
   'intro.facts.aria': 'Ce qui me distingue',
   'intro.fact.1.title': 'Formé en construisant',
   'intro.fact.1.text':
-    'Autodidacte : chaque compétence renvoie à un produit en ligne ou à un dépôt public.',
+    'Mes choix techniques se retrouvent dans des produits en ligne et des dépôts publics.',
   'intro.fact.2.title': 'JS/TS de bout en bout',
   'intro.fact.2.text':
-    'Interface, API, temps réel et données dans un même langage, vérifiés par des tests.',
+    'Interface, API, temps réel et données reposent sur un même langage, avec des tests automatisés.',
   'intro.fact.3.title': 'Livré, pas seulement montré',
   'intro.fact.3.text':
-    'Docker, Cloudflare Pages et Oracle Cloud : les produits sont déployés et contrôlés.',
+    'Docker, Cloudflare Pages et Oracle Cloud : des produits en ligne, pas des maquettes.',
   'intro.link': 'Voir les trois produits',
   'project.label': 'Étude de cas',
   'project.problem': 'Contexte',
@@ -92,16 +92,16 @@ const fr: Dict = {
   'freelance.role.cta': 'Parler d’un poste',
   'freelance.card.product.title': 'Interfaces & sites web',
   'freelance.card.product.text':
-    'Une interface rapide, accessible et bilingue qui présente clairement votre activité et amène le visiteur à vous écrire.',
+    'Une interface rapide, accessible et bilingue qui présente clairement votre activité et facilite la prise de contact.',
   'freelance.card.system.title': 'Applications full-stack',
   'freelance.card.system.text':
-    'Un outil sur mesure (tableau de bord, espace client, MVP) qui remplace tableurs et tâches manuelles, de l’interface à la base de données.',
+    'Un outil sur mesure (tableau de bord, espace client, MVP) pour sortir des tableurs et des tâches manuelles, de l’interface à la base de données.',
   'freelance.card.automation.title': 'Expériences 3D & interactives',
   'freelance.card.automation.text':
-    'Une visualisation, un configurateur ou un jeu temps réel qui rend une donnée complexe lisible et donne envie d’explorer.',
+    'Une visualisation, un configurateur ou un jeu temps réel qui rend une donnée complexe lisible et invite à explorer.',
   'freelance.card.delivery.title': 'Systèmes backend & déploiement',
   'freelance.card.delivery.text':
-    'APIs, persistance, temps réel et mise en production : un service fiable, testé et déployé, que votre équipe peut exploiter.',
+    'APIs, persistance, temps réel et mise en production : un service testé et déployé, que votre équipe peut exploiter.',
   'projects.threshold.kicker': 'Sélection actuelle',
   'projects.threshold.title': 'Des produits choisis pour leurs systèmes.',
   'projects.threshold.lead':
@@ -204,20 +204,20 @@ const en: Dict = {
   'hero.projects': 'Jump to a project',
   'hero.cta.contact': 'Discuss a project',
   'hero.lead':
-    'Self-taught developer building web applications, backend systems and real-time 3D experiences, from interface to deployment.',
+    'I build web applications, backend systems and real-time 3D experiences, from interface to deployment.',
   'intro.kicker': 'Real products, not just screens',
   'intro.title':
     'I start with a use case and build the system that makes it simple, reliable and alive.',
   'intro.facts.aria': 'What sets me apart',
   'intro.fact.1.title': 'Learned by building',
   'intro.fact.1.text':
-    'Self-taught: every skill points to a live product or a public repository.',
+    'My technical choices show up in live products and public repositories.',
   'intro.fact.2.title': 'JS/TS end to end',
   'intro.fact.2.text':
-    'Interface, API, real time and data in one language, backed by tests.',
+    'Interface, API, real time and data share one language, with automated tests.',
   'intro.fact.3.title': 'Shipped, not just shown',
   'intro.fact.3.text':
-    'Docker, Cloudflare Pages and Oracle Cloud: the products are deployed and checked.',
+    'Docker, Cloudflare Pages and Oracle Cloud: live products, not mock-ups.',
   'intro.link': 'See the three products',
   'project.label': 'Case study',
   'project.problem': 'Context',
@@ -264,16 +264,16 @@ const en: Dict = {
   'freelance.role.cta': 'Discuss a role',
   'freelance.card.product.title': 'Interfaces & websites',
   'freelance.card.product.text':
-    'A fast, accessible, bilingual interface that presents your business clearly and gets visitors to write to you.',
+    'A fast, accessible, bilingual interface that presents your business clearly and makes it easy to get in touch.',
   'freelance.card.system.title': 'Full-stack applications',
   'freelance.card.system.text':
-    'A custom tool (dashboard, client area, MVP) that replaces spreadsheets and manual tasks, from interface to database.',
+    'A custom tool (dashboard, client area, MVP) to move off spreadsheets and manual tasks, from interface to database.',
   'freelance.card.automation.title': '3D & interactive experiences',
   'freelance.card.automation.text':
     'A visualisation, configurator or real-time game that makes complex data legible and invites exploration.',
   'freelance.card.delivery.title': 'Backend systems & deployment',
   'freelance.card.delivery.text':
-    'APIs, persistence, real time and production release: a reliable, tested, deployed service your team can operate.',
+    'APIs, persistence, real time and production release: a tested, deployed service your team can operate.',
   'projects.threshold.kicker': 'Current selection',
   'projects.threshold.title': 'Products chosen for their systems.',
   'projects.threshold.lead':

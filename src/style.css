@@ -7216,3 +7216,20 @@ button:focus-visible {
   color: inherit;
   font: inherit;
 }
+
+/* Mobile : l'action email passe avant les repères et reste au-dessus du rail. */
+@media (max-width: 860px) {
+  .section--contact {
+    padding-top: clamp(12.5rem, 28svh, 16rem);
+  }
+
+  .section--contact > .contact__primary {
+    justify-content: center;
+    margin: 0.3rem 0 0;
+    gap: 0.3rem;
+  }
+
+  .contact__reply {
+    display: none;
+  }
+}
