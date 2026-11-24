@@ -229,122 +229,7 @@ button:focus-visible {
   justify-content: center;
 }
 
-.section--stack {
-  min-height: 132svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3.5rem;
-}
-
-.stack__copy {
-  width: min(31rem, 100%);
-}
-
-.stack__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  line-height: 1.05;
-}
-
-.stack__lead {
-  margin: 1.5rem 0 0;
-  color: var(--fg-muted);
-  font-size: clamp(1rem, 1.8vw, 1.18rem);
-}
-
-.stack-graph {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-.stack-node {
-  --node-color: var(--ag-cobalt);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  padding: 0.4rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--node-color) 45%, transparent);
-  background: color-mix(in srgb, var(--node-color) 12%, var(--bg-soft));
-  color: color-mix(in srgb, var(--node-color) 32%, var(--fg));
-  white-space: nowrap;
-}
-
-.stack-node[data-layer='interface'] {
-  --node-color: var(--ag-cobalt);
-}
-.stack-node[data-layer='realtime'] {
-  --node-color: var(--ag-cyan);
-}
-.stack-node[data-layer='data'] {
-  --node-color: var(--ag-violet);
-}
-.stack-node[data-layer='deploy'] {
-  --node-color: var(--ag-amber);
-}
-
-.stack-node[data-weight='primary'] {
-  font-size: 0.94rem;
-  padding: 0.5rem 1.05rem;
-}
-
-.stack-proof {
-  margin: 1rem 0 0;
-  color: var(--fg-muted);
-  font-size: 0.84rem;
-}
-
-.stack-proof a {
-  color: var(--fg);
-  text-underline-offset: 0.2em;
-}
-
 /* LÃ©gende couleur â†’ couche. */
-.stack-legend {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.1rem;
-  margin: 1.5rem 0 0;
-  padding: 0;
-  letter-spacing: 0.04em;
-  color: var(--fg-muted);
-}
-
-.stack-legend li {
-  --node-color: var(--ag-cobalt);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.stack-legend li::before {
-  content: '';
-  width: 9px;
-  height: 9px;
-  border-radius: 1px;
-  background: var(--node-color);
-  transform: rotate(45deg);
-}
-
-.stack-legend li[data-layer='interface'] {
-  --node-color: var(--ag-cobalt);
-}
-.stack-legend li[data-layer='realtime'] {
-  --node-color: var(--ag-cyan);
-}
-.stack-legend li[data-layer='data'] {
-  --node-color: var(--ag-violet);
-}
-.stack-legend li[data-layer='deploy'] {
-  --node-color: var(--ag-amber);
-}
 
 /* HÃ©ros centrÃ© : badges, titre, lead et CTAs sur l'axe du viewport. */
 .hero__inner {
@@ -1057,18 +942,10 @@ button:focus-visible {
   gap: clamp(2rem, 6vw, 5rem);
 }
 
-.section-copy {
-  max-width: 34rem;
-}
-
 .offer-grid,
 .lab-grid {
   display: grid;
   gap: 0.75rem;
-}
-
-.offer-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .offer-card,
@@ -1078,19 +955,6 @@ button:focus-visible {
   background: rgba(8, 12, 22, 0.58);
   backdrop-filter: blur(10px);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
-}
-
-.offer-card {
-  min-height: 13rem;
-  padding: 1.1rem;
-}
-
-.offer-card span {
-  display: inline-block;
-  color: var(--accent-warm);
-  font-family: ui-monospace, monospace;
-  font-size: 0.72rem;
-  margin-bottom: 1.1rem;
 }
 
 .offer-card h3,
@@ -1123,10 +987,6 @@ button:focus-visible {
   .section--lab {
     grid-template-columns: 1fr;
     min-height: auto;
-  }
-
-  .offer-grid {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -1882,38 +1742,8 @@ button:focus-visible {
       radial-gradient(circle at 50% 38%, transparent 34%, rgba(2, 3, 8, 0.3));
   }
 
-  .section--stack {
-    min-height: 130svh;
-    align-items: flex-end;
-    justify-content: flex-start;
-    gap: 1rem;
-  }
-
   .section--intro {
     opacity: var(--intro-exit-opacity, 1);
-  }
-
-  .stack__copy {
-    margin-top: 13svh;
-    background: rgba(3, 5, 11, 0.96);
-    box-shadow: 0 0 2.5rem 1.5rem rgba(3, 5, 11, 0.9);
-  }
-
-  .stack-viz {
-    position: relative;
-    z-index: 2;
-  }
-
-  .stack-legend {
-    width: max-content;
-    max-width: 100%;
-    margin-top: 0.5rem;
-    padding: 0.55rem 0.65rem;
-    gap: 0.9rem;
-    border: 1px solid var(--line);
-    border-radius: 0.4rem;
-    background: rgba(5, 7, 14, 0.86);
-    backdrop-filter: blur(8px);
   }
 
   .chapter {
@@ -3143,81 +2973,12 @@ button:focus-visible {
 /* =========================================================================
    Recomposition narrative — chronographe, solutions éditoriales, lab
    ========================================================================= */
-.section--stack {
-  min-height: 116svh;
-  gap: clamp(2rem, 4vw, 3.25rem);
-}
-
-.stack__copy {
-  width: min(40rem, 100%);
-}
-
-.stack__lead {
-  max-width: 38rem;
-}
 
 /* Les technologies restent lisibles dans le HTML, même sans rendu 3D. */
-.stack-viz {
-  width: min(38rem, 100%);
-}
 
 .section--offers,
 .section--lab {
   min-height: 92svh;
-}
-
-.section--offers .section-copy,
-.section--lab .section-copy {
-  max-width: 38rem;
-}
-
-.section--offers .offer-grid {
-  gap: 0;
-  border-top: 1px solid var(--line);
-}
-
-.section--offers .offer-card {
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: 0 0.8rem;
-  padding: 1.05rem 0;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-}
-
-.section--offers .offer-card:hover,
-.section--offers .offer-card:focus-within {
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--ag-cobalt) 7%, transparent),
-    transparent
-  );
-}
-
-.section--offers .offer-card span {
-  grid-row: 1 / span 3;
-  margin: 0.15rem 0 0;
-  color: var(--ag-cyan);
-}
-
-.section--offers .offer-card h3 {
-  font-size: 1.12rem;
-}
-
-.section--offers .offer-card p {
-  grid-column: 2;
-  max-width: 31rem;
-  margin-top: 0.45rem;
-}
-
-.section--offers .offer-card .story-note {
-  color: var(--ag-cobalt);
-  font-size: 0.72rem;
 }
 
 .section--lab {
@@ -3337,10 +3098,6 @@ button:focus-visible {
 }
 
 @media (max-width: 860px) {
-  .section--stack {
-    min-height: 116svh;
-  }
-
   .section--lab::before {
     top: 4.5rem;
   }
@@ -3355,11 +3112,6 @@ button:focus-visible {
 }
 
 @media (max-width: 600px) {
-  .section--offers .offer-card {
-    grid-template-columns: 2rem minmax(0, 1fr);
-    padding-block: 0.9rem;
-  }
-
   .section--lab .lab-grid {
     padding-left: 0.95rem;
   }
@@ -4324,28 +4076,6 @@ button:focus-visible {
   .hero__ctas {
     justify-content: flex-start;
   }
-
-  .section--offers {
-    grid-template-columns: minmax(0, 46%) minmax(0, 54%);
-    grid-template-rows: auto auto;
-    align-content: center;
-    align-items: end;
-    gap: 1.1rem 0;
-  }
-
-  .section--offers .section-copy,
-  .section--offers .offer-grid {
-    grid-column: 1;
-  }
-
-  .section--offers .section-copy {
-    grid-row: 1;
-  }
-
-  .section--offers .offer-grid {
-    grid-row: 2;
-    width: min(34rem, 100%);
-  }
 }
 
 /* Les études de cas restent structurées sans ressembler à des cartes de
@@ -4403,56 +4133,6 @@ button:focus-visible {
   .section--intro {
     justify-content: flex-end;
     padding-bottom: clamp(7rem, 17svh, 10rem);
-  }
-
-  .section--stack {
-    min-height: 132svh;
-    justify-content: flex-start;
-    padding-top: clamp(6.75rem, 14svh, 8rem);
-    padding-bottom: calc(9rem + env(safe-area-inset-bottom));
-  }
-
-  .stack-viz {
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  .stack-legend {
-    position: relative;
-    z-index: 3;
-    width: fit-content;
-    padding: 0.4rem 0.55rem;
-    background: rgba(3, 5, 11, 0.86);
-  }
-
-  .section--offers {
-    position: relative;
-    align-content: start;
-  }
-
-  .section--offers .section-copy {
-    position: relative;
-    z-index: 3;
-    padding-bottom: 0.5rem;
-    background: linear-gradient(90deg, rgba(3, 5, 11, 0.98) 0 88%, transparent);
-  }
-
-  .section--offers .offer-grid {
-    position: relative;
-    z-index: 3;
-    margin-top: clamp(12rem, 28svh, 16rem);
-  }
-
-  .section--offers .offer-card {
-    padding-right: 2.4rem;
-    background: linear-gradient(
-      90deg,
-      rgba(3, 5, 11, 0.98) 0 86%,
-      rgba(3, 5, 11, 0.42) 96%,
-      transparent
-    );
   }
 
   .chapter__panel {
@@ -4827,13 +4507,6 @@ button:focus-visible {
    Rééquilibrage FHD : solutions et seuil des produits
    ========================================================================= */
 @media (min-width: 981px) {
-  .section--offers {
-    min-height: 100svh;
-    align-content: end;
-    padding-top: 7rem;
-    padding-bottom: clamp(3.5rem, 7svh, 5rem);
-  }
-
   .project-threshold {
     min-height: 84svh;
   }
@@ -5009,10 +4682,6 @@ button:focus-visible {
 }
 
 @media (max-width: 860px) {
-  .section--offers {
-    align-content: start;
-  }
-
   .section--contact {
     gap: 0.8rem;
     padding-top: clamp(14rem, 32svh, 18rem);
@@ -5565,9 +5234,6 @@ button:focus-visible {
 }
 
 /* Textes d'aide : lisibles (≥ 12 px, contraste correct). */
-.stack-legend {
-  font-size: 0.8rem;
-}
 
 .hud__kbd {
   font-size: 0.74rem;
@@ -5997,28 +5663,6 @@ button:focus-visible {
 }
 
 /* Stacks : les quatre familles reprennent les couleurs des modules du cube. */
-:is(.stack-node, .stack-legend li)[data-layer='interface'] {
-  --node-color: #8fc3e8;
-}
-:is(.stack-node, .stack-legend li)[data-layer='realtime'] {
-  --node-color: #6fe0ea;
-}
-:is(.stack-node, .stack-legend li)[data-layer='data'] {
-  --node-color: #e8a3d6;
-}
-:is(.stack-node, .stack-legend li)[data-layer='deploy'] {
-  --node-color: #e7b95c;
-}
-
-.stack-node {
-  border-radius: 0.5rem;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--node-color) 14%, var(--graphite)),
-    color-mix(in srgb, var(--node-color) 6%, var(--bg-soft))
-  );
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
 
 /* Palette de commandes et formulaire : plaques graphite à filet laiton. */
 .palette__panel {
@@ -6064,27 +5708,7 @@ button:focus-visible {
   border-left: 3px solid var(--study-accent, var(--accent));
 }
 
-.offer-card span {
-  color: var(--brass);
-}
-
 /* Solutions : la liste éditoriale garde sa forme, avec numéros et filets laiton. */
-.section--offers .offer-grid {
-  border-top-color: rgba(201, 164, 92, 0.4);
-}
-
-.section--offers .offer-card {
-  border-bottom-color: rgba(180, 190, 198, 0.16);
-}
-
-.section--offers .offer-card span {
-  color: var(--brass);
-}
-
-.section--offers .offer-card:hover,
-.section--offers .offer-card:focus-within {
-  background: linear-gradient(90deg, rgba(201, 164, 92, 0.09), transparent);
-}
 
 /* Grain de métal brossé, statique et très discret, sur les plaques. */
 :root {
@@ -6410,9 +6034,40 @@ button:focus-visible {
   margin: 0 0 1.1rem;
   border: 1px solid color-mix(in srgb, var(--chapter-accent) 55%, transparent);
   border-radius: 0.45rem;
+  background: rgba(5, 7, 14, 0.92);
   color: #fff;
   text-decoration: none;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Bandeau de plaque : le produit réel est présenté comme une pièce encadrée. */
+.chapter__exhibit-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--chapter-accent) 40%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--chapter-accent) 16%, rgba(5, 7, 14, 0.95)),
+    rgba(5, 7, 14, 0.95)
+  );
+  color: color-mix(in srgb, var(--chapter-accent) 70%, #fff);
+  font:
+    650 0.66rem ui-monospace,
+    monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.chapter__exhibit-bar::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--chapter-accent);
+  box-shadow: 0 0 0.6rem var(--chapter-accent);
 }
 
 .chapter__exhibit img {
@@ -6812,17 +6467,6 @@ button:focus-visible {
   letter-spacing: 0.04em;
 }
 
-.section--offers .offer-card {
-  border-bottom-color: var(--editorial-rule);
-}
-
-.section--offers .offer-card h3 {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-}
-
 .section--offers .offer-card > p:not(.story-note),
 .chapter__proof-value,
 .study__value,
@@ -7008,142 +6652,8 @@ button:focus-visible {
 }
 
 /* Familles de compétences : décision technique + preuve, au lieu d'un catalogue. */
-.stack-families {
-  display: grid;
-  gap: 0.6rem;
-}
-
-.stack-family {
-  --node-color: var(--ag-cobalt);
-  display: grid;
-  gap: 0.5rem;
-  padding: 0.8rem 0.95rem;
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--node-color);
-  border-radius: 0.4rem;
-  background: rgba(5, 8, 17, 0.8);
-}
-
-.stack-family[data-layer='interface'] {
-  --node-color: var(--ag-cobalt);
-}
-.stack-family[data-layer='realtime'] {
-  --node-color: var(--ag-cyan);
-}
-.stack-family[data-layer='data'] {
-  --node-color: var(--ag-violet);
-}
-.stack-family[data-layer='deploy'] {
-  --node-color: var(--ag-amber);
-}
-
-.stack-family__name {
-  margin: 0;
-  color: var(--node-color);
-  font:
-    650 0.72rem ui-monospace,
-    monospace;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.stack-family__decision {
-  margin: 0;
-  color: var(--fg);
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
-
-.stack-family__chips {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 0;
-  padding: 0;
-}
-
-.stack-family__chips .stack-node {
-  padding: 0.22rem 0.6rem;
-  font-size: 0.74rem;
-}
-
-.stack-family__chips .stack-node[data-weight='primary'] {
-  padding: 0.28rem 0.7rem;
-  font-size: 0.8rem;
-}
-
-.stack-family__proof {
-  margin: 0;
-  color: var(--fg-muted);
-  font-size: 0.78rem;
-}
-
-.stack-family__proof a {
-  color: var(--fg);
-  font-weight: 600;
-  text-underline-offset: 0.2em;
-}
 
 /* Missions : résultat, livrable, preuves et appel à l'action dans chaque carte. */
-.section--offers .offer-card .story-note {
-  opacity: 1;
-  transform: none;
-}
-
-.section--offers .offer-card .offer-card__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.4rem 1rem;
-  margin-top: 0.7rem;
-  font-size: 0.8rem;
-}
-
-.offer-card__proof {
-  color: var(--fg-muted);
-}
-
-.offer-card__proof a {
-  color: var(--fg);
-  font-weight: 600;
-  text-underline-offset: 0.2em;
-}
-
-.offer-card__cta {
-  color: var(--accent-warm);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.offer-card__cta::after {
-  content: ' →';
-}
-
-.offer-card__cta:hover,
-.offer-card__cta:focus-visible {
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
-}
-
-.offer-aside {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem 1rem;
-  margin: 0;
-  padding: 1rem 0 0;
-  color: var(--fg-muted);
-  font-size: 0.9rem;
-}
-
-.offer-aside a {
-  color: var(--accent-warm);
-  font-weight: 700;
-  text-underline-offset: 0.3em;
-}
 
 /* Contact : l'email reste le chemin principal ; le formulaire prépare le même message. */
 .contact__primary {
@@ -7188,34 +6698,7 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-@media (max-width: 600px) {
-  .offer-aside {
-    padding-top: 0.8rem;
-  }
-
-  .section--offers .offer-card .offer-card__foot {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 /* Les missions se lisent en rangées : le résultat, le livrable, la preuve et l'action. */
-.section--offers .offer-grid {
-  grid-template-columns: minmax(0, 1fr);
-  width: min(36rem, 100%);
-}
-
-.stack-families {
-  width: min(34rem, 100%);
-}
-
-.section--offers .offer-card .offer-card__foot span {
-  grid-row: auto;
-  display: inline;
-  margin: 0;
-  color: inherit;
-  font: inherit;
-}
 
 /* Mobile : l'action email passe avant les repères et reste au-dessus du rail. */
 @media (max-width: 860px) {
@@ -7300,10 +6783,6 @@ button:focus-visible {
   .exhibit-plaque {
     transition: none;
   }
-}
-
-.stack-family {
-  background: rgba(5, 8, 17, 0.95);
 }
 
 .exhibit-plaque__no:empty {

@@ -96,6 +96,23 @@ Le script doit enregistrer explicitement le `.blend` s'il change la source (`bpy
 
 Pour créer une scène depuis le fichier de démarrage Blender, lancer `script -Script <chemin.py>` sans `-BlendFile` ; le script crée les collections et enregistre le nouveau `.blend`.
 
+## Pièces maîtresses des produits (Galaxy, Ludora, MagNotes)
+
+Les trois sculptures des chapitres sont fabriquées par `tools/build_galaxy_astrolabe.py`, `tools/build_ludora_dice.py` et `tools/build_magnotes_grimoire.py`, avec la boîte à outils `tools/blender_craft.py` (profils tournés `lathe`, anneaux à section, engrenages, bras effilés, graduations, plots hexagonaux) en plus de `tools/blender_kit.py`. Les profils sont des polylignes `(r, z)` anti-horaires : les points d'une même polyligne restent lisses (congés), chaque jonction garde une arête franche.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .	oolslender.ps1 script -Script tools/build_galaxy_astrolabe.py
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .	oolslender.ps1 export -BlendFile assets/blender/galaxy_astrolabe.blend -Output public/models/galaxy_astrolabe.glb
+```
+
+Chaque script recrée sa source : ne pas le relancer sur un `.blend` retouché à la main. Les pièces de même matière sont fusionnées par pivot (`join_by_material`) pour limiter les appels de rendu ; les pivots animés par `StoryWorld3D` restent séparés.
+
+Contrat d'intégration, vérifié par `src/visual/craftedAssets.test.ts` (noms de pivots, matières, budgets de triangles et d'octets, aucune texture embarquée) :
+
+- Galaxy : `ASTRO / ring 1..3 spin` ; matières `aged brass`, `sun`, `energy ring`, `rune`.
+- Ludora : `DICE / die pivot`, `DICE / board pivot`, `DICE / tile 1..6 pivot` (rayon de base 1,2) ; matières `titanium`, `cyan index`, `indigo enamel`.
+- MagNotes : `BOOK / book pivot`, `NOTE / 01..06 pivot` centrés sur leur fiche, face visible vers -Y.
+
 ## Travail à deux dans Blender
 
 1. Adrian ouvre le `.blend` dans Blender et apprend à repérer les objets dans l'**Outliner**, les collections et les matériaux. La vue **Material Preview** aide à juger la matière ; **F12** lance le rendu avec l'éclairage et la caméra enregistrés.

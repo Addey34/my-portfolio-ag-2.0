@@ -209,13 +209,18 @@ function buildChapter(project: Project, index: number): HTMLElement {
     image.height = project.preview.height;
     image.loading = 'lazy';
     image.decoding = 'async';
+    // Bandeau d'identification : la capture est celle du produit réel, pas une maquette.
+    const bar = document.createElement('small');
+    bar.className = 'chapter__exhibit-bar';
+    bar.dataset.i18n = 'project.capture';
+    bar.textContent = t('project.capture');
     const caption = document.createElement('span');
     registerDynamic(caption, () => tl(demoLink.label));
     onLocaleChange(() => {
       image.alt = tl(project.preview.alt);
     });
     image.alt = tl(project.preview.alt);
-    anchor.append(image, caption);
+    anchor.append(bar, image, caption);
     exhibit = anchor;
   }
   context.appendChild(contextProof);
