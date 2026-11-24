@@ -931,21 +931,36 @@ test('contenu utilisable avec mouvement réduit', async ({ page }) => {
 });
 
 test('horloge à l’heure même avec mouvement réduit', async ({ page }) => {
+  test.setTimeout(90_000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  const clockResponse = page.waitForResponse((response) =>
-    response.url().endsWith('/models/clock.glb')
-  );
-  const lampResponse = page.waitForResponse((response) =>
-    response.url().endsWith('/models/lamp.glb')
-  );
+  await page.addInitScript(() => {
+    window.addEventListener('world-settled', () => {
+      document.documentElement.dataset.worldSettled = 'true';
+    });
+  });
   await page.goto('/');
-  expect((await clockResponse).ok()).toBe(true);
-  expect((await lampResponse).ok()).toBe(true);
+  // Le héros montre le médaillon AG : les aiguilles n'existent qu'une fois
+  // l'horloge révélée, et le rendu n'est prêt qu'après le chargement des modèles.
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-world-settled',
+    'true',
+    { timeout: 60_000 }
+  );
+  await page.evaluate(() => {
+    const section = document.querySelector('#intro');
+    if (!section) throw new Error('Introduction introuvable');
+    window.scrollTo(
+      0,
+      section.getBoundingClientRect().top + window.scrollY - innerHeight * 0.32
+    );
+  });
   const canvas = page.locator('#world-3d');
   await expect(canvas).toBeVisible();
-  await page.waitForTimeout(1100);
+  // Mouvement réduit : l'image est rafraîchie une fois par seconde, la
+  // trotteuse doit donc avancer entre deux captures espacées de 2,2 s.
+  await page.waitForTimeout(1500);
   const before = await canvas.screenshot();
-  await page.waitForTimeout(1600);
+  await page.waitForTimeout(2200);
   const after = await canvas.screenshot();
   expect(before.equals(after)).toBe(false);
 });
