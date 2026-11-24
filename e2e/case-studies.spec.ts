@@ -95,3 +95,32 @@ test('petit écran sans WebGL : liens et fiches utilisables sans collision avec 
     ).toBeLessThanOrEqual(1);
   }
 });
+
+test('libellé de capture MagNotes : contraste WCAG AA en FR et EN', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page
+    .locator('#boot-loader')
+    .waitFor({ state: 'hidden', timeout: 30_000 });
+  const badge = page.locator('#magnotes .chapter__exhibit-badge');
+  for (const locale of ['fr', 'en']) {
+    if (locale === 'en') await page.locator('#lang-toggle').click();
+    const ratio = await badge.evaluate((node) => {
+      const channels = (css: string) => css.match(/[\d.]+/g)!.slice(0, 3);
+      const luminance = (css: string) => {
+        const [r, g, b] = channels(css).map((value) => {
+          const v = Number(value) / 255;
+          return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const text = luminance(getComputedStyle(node).color);
+      const frame = luminance(
+        getComputedStyle(node.closest('.chapter__exhibit')!).backgroundColor
+      );
+      return (Math.max(text, frame) + 0.05) / (Math.min(text, frame) + 0.05);
+    });
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  }
+});

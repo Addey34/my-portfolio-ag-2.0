@@ -605,6 +605,11 @@
   border-bottom: 0;
 }
 
+/* Libellé sur papier clair : prune foncé (≈ 8,7:1), le rose d'accent n'atteignait que 1,44:1. */
+#magnotes .chapter__exhibit-badge {
+  color: #6b2a55;
+}
+
 #magnotes .chapter__exhibit img {
   border-radius: 0.35rem;
 }
