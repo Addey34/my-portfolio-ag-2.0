@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
+import { requireDevSources } from './dev-sources';
 
 interface ArtWorld {
   state: {
@@ -43,6 +44,7 @@ test('trois passages : composition, retour et navigation tactile', async ({
   isMobile,
 }, testInfo) => {
   test.setTimeout(180_000);
+  await requireDevSources(page);
   await page.addInitScript(() => {
     localStorage.setItem('ag-transition', 'fade');
     window.mobileArt = {

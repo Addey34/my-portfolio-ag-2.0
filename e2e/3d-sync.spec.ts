@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { requireDevSources } from './dev-sources';
 
 interface SyncState {
   scene: string;
@@ -44,6 +45,7 @@ declare global {
 
 /** Sonde locale : observe les objets après le vrai renderer.render. */
 async function instrument(page: Page): Promise<void> {
+  await requireDevSources(page);
   await page.addInitScript(() => {
     const probe: SyncProbe = {
       world: null,

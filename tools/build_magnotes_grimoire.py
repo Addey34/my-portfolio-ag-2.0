@@ -17,12 +17,12 @@ import bpy  # noqa: E402
 
 OUTPUT = kit.ROOT / "assets" / "blender" / "magnotes_grimoire.blend"
 kit.reset_scene()
-leather = kit.material("BOOK / dark obsidian", (0.035, 0.04, 0.055), 0.65, 0.34)
+leather = kit.material("BOOK / oxblood leather", (0.07, 0.018, 0.04), 0.0, 0.6)
 champagne = kit.material("BOOK / champagne", (0.7, 0.58, 0.39), 0.85, 0.35)
-paper = kit.material("BOOK / ivory paper", (0.87, 0.82, 0.7), 0.05, 0.75)
+paper = kit.material("BOOK / ivory paper", (0.9, 0.82, 0.64), 0.0, 0.8)
 ink = kit.material("BOOK / graphite ink", (0.06, 0.045, 0.08), 0.1, 0.65)
 accent = kit.material("BOOK / mauve index", (0.5, 0.2, 0.4), 0.3, 0.43, (0.45, 0.12, 0.3), 0.22)
-strap = kit.material("BOOK / oiled strap", (0.1, 0.055, 0.07), 0.05, 0.55)
+strap = kit.material("BOOK / oiled strap", (0.13, 0.06, 0.032), 0.0, 0.48)
 W, D, T = 1.5, 1.05, 0.07
 SPINE_X = -W / 2 + 0.03
 

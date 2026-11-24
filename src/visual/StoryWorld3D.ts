@@ -55,6 +55,7 @@ import { clockHandAngles } from '@/visual/clockHands';
 import { createLightShaft } from '@/visual/LightShaft';
 import { GalaxySignature } from '@/visual/GalaxySignature';
 import { TextureWarmupCache } from '@/visual/TextureWarmupCache';
+import { applyMaterialDetail, detailKindFor } from '@/visual/materialDetail';
 import { HeroStage } from '@/visual/HeroStage';
 import { magnotesOrganization } from '@/visual/magnotesLayout';
 import type { VisualScene, VisualState } from '@/visual/types';
@@ -2430,6 +2431,37 @@ export class StoryWorld3D {
       material.emissiveIntensity = 1.3;
       material.envMapIntensity = 0.2;
     }
+    this.applyCraftedDetail(material);
+  }
+
+  /**
+   * Identité de matière des objets usinés : relief, rugosité et patine procéduraux
+   * (voir materialDetail.ts). Les GLB n'ont pas d'UV, les anciennes cartes ne s'y appliquaient pas.
+   */
+  private applyCraftedDetail(material: MeshStandardMaterial): void {
+    const kind = detailKindFor(material.name);
+    if (!kind) return;
+    // L'ancienne carte (sans UV, lue en un seul texel ≈ 0,66) réduisait la rugosité effective.
+    if (material.roughnessMap) material.roughness *= 0.66;
+    material.roughnessMap = null;
+    material.bumpMap = null;
+    // Tranche des pages MagNotes : dorure sur les côtés du bloc de papier.
+    const gilt = /^BOOK.*paper/i.test(material.name)
+      ? { color: [0.86, 0.66, 0.27] as [number, number, number], mix: 0.6 }
+      : undefined;
+    // Matières non métalliques : le reflet froid d'environnement les rendrait argentées.
+    if (kind === 'paper') {
+      material.envMapIntensity = 0.22;
+      // La clé froide de la galerie grisaille le papier : on le chauffe à la source.
+      material.color.multiply(new Color('#fff9f0'));
+    } else if (kind === 'leather') material.envMapIntensity = 0.3;
+    applyMaterialDetail(
+      material,
+      kind,
+      this.compact ? 0.8 : 1,
+      gilt,
+      !this.compact
+    );
   }
 
   private loadSelectionSeals(): void {

@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 test('Ludora : liens actionnables et transformations voisines réversibles', async ({ page }, testInfo) => {
+  // Rendu logiciel sous workers parallèles : ~30 s mesurés seul, la marge évite un faux échec.
+  test.setTimeout(120_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/#ludora');

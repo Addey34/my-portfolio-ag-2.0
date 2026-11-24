@@ -63,7 +63,7 @@ const CONTRACTS = [
       'BOOK / book pivot',
       ...[1, 2, 3, 4, 5, 6].map((k) => `NOTE / 0${k} pivot`),
     ],
-    materials: ['obsidian', 'champagne', 'ivory paper'],
+    materials: ['oxblood leather', 'champagne', 'ivory paper'],
     maxTriangles: 16_000,
     maxBytes: 700_000,
   },
