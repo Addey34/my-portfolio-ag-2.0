@@ -70,6 +70,33 @@ const CUBE_CENTERS: ReadonlyArray<readonly [number, number]> = [
   [-0.5, -0.5],
   [0.5, -0.5],
 ];
+/**
+ * Cadrage par chapitre : la pièce courante prend la place que son récit exige
+ * (la vitrine d'un produit pèse plus que l'étape d'un raccord). Valeurs
+ * multiplicatives de l'échelle du monde, interpolées à chaque raccord.
+ */
+const SCENE_FRAMING: Record<VisualScene, number> = {
+  identity: 1,
+  stack: 1.12,
+  solutions: 1.1,
+  selection: 1.08,
+  galaxy: 1.22,
+  ludora: 1.2,
+  magnotes: 1.2,
+  studies: 1.12,
+  contact: 1.15,
+};
+const SCENE_FRAMING_COMPACT: Record<VisualScene, number> = {
+  identity: 1,
+  stack: 1.14,
+  solutions: 1,
+  selection: 1.1,
+  galaxy: 1.14,
+  ludora: 1.1,
+  magnotes: 1.1,
+  studies: 1.1,
+  contact: 1,
+};
 /** Hauteur unique de l'objet sur mobile, hors prologue. */
 const COMPACT_ANCHOR_Y = 2.5;
 const SCENE_ORDER: readonly VisualScene[] = [
@@ -382,6 +409,9 @@ export class StoryWorld3D {
   private lastStaticScene: VisualScene | null = null;
   private lastStaticClockPhase: boolean | null = null;
   private lastMagnotesProgress = 0.72;
+  /** Gonflement de lumière au cœur d'un raccord (0 au repos, 1 au pivot). */
+  private crossingSwell = 0;
+  private lastSwellCss = -1;
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     let renderer: WebGLRenderer | null = null;
@@ -824,6 +854,29 @@ export class StoryWorld3D {
       );
       this.world.scale.multiplyScalar(1 - 0.25 * gather);
     }
+    // Cadrage narratif : chaque chapitre pèse selon son récit ; au cœur d'un
+    // raccord la pièce se recueille (elle recule) pendant que la lampe gonfle,
+    // le temps que l'assemblage change de forme dans la pénombre.
+    const framingTable = this.compact ? SCENE_FRAMING_COMPACT : SCENE_FRAMING;
+    const [fromScene, toScene] = (crossing ?? '').split('-') as [
+      VisualScene,
+      VisualScene,
+    ];
+    const framing =
+      crossing === null || !framingTable[fromScene]
+        ? framingTable[scene]
+        : framingTable[fromScene] +
+          (framingTable[toScene] - framingTable[fromScene]) *
+            smooth(crossingProgress);
+    const swell =
+      crossing === null || crossing === 'identity-stack'
+        ? 0
+        : Math.sin(Math.PI * smooth(crossingProgress));
+    this.crossingSwell = swell;
+    this.world.scale.multiplyScalar(
+      (directOpening || medallionOpening ? 1 : framing) * (1 - 0.1 * swell)
+    );
+    this.syncSwellCss(swell);
     // Après le prologue, l'objet garde une seule position à l'écran : il ne monte
     // ni ne descend d'un chapitre à l'autre, seul son contenu change.
     if (this.compact) {
@@ -1104,6 +1157,17 @@ export class StoryWorld3D {
     // d'un programme non compilé bloque la page jusqu'à la fin de la compilation.
     if (!this.programsReady) return;
     this.renderer.render(this.scene, this.camera);
+  }
+
+  /** Publie le gonflement de lumière aux éléments éditoriaux (rail, repères). */
+  private syncSwellCss(swell: number): void {
+    const rounded = Math.round(swell * 50) / 50;
+    if (rounded === this.lastSwellCss) return;
+    this.lastSwellCss = rounded;
+    document.documentElement.style.setProperty(
+      '--world-swell',
+      rounded.toFixed(2)
+    );
   }
 
   resize(): void {
@@ -3688,15 +3752,20 @@ export class StoryWorld3D {
       (this.compact || this.heroTablet ? 24 : 30) *
       this.lampLab.power *
       (1 - 0.28 * galaxyPresence) *
-      (1 - 0.18 * heroPresence);
+      (1 - 0.18 * heroPresence) *
+      (1 + 0.35 * this.crossingSwell);
     this.lightShaft.setIntensity(
-      this.lampLab.power * (1 - 0.3 * galaxyPresence) * (1 - 0.2 * heroPresence)
+      this.lampLab.power *
+        (1 - 0.3 * galaxyPresence) *
+        (1 - 0.2 * heroPresence) *
+        (1 + 0.3 * this.crossingSwell)
     );
     this.reflectorBounce.intensity =
       (this.compact || this.heroTablet ? 17 : 22) *
       this.lampLab.power *
       (1 - 0.32 * galaxyPresence) *
-      (1 - 0.2 * heroPresence);
+      (1 - 0.2 * heroPresence) *
+      (1 + 0.3 * this.crossingSwell);
     this.filamentGlowMaterial.opacity =
       (this.compact || this.heroTablet ? 0.35 : 0.45) *
       (1 - 0.55 * galaxyPresence) *

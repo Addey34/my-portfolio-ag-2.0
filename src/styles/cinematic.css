@@ -538,3 +538,30 @@
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Synchronisation 3D ↔ éditorial (PORT-EXPERIENCE-MASTERY-014)
+   --world-swell : gonflement de lumière de la lampe au cœur d'un raccord
+   (0 au repos, 1 au pivot), publié par StoryWorld3D depuis le ticker GSAP.
+   Le repère du chapitre courant s'éclaire avec la lampe.
+   ========================================================================== */
+.rail__dot.is-current .rail__marker {
+  filter: drop-shadow(
+    0 0 calc(var(--world-swell, 0) * 7px)
+      color-mix(in srgb, var(--brass) 85%, transparent)
+  );
+}
+
+/* Mobile : le nom du chapitre courant se lit sur un fond plein, le contenu ne
+   passe plus derrière l'étiquette. */
+@media (max-width: 860px) {
+  .rail::before {
+    top: -1.7rem;
+    background: linear-gradient(
+      to top,
+      rgba(3, 5, 10, 0.97) 0%,
+      rgba(3, 5, 10, 0.94) 66%,
+      transparent 100%
+    );
+  }
+}
