@@ -32,16 +32,12 @@ servir `dist` avec `pnpm preview` et définir `E2E_BASE_URL` sur son URL exacte.
 Les vingt captures de revue du récit sont activables avec `SEO_VISUAL_CAPTURE=1` ;
 les assertions fonctionnelles restent actives sans cette option, notamment en CI.
 
-CircleCI exécute les mêmes fichiers SEO/contact dans deux étapes successives,
-desktop puis Android, avec un worker et un plafond de vingt minutes par profil.
-Le plafond Playwright de 1 170 secondes laisse une marge pour écrire les rapports
-avant le garde-fou GNU. Chaque campagne conserve son code de sortie ; Android
-est exécuté même après un échec desktop. Aucun job supplémentaire n’est créé.
-`E2E_REPORT_DIR` active les rapports JUnit/JSON ; les traces DOM/réseau et la
-capture automatique sont conservées seulement en cas d’échec, sans vidéo, sources Git
-ou retry automatique. Les rapports sont collectés après chaque campagne, même
-rouge. La rétention des artefacts reste celle du projet CircleCI (30 jours par
-défaut), sans modification des paramètres du compte.
+GitHub Actions (`.github/workflows/ci.yml`) exécute `pnpm verify`, l'audit des
+dépendances de production et l'analyse de secrets (Gitleaks) sur tout l'historique.
+Les campagnes Playwright (desktop, Android Pixel 7, iPhone 13 WebKit) sont qualifiées
+en local avant fusion. `E2E_REPORT_DIR` active les rapports JUnit/JSON ; les traces
+DOM/réseau et la capture automatique sont conservées seulement en cas d'échec, sans
+vidéo, sources Git ou retry automatique.
 Les scénarios de liens linguistiques utilisent le bouton d’accès anticipé et gardent
 les téléchargements GLB en attente pendant leurs interactions. Le test distinct
 de bascule 3D charge les vrais modèles et contrôle le canvas et le ticker.
