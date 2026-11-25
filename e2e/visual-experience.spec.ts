@@ -30,8 +30,8 @@ test('composition aux entrées depuis le rail', async ({
       html: document.documentElement.className,
       done: document.querySelector('#boot-loader.is-done') !== null,
       rail: document.querySelector('.rail') !== null,
-      canvasHidden: document.querySelector<HTMLCanvasElement>('#world-3d')
-        ?.hidden,
+      canvasHidden:
+        document.querySelector<HTMLCanvasElement>('#world-3d')?.hidden,
     }));
     throw new Error(
       `Écran d'attente toujours présent : ${JSON.stringify({ state, diagnostics })}`,

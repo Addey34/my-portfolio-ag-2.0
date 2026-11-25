@@ -475,9 +475,9 @@ test('polices servies par le site, sans requête tierce ni violation CSP', async
   }));
   expect(loaded).toEqual({ display: true, body: true });
   // Seule l'API GitHub publique (profil du contact) peut être contactée.
-  expect(
-    foreign.filter((value) => value !== 'https://api.github.com')
-  ).toEqual([]);
+  expect(foreign.filter((value) => value !== 'https://api.github.com')).toEqual(
+    []
+  );
   expect(
     await page.evaluate(() =>
       Reflect.get(window, 'fontCspViolations').filter((directive: string) =>
