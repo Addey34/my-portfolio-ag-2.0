@@ -15,10 +15,10 @@ interface SceneTarget {
 }
 
 /**
- * Direction artistique centrale. Elle ne dessine rien elle-mÃªme : elle traduit
- * le parcours de scroll en un Ã©tat visuel partagÃ© par le champ persistant et
- * les chapitres. Les univers gardent leur personnalitÃ©, mais battent sur la
- * mÃªme pulsation et partagent le mÃªme point d'attention.
+ * Direction artistique centrale. Elle ne dessine rien elle-même : elle traduit
+ * le parcours de scroll en un état visuel partagé par le champ persistant et
+ * les chapitres. Les univers gardent leur personnalité, mais battent sur la
+ * même pulsation et partagent le même point d'attention.
  */
 export class VisualDirector {
   private readonly triggers: ScrollTrigger[] = [];

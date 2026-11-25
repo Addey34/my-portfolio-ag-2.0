@@ -2,28 +2,28 @@ import { prefersReducedMotion } from '@/core/motion';
 import type { SmoothScroll } from '@/core/SmoothScroll';
 
 /**
- * Scroll Â« intelligent Â» : l'effet diaporama sans hijack.
+ * Scroll « intelligent » : l'effet diaporama sans hijack.
  *
- * Principe : chaque chapitre a un point d'accroche (sa section centrÃ©e dans le
- * viewport). Quand le dÃ©filement S'ARRÃŠTE Ã€ PROXIMITÃ‰ d'un point (zone de
- * ~22 % du viewport), la page glisse doucement pour caler le chapitre â€” comme
+ * Principe : chaque chapitre a un point d'accroche (sa section centrée dans le
+ * viewport). Quand le défilement S'ARRÊTE À PROXIMITÉ d'un point (zone de
+ * ~22 % du viewport), la page glisse doucement pour caler le chapitre — comme
  * une diapositive qui clique en place. Hors zone : scroll totalement libre.
  *
- * Garde-fous dÃ©libÃ©rÃ©s :
+ * Garde-fous délibérés :
  *  - On n'aimante JAMAIS pendant que l'utilisateur bouge : uniquement une fois
- *    le scroll posÃ© (~150 ms d'immobilitÃ©). Un coup de molette pendant la
- *    glissade la reprend immÃ©diatement (comportement natif de Lenis).
+ *    le scroll posé (~150 ms d'immobilité). Un coup de molette pendant la
+ *    glissade la reprend immédiatement (comportement natif de Lenis).
  *  - Glissade courte (â‰¤ 0,75 s) et cooldown : pas de ping-pong, pas de lutte.
- *  - En `prefers-reduced-motion` (Lenis absent) : rien n'est installÃ©.
+ *  - En `prefers-reduced-motion` (Lenis absent) : rien n'est installé.
  *
- * Invariants : `update(time)` est appelÃ© par la boucle maÃ®tresse (ticker GSAP
- * unique) â€” aucun Ã©couteur scroll, aucune horloge propre.
+ * Invariants : `update(time)` est appelé par la boucle maîtresse (ticker GSAP
+ * unique) — aucun écouteur scroll, aucune horloge propre.
  */
 const ZONE = 0.22; // fraction du viewport autour d'un point d'accroche
-const SETTLE_MS = 180; // immobilitÃ© requise avant d'aimanter
+const SETTLE_MS = 180; // immobilité requise avant d'aimanter
 const MOBILE_ZONE = 0.32;
-const COOLDOWN_MS = 760; // dÃ©lai minimal entre deux glissades
-const MIN_DIST = 8; // px â€” dÃ©jÃ  calÃ©, on ne bouge pas
+const COOLDOWN_MS = 760; // délai minimal entre deux glissades
+const MIN_DIST = 8; // px — déjà calé, on ne bouge pas
 const EASE = (t: number): number => 1 - Math.pow(1 - t, 3);
 
 export class ScrollChoreographer {
@@ -43,13 +43,13 @@ export class ScrollChoreographer {
     window.addEventListener('resize', this.onResize, { passive: true });
   }
 
-  /** AppelÃ© une fois par frame par la boucle maÃ®tresse (ticker GSAP). */
+  /** Appelé une fois par frame par la boucle maîtresse (ticker GSAP). */
   update(time: number): void {
     const lenis = this.scroll.lenis;
     if (!lenis) return;
 
-    // En mouvement : on n'Ã©value RIEN (aucune lecture de layout par frame â€”
-    // `scrollHeight` aprÃ¨s les Ã©critures de styles forcerait un reflow).
+    // En mouvement : on n'évalue RIEN (aucune lecture de layout par frame —
+    // `scrollHeight` après les écritures de styles forcerait un reflow).
     const y = lenis.scroll;
     if (Math.abs(y - this.lastScroll) > 0.4) {
       this.lastScroll = y;
@@ -59,10 +59,10 @@ export class ScrollChoreographer {
     }
     if (this.evaluated) return;
     if (time - this.settleAt < SETTLE_MS) return;
-    this.evaluated = true; // une seule dÃ©cision par arrÃªt de scroll
+    this.evaluated = true; // une seule décision par arrêt de scroll
     if (time - this.lastSnapAt < COOLDOWN_MS) return;
 
-    // Un changement de hauteur du document (fonts, i18nâ€¦) invalide les points.
+    // Un changement de hauteur du document (fonts, i18n…) invalide les points.
     const docHeight = document.documentElement.scrollHeight;
     if (this.dirty || docHeight !== this.docHeight) {
       this.docHeight = docHeight;
@@ -96,7 +96,7 @@ export class ScrollChoreographer {
     window.removeEventListener('resize', this.onResize);
   }
 
-  /** Points d'accroche : chaque chapitre centrÃ© dans le viewport. */
+  /** Points d'accroche : chaque chapitre centré dans le viewport. */
   private collect(): void {
     this.dirty = false;
     const scrollY = window.scrollY;

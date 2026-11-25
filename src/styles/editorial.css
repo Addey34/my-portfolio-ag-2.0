@@ -204,6 +204,15 @@
   transform: translate(0.25rem, -0.25rem);
 }
 
+/* Bureau : le titre et la liste s'arrêtent avant la colonne de la lampe et des
+   sceaux (≈ 60 % de la largeur), au lieu de passer sous l'abat-jour. */
+@media (min-width: 981px) {
+  .project-threshold__title,
+  .project-threshold__list {
+    max-width: min(46rem, calc(60vw - var(--edge)));
+  }
+}
+
 /* ==========================================================================
    Dossier produit
    ========================================================================== */

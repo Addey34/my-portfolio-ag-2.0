@@ -9,10 +9,35 @@ test('composition aux entrées depuis le rail', async ({
   isMobile,
 }, info) => {
   test.setTimeout(150_000);
-  await page.goto('/');
-  await expect(page.locator('#boot-loader')).toHaveCount(0, {
-    timeout: 90_000,
+  // Diagnostic de l'anomalie iPhone sous charge (PORT-RELEASE-014) : un échec
+  // de l'écran d'attente doit dire si le démarrage a levé une erreur, si un
+  // module manque ou si le monde 3D n'a simplement pas fini de s'installer.
+  const diagnostics: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') diagnostics.push(message.text());
   });
+  page.on('pageerror', (error) => diagnostics.push(error.message));
+  page.on('requestfailed', (request) =>
+    diagnostics.push(`${request.failure()?.errorText} ${request.url()}`)
+  );
+  await page.goto('/');
+  try {
+    await expect(page.locator('#boot-loader')).toHaveCount(0, {
+      timeout: 90_000,
+    });
+  } catch (error) {
+    const state = await page.evaluate(() => ({
+      html: document.documentElement.className,
+      done: document.querySelector('#boot-loader.is-done') !== null,
+      rail: document.querySelector('.rail') !== null,
+      canvasHidden:
+        document.querySelector<HTMLCanvasElement>('#world-3d')?.hidden,
+    }));
+    throw new Error(
+      `Écran d'attente toujours présent : ${JSON.stringify({ state, diagnostics })}`,
+      { cause: error }
+    );
+  }
   for (const id of [
     'freelance',
     'projects-intro',

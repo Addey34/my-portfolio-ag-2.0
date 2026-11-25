@@ -1,13 +1,15 @@
 /* =========================================================================
-   Design tokens â€” source unique des couleurs, rythmes et typographies.
+   Design tokens — source unique des couleurs, rythmes et typographies.
    ========================================================================= */
+/* Polices servies par le site lui-même (licence OFL distribuée avec le site :
+   /fonts/OFL.txt, source public/fonts/OFL.txt) : aucune requête de police
+   vers un tiers, et un fichier versionné mis en cache une fois pour toutes. */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400 600;
   font-display: swap;
-  src: url('https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2')
-    format('woff2');
+  src: url('./assets/fonts/inter-latin.woff2') format('woff2');
 }
 
 @font-face {
@@ -15,8 +17,7 @@
   font-style: normal;
   font-weight: 500 700;
   font-display: swap;
-  src: url('https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPbF4Cw.woff2')
-    format('woff2');
+  src: url('./assets/fonts/space-grotesk-latin.woff2') format('woff2');
 }
 
 *,
@@ -26,7 +27,7 @@
 }
 
 html {
-  /* Lenis gÃ¨re le smooth-scroll ; on dÃ©sactive le smooth natif pour Ã©viter le conflit. */
+  /* Lenis gère le smooth-scroll ; on désactive le smooth natif pour éviter le conflit. */
   scroll-behavior: auto;
   /* La progression est affichée par la barre horizontale du bas de page. */
   scrollbar-width: none;
@@ -72,8 +73,8 @@ body {
   transform: translateY(0);
 }
 
-/* Focus clavier cohÃ©rent sur tout l'interactif. Les navigateurs modernes font
-   suivre le border-radius Ã  l'outline â†’ propre sur les pilules comme les liens.
+/* Focus clavier cohérent sur tout l'interactif. Les navigateurs modernes font
+   suivre le border-radius à l'outline → propre sur les pilules comme les liens.
    Le fil de progression garde son propre halo (voir .rail__dot:focus-visible). */
 a:focus-visible,
 button:focus-visible {
@@ -143,48 +144,6 @@ button:focus-visible {
 }
 
 /* =========================================================================
-   Navigation principale
-   ========================================================================= */
-.topnav {
-  position: fixed;
-  top: 1rem;
-  left: 50%;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem;
-  border: 1px solid color-mix(in srgb, var(--ag-cobalt) 18%, var(--line));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--bg-soft) 78%, transparent);
-  backdrop-filter: blur(10px);
-  transform: translateX(-50%);
-}
-
-.topnav a {
-  color: var(--fg-muted);
-  text-decoration: none;
-  font-size: 0.78rem;
-  font-weight: 600;
-  line-height: 1;
-  padding: 0.5rem 0.75rem;
-  border-radius: 999px;
-  transition:
-    color 0.2s var(--ease-out),
-    background 0.2s var(--ease-out);
-}
-
-.topnav a:hover {
-  color: var(--fg);
-  background: color-mix(in srgb, var(--accent) 13%, transparent);
-}
-
-@media (max-width: 980px) {
-  .topnav {
-    display: none;
-  }
-}
-/* =========================================================================
    Sections
    ========================================================================= */
 .section {
@@ -207,16 +166,16 @@ button:focus-visible {
   justify-content: center;
 }
 
-/* LÃ©gende couleur â†’ couche. */
+/* Légende couleur → couche. */
 
-/* HÃ©ros centrÃ© : badges, titre, lead et CTAs sur l'axe du viewport. */
+/* Héros centré : badges, titre, lead et CTAs sur l'axe du viewport. */
 .hero__inner {
   position: relative;
   max-width: 46rem;
   text-align: center;
 }
 
-/* Voile sombre localisÃ© derriÃ¨re le texte hÃ©ros : garantit la lisibilitÃ©
+/* Voile sombre localisé derrière le texte héros : garantit la lisibilité
    par-dessus le champ de lignes, sans assombrir tout le fond. */
 .hero__inner::before {
   content: '';
@@ -231,23 +190,19 @@ button:focus-visible {
   pointer-events: none;
 }
 
-/* Titres en police d'affichage + lÃ©ger halo pour dÃ©coller du fond animÃ©. */
+/* Titres en police d'affichage + léger halo pour décoller du fond animé. */
 .hero__title,
 .intro__title,
-.project__name,
 .contact__title {
   font-family: var(--font-display);
 }
 
-.hero__eyebrow,
 .hero__title,
 .hero__lead,
 .intro__kicker,
 .intro__title,
 .stack__title,
 .stack__lead,
-.project__name,
-.project__tagline,
 .contact__title {
   text-shadow:
     0 1px 2px rgba(3, 5, 12, 0.55),
@@ -342,7 +297,7 @@ button:focus-visible {
   letter-spacing: -0.03em;
 }
 
-/* Gradient animÃ© sur le nom de famille */
+/* Gradient animé sur le nom de famille */
 .hero__word--gradient {
   color: transparent;
   background: linear-gradient(
@@ -383,7 +338,7 @@ button:focus-visible {
   color: rgba(244, 246, 251, 0.9);
 }
 
-/* Masquage initial gÃ©rÃ© par heroAnim.ts (uniquement si JS actif) */
+/* Masquage initial géré par heroAnim.ts (uniquement si JS actif) */
 .js .hero__lead,
 .js .hero__ctas,
 .js .hero__status {
@@ -452,23 +407,6 @@ button:focus-visible {
   transform: translateY(-3px);
 }
 
-/* FlÃ¨che du CTA primaire â€” rebondit doucement */
-.hero__cta-icon {
-  display: inline-block;
-  animation: cta-bounce 2.4s ease-in-out infinite;
-  font-size: 1rem;
-}
-
-@keyframes cta-bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(4px);
-  }
-}
-
 .intro__kicker {
   margin: 0 0 1rem;
   font-size: 0.85rem;
@@ -486,7 +424,7 @@ button:focus-visible {
   letter-spacing: -0.025em;
 }
 
-/* Ã‰tat initial du titre intro â€” gÃ©rÃ© par GSAP dans reveals.ts, pas data-reveal. */
+/* État initial du titre intro — géré par GSAP dans reveals.ts, pas data-reveal. */
 .js .intro__title {
   opacity: 0;
   transform: translateY(2rem) scale(0.985);
@@ -501,7 +439,7 @@ button:focus-visible {
   }
 }
 
-/* Ã‰tat initial des panneaux de chapitres â€” rÃ©vÃ©lÃ©s avec perspective 3D
+/* État initial des panneaux de chapitres — révélés avec perspective 3D
    par GSAP (voir src/core/reveals.ts). */
 .js [data-reveal-panel] {
   opacity: 0;
@@ -509,260 +447,9 @@ button:focus-visible {
 }
 
 /* =========================================================================
-   Chapitres projet â€” une section plein Ã©cran par app, dans SON univers.
-   Le décor continu est rendu par StoryWorld3D ; le texte des projets reste
-   sur un panneau translucide au contraste garanti.
-   ========================================================================= */
-
-/* Panneau texte : verre sombre + liserÃ© Ã  l'accent du projet. Lisible sur
-   n'importe quel dÃ©cor â€” le contraste vient du panneau, pas du fond. */
-
-/* -------------------------------------------------------------------------
-   DÃ©cor GALAXY â€” espace rÃ©el : noir profond, Ã©toiles, nav planÃ¨tes Ã  halo
-   (le style exact des pilules de l'app SolarSystem3D).
-   ------------------------------------------------------------------------- */
-.stage--galaxy {
-  background: radial-gradient(
-    120% 100% at 64% 45%,
-    #060a16 0%,
-    #01020a 60%,
-    #000 100%
-  );
-}
-
-.stage--portfolio-story {
-  background: transparent;
-}
-
-.story-board {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.gx-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.gx-nav {
-  position: absolute;
-  top: clamp(5.5rem, 11vh, 7.5rem);
-  left: 50%;
-  right: 1rem;
-  z-index: 4;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  padding: 0 1rem;
-}
-
-.gx-btn {
-  --planet-rgb: 100, 150, 255;
-  padding: 0.5rem 1rem;
-  background: rgba(0, 0, 0, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 0.5rem;
-  color: #fff;
-  font-size: 0.82rem;
-  backdrop-filter: blur(6px);
-  transition:
-    background 0.25s,
-    border-color 0.25s,
-    box-shadow 0.25s;
-}
-
-.gx-btn.is-active {
-  background: rgba(var(--planet-rgb), 0.28);
-  border-color: rgb(var(--planet-rgb));
-  box-shadow: 0 0 18px rgba(var(--planet-rgb), 0.45);
-  text-shadow: 0 0 8px rgba(var(--planet-rgb), 0.85);
-}
-
-.gx-btn.is-hovered {
-  border-color: rgb(var(--planet-rgb));
-  background: rgba(var(--planet-rgb), 0.18);
-  box-shadow: 0 0 24px rgba(var(--planet-rgb), 0.36);
-  transform: translateY(-2px) scale(1.04);
-}
-
-/* -------------------------------------------------------------------------
-   DÃ©cor LUDORA â€” le Â« portail Â» navy aux aurores (tokens rÃ©els de l'app) et
-   la grille de tuiles de jeux teintÃ©es, chacune dans SA couleur.
-   ------------------------------------------------------------------------- */
-.stage--ludora {
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(125, 211, 252, 0.15),
-      transparent 30rem
-    ),
-    radial-gradient(
-      circle at 88% 108%,
-      rgba(99, 102, 241, 0.12),
-      transparent 26rem
-    ),
-    linear-gradient(180deg, #080d1a 0%, #0b1020 100%);
-}
-
-.ld-grid {
-  position: absolute;
-  top: 50%;
-  right: clamp(1rem, 6vw, 5rem);
-  transform: translateY(-50%);
-  width: min(34rem, 52%);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.7rem;
-}
-
-.ld-tile {
-  position: relative;
-  display: grid;
-  place-items: center;
-  gap: 0.25rem;
-  aspect-ratio: 1;
-  border-radius: 0.6rem;
-  border: 1px solid color-mix(in srgb, var(--tile) 45%, transparent);
-  background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--tile) 62%, #0b1020),
-    color-mix(in srgb, var(--tile) 30%, #0b1020)
-  );
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-.ld-tile__icon {
-  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
-  line-height: 1;
-}
-
-.ld-tile__label {
-  font-size: 0.62rem;
-  font-weight: 600;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-}
-
-.ld-tile__badge {
-  position: absolute;
-  top: -0.4rem;
-  right: -0.4rem;
-  font-size: 0.85rem;
-  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8));
-}
-
-/* -------------------------------------------------------------------------
-   DÃ©cor MAGNOTES â€” le board sombre Ã  grille de points (#0d0f1d, le fond rÃ©el
-   de l'app), post-it papier, liens indigo, colonnes Kanban.
-   ------------------------------------------------------------------------- */
-.stage--magnotes {
-  background-color: #0d0f1d;
-  background-image: radial-gradient(
-    rgba(148, 163, 184, 0.16) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
-}
-
-.mg-board {
-  position: absolute;
-  inset: 0;
-}
-
-.mg-links {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.mg-links line {
-  stroke: #6366f1;
-  stroke-width: 1.5;
-  stroke-dasharray: 6 5;
-}
-
-.mg-col {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 120px;
-  text-align: center;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #818cf8;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-.mg-note {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 132px;
-  padding: 0.6rem 0.7rem;
-  border-radius: 6px;
-  background: var(--paper, #fde68a);
-  color: #1e293b;
-  font-size: 0.72rem;
-  font-weight: 600;
-  line-height: 1.3;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
-  will-change: transform;
-}
-
-@media (max-width: 720px) {
-  .mg-note {
-    width: 104px;
-    font-size: 0.65rem;
-  }
-}
-
-/* -------------------------------------------------------------------------
-   DÃ©cor GÃ‰NÃ‰RIQUE â€” futur projet sans chapitre dÃ©diÃ© : orbes Ã  son accent.
-   ------------------------------------------------------------------------- */
-.stage--generic {
-  background:
-    radial-gradient(
-      110% 110% at 70% 30%,
-      color-mix(in srgb, var(--chapter-accent, #6ea8ff) 12%, transparent),
-      transparent 60%
-    ),
-    linear-gradient(180deg, #070a12 0%, #04050a 100%);
-}
-
-.gn-orbs {
-  position: absolute;
-  inset: 0;
-}
-
-.gn-orb {
-  position: absolute;
-  width: clamp(3rem, 8vw, 7rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 35% 35%,
-    color-mix(in srgb, var(--chapter-accent, #6ea8ff) 55%, transparent),
-    color-mix(in srgb, var(--chapter-accent, #6ea8ff) 10%, transparent) 70%
-  );
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* =========================================================================
    Solutions & lab
    ========================================================================= */
-.section--offers,
-.section--lab {
+.section--offers {
   min-height: 100svh;
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 1.1fr);
@@ -770,14 +457,12 @@ button:focus-visible {
   gap: clamp(2rem, 6vw, 5rem);
 }
 
-.offer-grid,
-.lab-grid {
+.offer-grid {
   display: grid;
   gap: 0.75rem;
 }
 
-.offer-card,
-.lab-item {
+.offer-card {
   border: 1px solid var(--line);
   border-radius: 0.5rem;
   background: rgba(8, 12, 22, 0.58);
@@ -785,8 +470,7 @@ button:focus-visible {
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
 }
 
-.offer-card h3,
-.lab-item h3 {
+.offer-card h3 {
   margin: 0;
   color: var(--fg);
   font-family: var(--font-display);
@@ -794,25 +478,15 @@ button:focus-visible {
   line-height: 1.15;
 }
 
-.offer-card p,
-.lab-item p {
+.offer-card p {
   margin: 0.75rem 0 0;
   color: var(--fg-muted);
   font-size: 0.88rem;
   line-height: 1.55;
 }
 
-.lab-grid {
-  grid-template-columns: 1fr;
-}
-
-.lab-item {
-  padding: 1.15rem 1.25rem;
-}
-
 @media (max-width: 860px) {
-  .section--offers,
-  .section--lab {
+  .section--offers {
     grid-template-columns: 1fr;
     min-height: auto;
   }
@@ -1056,11 +730,11 @@ button:focus-visible {
 }
 
 /* =========================================================================
-   Reveal â€” Ã©tat initial des Ã©lÃ©ments [data-reveal].
-   L'animation est jouÃ©e par GSAP (voir src/core/reveals.ts). Le fallback
-   ci-dessous garantit la visibilitÃ© si JS Ã©choue ou en reduced-motion.
+   Reveal — état initial des éléments [data-reveal].
+   L'animation est jouée par GSAP (voir src/core/reveals.ts). Le fallback
+   ci-dessous garantit la visibilité si JS échoue ou en reduced-motion.
    ========================================================================= */
-/* MasquÃ©s uniquement si le JS a dÃ©marrÃ© (.js) : sinon le contenu reste visible. */
+/* Masqués uniquement si le JS a démarré (.js) : sinon le contenu reste visible. */
 .js [data-reveal] {
   opacity: 0;
   transform: translateY(2rem);
@@ -1090,10 +764,7 @@ button:focus-visible {
 }
 
 /* =========================================================================
-   AccessibilitÃ© â€” l'utilisateur qui refuse le mouvement voit tout, sans anim.
-   ========================================================================= */
-/* =========================================================================
-   Wordmark â€” ancre identitaire fixe haut-gauche.
+   Wordmark — ancre identitaire fixe haut-gauche.
    ========================================================================= */
 .wordmark {
   position: fixed;
@@ -1121,7 +792,7 @@ button:focus-visible {
     transform 0.35s var(--ease-out);
 }
 
-/* Avec JS : cachÃ© sur le hÃ©ros, rÃ©vÃ©lÃ© au scroll (classe posÃ©e par scrollScenes.ts).
+/* Avec JS : caché sur le héros, révélé au scroll (classe posée par scrollScenes.ts).
    Sans JS, le wordmark reste visible (fallback ci-dessus). */
 .js .wordmark {
   opacity: 0;
@@ -1139,7 +810,7 @@ button:focus-visible {
   opacity: 1;
 }
 
-/* Mouvement rÃ©duit : pas de reveal au scroll, le wordmark est prÃ©sent d'emblÃ©e. */
+/* Mouvement réduit : pas de reveal au scroll, le wordmark est présent d'emblée. */
 @media (prefers-reduced-motion: reduce) {
   .js .wordmark {
     opacity: 0.65;
@@ -1149,7 +820,7 @@ button:focus-visible {
 }
 
 /* =========================================================================
-   Fil de progression vertical (desktop) â€” voir src/ui/SectionRail.ts.
+   Fil de progression vertical (desktop) — voir src/ui/SectionRail.ts.
    ========================================================================= */
 .rail {
   --rail-proximity: 0;
@@ -1229,7 +900,7 @@ button:focus-visible {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-/* LibellÃ© au survol/focus â€” glisse depuis le point. */
+/* Libellé au survol/focus — glisse depuis le point. */
 .rail__label {
   position: absolute;
   left: 1.5rem;
@@ -1266,7 +937,7 @@ button:focus-visible {
 }
 
 /* =========================================================================
-   HUD â€” bascule de langue + raccourci palette (fixe, haut-droite)
+   HUD — bascule de langue + raccourci palette (fixe, haut-droite)
    ========================================================================= */
 .hud {
   position: fixed;
@@ -1330,13 +1001,13 @@ button:focus-visible {
   opacity: 1;
 }
 
-/* Loupe masquÃ©e par dÃ©faut : le kbd âŒ˜K est l'affordance desktop. */
+/* Loupe masquée par défaut : le kbd ⌘K est l'affordance desktop. */
 .hud__cmd-icon {
   display: none;
 }
 
 /* =========================================================================
-   Panneau de rÃ©glages visuels (bouton âš™ â€” voir ui/ControlPanel.ts)
+   Panneau de réglages visuels (bouton ⚙ — voir ui/ControlPanel.ts)
    ========================================================================= */
 .controls {
   position: fixed;
@@ -1509,7 +1180,7 @@ button:focus-visible {
 }
 
 /* =========================================================================
-   AccessibilitÃ© â€” l'utilisateur qui refuse le mouvement voit tout, sans anim.
+   Accessibilité — l'utilisateur qui refuse le mouvement voit tout, sans anim.
    ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
   .js [data-reveal] {
@@ -1524,8 +1195,8 @@ button:focus-visible {
   }
 }
 
-/* Mobile : les dÃ©cors se recentrent derriÃ¨re le panneau (qui garde son fond
-   opaque â€” la lisibilitÃ© ne dÃ©pend jamais du dÃ©cor). */
+/* Mobile : les décors se recentrent derrière le panneau (qui garde son fond
+   opaque — la lisibilité ne dépend jamais du décor). */
 @media (max-width: 860px) {
   #world-3d {
     opacity: 1;
@@ -1573,21 +1244,10 @@ button:focus-visible {
   .section--intro {
     opacity: var(--intro-exit-opacity, 1);
   }
-
-  .gx-nav {
-    display: none;
-  }
-
-  .ld-grid {
-    top: 36%;
-    right: 50%;
-    transform: translate(50%, -50%);
-    width: min(20rem, 84%);
-  }
 }
 
 /* Tactile : le âŒ˜K n'a aucun sens sans clavier â†’ on montre la loupe et on
-   rend le bouton carrÃ©. La palette reste la nav principale du mobile. */
+   rend le bouton carré. La palette reste la nav principale du mobile. */
 @media (hover: none), (pointer: coarse), (max-width: 600px) {
   .hud__btn--cmd {
     width: 2.25rem;
@@ -1673,8 +1333,7 @@ button:focus-visible {
 @media (min-width: 981px) {
   .section--intro,
   .section--stack,
-  .section--offers,
-  .section--lab {
+  .section--offers {
     padding-left: clamp(8.75rem, 13.5vw, 10rem);
   }
 }
@@ -1704,8 +1363,7 @@ button:focus-visible {
     backdrop-filter: none;
   }
 
-  .section--offers,
-  .section--lab {
+  .section--offers {
     padding-top: clamp(5.75rem, 12svh, 7rem);
     padding-bottom: clamp(5rem, 10svh, 6.5rem);
   }
@@ -1749,8 +1407,7 @@ button:focus-visible {
 
 /* Les cartes importantes ne sont pas seulement décoratives : elles offrent
    un second niveau de lecture au survol et au focus clavier. */
-.offer-card,
-.lab-item {
+.offer-card {
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -1762,14 +1419,12 @@ button:focus-visible {
     box-shadow 0.32s var(--ease-out);
 }
 
-.offer-card,
-.lab-item {
+.offer-card {
   display: flex;
   flex-direction: column;
 }
 
-.offer-card::before,
-.lab-item::before {
+.offer-card::before {
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
@@ -1781,8 +1436,7 @@ button:focus-visible {
   transition: transform 0.34s var(--ease-out);
 }
 
-.offer-card::after,
-.lab-item::after {
+.offer-card::after {
   content: '';
   position: absolute;
   inset: -45%;
@@ -1800,9 +1454,7 @@ button:focus-visible {
 }
 
 .offer-card:hover,
-.offer-card:focus-visible,
-.lab-item:hover,
-.lab-item:focus-visible {
+.offer-card:focus-visible {
   border-color: color-mix(in srgb, var(--accent) 55%, transparent);
   background: rgba(10, 15, 28, 0.82);
   box-shadow:
@@ -1812,23 +1464,18 @@ button:focus-visible {
 }
 
 .offer-card:hover::before,
-.offer-card:focus-visible::before,
-.lab-item:hover::before,
-.lab-item:focus-visible::before {
+.offer-card:focus-visible::before {
   transform: scaleY(1);
   transform-origin: top;
 }
 
 .offer-card:hover::after,
-.offer-card:focus-visible::after,
-.lab-item:hover::after,
-.lab-item:focus-visible::after {
+.offer-card:focus-visible::after {
   opacity: 1;
   transform: scale(1);
 }
 
-.offer-card:focus-visible,
-.lab-item:focus-visible {
+.offer-card:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
@@ -1851,16 +1498,13 @@ button:focus-visible {
 }
 
 .offer-card:hover .story-note,
-.offer-card:focus-visible .story-note,
-.lab-item:hover .story-note,
-.lab-item:focus-visible .story-note {
+.offer-card:focus-visible .story-note {
   opacity: 1;
   transform: none;
 }
 
 @media (hover: hover) {
-  .offer-grid:has(.offer-card:hover) .offer-card:not(:hover),
-  .lab-grid:has(.lab-item:hover) .lab-item:not(:hover) {
+  .offer-grid:has(.offer-card:hover) .offer-card:not(:hover) {
     opacity: 0.58;
   }
 }
@@ -1874,25 +1518,19 @@ button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .offer-card,
-  .lab-item,
   .story-note {
     transition: none;
   }
 }
 
 /* Profil léger automatique : conserve la direction artistique sans payer les effets coûteux. */
-.lite-mode .offer-card,
-.lite-mode .lab-item {
+.lite-mode .offer-card {
   backdrop-filter: none;
 }
 
 .lite-mode .story-vignette {
   opacity: 0.72;
 }
-
-/* =========================================================================
-   Hiérarchie des études de cas — contexte → décision → résultat
-   ========================================================================= */
 
 /* =========================================================================
    Confiance et conversion — statut réel, contact direct
@@ -1937,1437 +1575,8 @@ button:focus-visible {
   }
 }
 
-/* =========================================================================
-   Univers produit — Comparator / Image Generator / UltimateTransfert
-   ========================================================================= */
-
-.stage--product {
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-.stage--comparator {
-  background:
-    radial-gradient(
-      circle at 70% 44%,
-      rgba(245, 158, 11, 0.13),
-      transparent 34%
-    ),
-    linear-gradient(135deg, #11100b, #050609 68%);
-}
-
-.stage--image-generator {
-  background:
-    radial-gradient(
-      circle at 35% 35%,
-      rgba(236, 72, 153, 0.2),
-      transparent 32%
-    ),
-    linear-gradient(135deg, #130b18, #050609 72%);
-}
-
-.stage--ultimate-transfer {
-  background:
-    radial-gradient(
-      circle at 68% 40%,
-      rgba(34, 197, 94, 0.14),
-      transparent 34%
-    ),
-    linear-gradient(135deg, #07130f, #050609 72%);
-}
-
-.pc-scene {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  pointer-events: none;
-  opacity: 0.96;
-}
-
-.pc-panel {
-  position: relative;
-  width: min(56rem, 78vw);
-  padding: clamp(1.1rem, 2vw, 1.8rem);
-  border: 1px solid
-    color-mix(in srgb, var(--chapter-accent, var(--accent)) 36%, transparent);
-  border-radius: 1rem;
-  background: rgba(5, 7, 14, 0.68);
-  box-shadow:
-    0 30px 90px rgba(0, 0, 0, 0.42),
-    0 0 70px
-      color-mix(in srgb, var(--chapter-accent, var(--accent)) 10%, transparent);
-  backdrop-filter: blur(10px);
-}
-
-.pc-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--chapter-accent, var(--accent)),
-    transparent 75%
-  );
-}
-
-.pc-search {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  border-radius: 0.55rem;
-  background: rgba(245, 158, 11, 0.07);
-}
-
-.pc-search__label,
-.pc-image-preview__label,
-.pc-flow,
-.pc-security {
-  color: color-mix(in srgb, var(--chapter-accent, var(--accent)) 82%, white);
-  font-family: ui-monospace, monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.pc-search strong {
-  color: var(--fg);
-  font-size: clamp(0.85rem, 1.7vw, 1.05rem);
-  letter-spacing: 0.02em;
-}
-
-.pc-search__pulse {
-  color: #fbbf24;
-  font:
-    700 0.62rem ui-monospace,
-    monospace;
-  letter-spacing: 0.1em;
-}
-
-.pc-sources {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin: 1.15rem 0;
-}
-
-.pc-source,
-.pc-model__chip,
-.pc-pipeline__step {
-  padding: 0.4rem 0.65rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--fg-muted);
-  font-size: 0.72rem;
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.pc-offers {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.pc-offer {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 0.8rem;
-  min-height: 3rem;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 0.45rem;
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.pc-offer--best {
-  border-color: rgba(245, 158, 11, 0.62);
-  background: rgba(245, 158, 11, 0.1);
-  box-shadow: 0 0 24px rgba(245, 158, 11, 0.1);
-}
-
-.pc-offer__rank {
-  color: #fbbf24;
-  font:
-    0.7rem ui-monospace,
-    monospace;
-}
-
-.pc-offer__name {
-  color: var(--fg);
-  font-size: 0.84rem;
-}
-
-.pc-offer__country {
-  color: var(--fg-muted);
-  font:
-    0.66rem ui-monospace,
-    monospace;
-}
-
-.pc-offer__price {
-  color: #fcd34d;
-  font-size: 0.84rem;
-}
-
-.pc-flow {
-  margin-top: 1.25rem;
-  color: rgba(253, 230, 138, 0.74);
-}
-
-.pc-panel--image {
-  display: grid;
-  grid-template-columns: minmax(16rem, 1.2fr) minmax(12rem, 0.8fr);
-  gap: 1.1rem;
-  background: rgba(10, 5, 14, 0.76);
-}
-
-.pc-image-preview {
-  position: relative;
-  min-height: 19rem;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border: 1px solid rgba(236, 72, 153, 0.32);
-  border-radius: 0.7rem;
-  background:
-    radial-gradient(
-      circle at 52% 38%,
-      rgba(236, 72, 153, 0.23),
-      transparent 35%
-    ),
-    linear-gradient(150deg, #2b122e, #08070c 70%);
-}
-
-.pc-image-art {
-  position: relative;
-  width: 12rem;
-  height: 12rem;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 35% 32%,
-    #fbcfe8,
-    #ec4899 24%,
-    #7e22ce 56%,
-    #160b27 74%
-  );
-  box-shadow: 0 0 52px rgba(236, 72, 153, 0.42);
-}
-
-.pc-image-art__sun,
-.pc-image-art__planet,
-.pc-image-art__ring {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-}
-
-.pc-image-art__sun {
-  width: 2.1rem;
-  height: 2.1rem;
-  top: 2.2rem;
-  left: 2.3rem;
-  background: #fef3c7;
-  box-shadow: 0 0 24px #fbbf24;
-}
-
-.pc-image-art__planet {
-  width: 3.2rem;
-  height: 3.2rem;
-  right: 1.6rem;
-  bottom: 2.3rem;
-  background: radial-gradient(circle at 35% 30%, #bae6fd, #2563eb 58%, #172554);
-}
-
-.pc-image-art__ring {
-  inset: 1.2rem;
-  border: 1px solid rgba(251, 207, 232, 0.5);
-  transform: rotate(-25deg) scaleY(0.3);
-}
-
-.pc-image-preview__label {
-  position: absolute;
-  left: 0.85rem;
-  bottom: 0.75rem;
-  color: rgba(251, 207, 232, 0.72);
-}
-
-.pc-image-controls {
-  display: grid;
-  align-content: center;
-  gap: 0.8rem;
-}
-
-.pc-prompt,
-.pc-memory {
-  display: grid;
-  gap: 0.45rem;
-  padding: 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 0.55rem;
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.pc-prompt small,
-.pc-memory small {
-  color: rgba(251, 207, 232, 0.7);
-  font:
-    0.62rem ui-monospace,
-    monospace;
-  letter-spacing: 0.12em;
-}
-
-.pc-prompt strong {
-  color: var(--fg);
-  font-size: 0.85rem;
-  line-height: 1.35;
-}
-
-.pc-model,
-.pc-pipeline,
-.pc-security {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.pc-model__chip {
-  color: #f9a8d4;
-  border-color: rgba(236, 72, 153, 0.38);
-}
-
-.pc-memory__track {
-  display: block;
-  height: 0.38rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    #ec4899 0 64%,
-    rgba(255, 255, 255, 0.12) 64%
-  );
-}
-
-.pc-pipeline {
-  grid-column: 1 / -1;
-  justify-content: center;
-  margin-top: 0.2rem;
-}
-
-.pc-pipeline__step {
-  color: #f9a8d4;
-  border-color: rgba(236, 72, 153, 0.32);
-  font:
-    0.65rem ui-monospace,
-    monospace;
-}
-
-.pc-panel--transfer {
-  width: min(48rem, 76vw);
-  background: rgba(4, 14, 10, 0.76);
-}
-
-.pc-drop {
-  display: grid;
-  justify-items: center;
-  gap: 0.45rem;
-  padding: 2.1rem 1rem;
-  border: 1px dashed rgba(74, 222, 128, 0.65);
-  border-radius: 0.8rem;
-  background: rgba(34, 197, 94, 0.07);
-}
-
-.pc-drop__icon {
-  display: grid;
-  width: 2.5rem;
-  height: 2.5rem;
-  place-items: center;
-  border: 1px solid rgba(74, 222, 128, 0.6);
-  border-radius: 50%;
-  color: #86efac;
-  font-size: 1.5rem;
-}
-
-.pc-drop strong {
-  color: #dcfce7;
-  letter-spacing: 0.18em;
-}
-
-.pc-drop small {
-  color: rgba(187, 247, 208, 0.66);
-  font-size: 0.75rem;
-}
-
-.pc-files {
-  display: grid;
-  gap: 0.55rem;
-  margin-top: 1rem;
-}
-
-.pc-file {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.65rem 0.75rem;
-  border: 1px solid rgba(74, 222, 128, 0.2);
-  border-radius: 0.45rem;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.pc-file__icon {
-  color: #86efac;
-  font-size: 0.9rem;
-}
-
-.pc-file strong {
-  min-width: 0;
-  overflow: hidden;
-  color: #dcfce7;
-  font-size: 0.82rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pc-file__size {
-  color: rgba(187, 247, 208, 0.62);
-  font:
-    0.68rem ui-monospace,
-    monospace;
-}
-
-.pc-file__bar {
-  grid-column: 2 / -1;
-  display: block;
-  height: 0.24rem;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    #22c55e 0 82%,
-    rgba(255, 255, 255, 0.1) 82%
-  );
-}
-
-.pc-security {
-  justify-content: center;
-  margin-top: 1.1rem;
-  color: rgba(187, 247, 208, 0.66);
-}
-
-.pc-security span {
-  font:
-    0.62rem ui-monospace,
-    monospace;
-  letter-spacing: 0.08em;
-}
-
-@media (max-width: 720px) {
-  .pc-scene {
-    padding: 1rem;
-  }
-
-  .pc-panel {
-    width: min(92vw, 34rem);
-  }
-
-  .pc-panel--image {
-    grid-template-columns: 1fr;
-  }
-
-  .pc-image-preview {
-    min-height: 13rem;
-  }
-
-  .pc-image-art {
-    width: 8.5rem;
-    height: 8.5rem;
-  }
-
-  .pc-pipeline {
-    justify-content: flex-start;
-  }
-
-  .pc-search {
-    grid-template-columns: 1fr auto;
-  }
-
-  .pc-search__label {
-    display: none;
-  }
-
-  .pc-offer {
-    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
-  }
-
-  .pc-offer__country {
-    display: none;
-  }
-}
-
-.lite-mode .pc-panel {
-  backdrop-filter: none;
-  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.38);
-}
-
-/* =========================================================================
-   Recomposition narrative — chronographe, solutions éditoriales, lab
-   ========================================================================= */
-
-/* Les technologies restent lisibles dans le HTML, même sans rendu 3D. */
-
-.section--offers,
-.section--lab {
+.section--offers {
   min-height: 92svh;
-}
-
-.section--lab {
-  position: relative;
-}
-
-.section--lab::before {
-  content: 'FIELD NOTES / 03';
-  position: absolute;
-  top: 12%;
-  right: var(--pad);
-  color: color-mix(in srgb, var(--ag-violet) 62%, transparent);
-  font:
-    600 0.68rem ui-monospace,
-    monospace;
-  letter-spacing: 0.16em;
-}
-
-.section--lab .lab-grid {
-  gap: 0.8rem;
-  padding-left: 1.15rem;
-  border-left: 1px solid color-mix(in srgb, var(--ag-violet) 42%, var(--line));
-}
-
-.section--lab .lab-item {
-  position: relative;
-  padding: 1.15rem 1.35rem 1.15rem 1.5rem;
-  border: 1px solid color-mix(in srgb, var(--ag-violet) 26%, var(--line));
-  border-left: 2px solid var(--ag-violet);
-  border-radius: 0 0.7rem 0.7rem 0;
-  background: linear-gradient(
-    110deg,
-    rgba(34, 22, 67, 0.42),
-    rgba(8, 12, 22, 0.46)
-  );
-  box-shadow: 12px 12px 0 rgba(162, 125, 255, 0.035);
-}
-
-.section--lab .lab-item:nth-child(2) {
-  border-left-color: var(--ag-cyan);
-  background: linear-gradient(
-    110deg,
-    rgba(14, 48, 64, 0.42),
-    rgba(8, 12, 22, 0.46)
-  );
-}
-
-.section--lab .lab-item:nth-child(3) {
-  border-left-color: var(--ag-amber);
-  background: linear-gradient(
-    110deg,
-    rgba(67, 42, 20, 0.42),
-    rgba(8, 12, 22, 0.46)
-  );
-}
-
-.section--lab .lab-item::before {
-  content: '01';
-  position: absolute;
-  top: 1.2rem;
-  left: -2.55rem;
-  color: var(--ag-violet);
-  font:
-    600 0.68rem ui-monospace,
-    monospace;
-}
-
-.section--lab .lab-item:nth-child(2)::before {
-  content: '02';
-  color: var(--ag-cyan);
-}
-
-.section--lab .lab-item:nth-child(3)::before {
-  content: '03';
-  color: var(--ag-amber);
-}
-
-.section--lab .lab-item .story-note {
-  color: var(--fg);
-  font-family: ui-monospace, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.02em;
-}
-
-@media (max-width: 860px) {
-  .section--lab::before {
-    top: 4.5rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .section--lab .lab-grid {
-    padding-left: 0.95rem;
-  }
-
-  .section--lab .lab-item::before {
-    left: -2.25rem;
-  }
-
-  .section--lab::before {
-    display: none;
-  }
-}
-
-/* Chaque projet possède un geste différent : balayage, orbite, transfert. */
-.pc-scene--comparator {
-  place-items: center end;
-  padding-right: clamp(2rem, 7vw, 8rem);
-}
-
-.pc-scene--comparator .pc-panel {
-  transform: rotate(-1deg);
-}
-
-.pc-panel--comparator::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(8% + var(--pc-scan, 0.5) * 84%);
-  width: 1px;
-  background: rgba(253, 230, 138, 0.56);
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.56);
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-.pc-scene--image-generator {
-  place-items: center end;
-  padding-right: clamp(1.5rem, 6vw, 7rem);
-}
-
-.pc-scene--image-generator .pc-panel {
-  transform: rotate(1deg);
-}
-
-.pc-image-art {
-  transform: rotate(var(--pc-orbit, 0deg));
-  transition: transform 0.16s linear;
-}
-
-.pc-image-preview {
-  isolation: isolate;
-}
-
-.pc-image-preview::before {
-  content: '';
-  position: absolute;
-  inset: 10% 12%;
-  border: 1px solid rgba(251, 207, 232, 0.22);
-  border-radius: 50%;
-  transform: rotate(-18deg) scaleY(0.42);
-  box-shadow: 0 0 32px rgba(236, 72, 153, 0.16);
-  pointer-events: none;
-}
-
-.pc-scene--ultimate-transfer {
-  place-items: center end;
-  padding-right: clamp(2rem, 8vw, 10rem);
-}
-
-.pc-scene--ultimate-transfer .pc-panel {
-  transform: rotate(-0.7deg);
-}
-
-.pc-drop__icon {
-  transform: translateY(var(--pc-pulse, 0px));
-  transition: transform 0.16s linear;
-}
-
-.pc-file__bar {
-  --pc-fill: 0;
-  background: linear-gradient(
-    90deg,
-    #22c55e 0 calc(var(--pc-fill) * 100%),
-    rgba(255, 255, 255, 0.1) calc(var(--pc-fill) * 100%) 100%
-  );
-}
-
-@media (max-width: 860px) {
-  .pc-scene--comparator,
-  .pc-scene--image-generator,
-  .pc-scene--ultimate-transfer {
-    place-items: center;
-    padding-inline: 1rem;
-  }
-}
-
-/* =========================================================================
-   Project worlds v2 — each scene borrows a real visual grammar:
-   Galaxy = orbital data, Ludora = colourful tiles, MagNotes = infinite board.
-   ========================================================================= */
-.stage--comparator {
-  background:
-    radial-gradient(
-      circle at 72% 44%,
-      rgba(245, 158, 11, 0.17),
-      transparent 24rem
-    ),
-    radial-gradient(
-      circle at 84% 70%,
-      rgba(245, 158, 11, 0.08),
-      transparent 18rem
-    ),
-    radial-gradient(rgba(253, 230, 138, 0.18) 0.7px, transparent 0.8px) 0 0 /
-      28px 28px,
-    linear-gradient(135deg, #11100b 0%, #07080c 58%, #020308 100%);
-}
-
-.stage--image-generator {
-  background:
-    radial-gradient(
-      circle at 70% 36%,
-      rgba(236, 72, 153, 0.22),
-      transparent 23rem
-    ),
-    radial-gradient(
-      circle at 28% 78%,
-      rgba(99, 102, 241, 0.22),
-      transparent 24rem
-    ),
-    linear-gradient(135deg, #130b1d 0%, #090713 55%, #05050b 100%);
-}
-
-.stage--ultimate-transfer {
-  background:
-    radial-gradient(
-      circle at 74% 25%,
-      rgba(34, 197, 94, 0.13),
-      transparent 22rem
-    ),
-    radial-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px) 0 0 / 24px
-      24px,
-    linear-gradient(135deg, #0d0f1d 0%, #07120f 58%, #03050a 100%);
-}
-
-.pc-scene--comparator,
-.pc-scene--image-generator,
-.pc-scene--ultimate-transfer {
-  place-items: center end;
-  padding-right: clamp(2rem, 7vw, 9rem);
-}
-
-.pc-universe {
-  position: relative;
-  width: min(58rem, 72vw);
-  height: min(39rem, 78vh);
-  isolation: isolate;
-}
-
-.pc-orbit-rings,
-.pc-orbit-ring {
-  position: absolute;
-  inset: 0;
-}
-
-.pc-orbit-ring {
-  inset: 13% 18% 16% 22%;
-  border: 1px solid rgba(253, 230, 138, 0.2);
-  border-radius: 50%;
-  transform: rotate(-18deg) scaleY(0.45);
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.05);
-}
-
-.pc-orbit-ring:nth-child(2) {
-  inset: 4% 8% 27% 30%;
-  transform: rotate(24deg) scaleY(0.35);
-  border-color: rgba(253, 230, 138, 0.13);
-}
-
-.pc-orbit-ring:nth-child(3) {
-  inset: 25% 25% 5% 9%;
-  transform: rotate(-8deg) scaleY(0.48);
-  border-color: rgba(253, 230, 138, 0.11);
-}
-
-.pc-orbit-core {
-  position: absolute;
-  top: 42%;
-  left: 52%;
-  z-index: 2;
-  display: grid;
-  width: 13rem;
-  min-height: 7rem;
-  place-items: center;
-  align-content: center;
-  gap: 0.35rem;
-  padding: 1rem;
-  border: 1px solid rgba(253, 230, 138, 0.58);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(106, 72, 13, 0.72),
-    rgba(8, 8, 11, 0.92) 68%
-  );
-  box-shadow: 0 0 35px rgba(245, 158, 11, 0.18);
-  text-align: center;
-}
-
-.pc-orbit-core small,
-.pc-orbit-core span,
-.pc-stream-label,
-.pc-data-flow,
-.pc-orbit-node span {
-  color: rgba(253, 230, 138, 0.7);
-  font:
-    600 0.62rem ui-monospace,
-    monospace;
-  letter-spacing: 0.12em;
-}
-
-.pc-orbit-core strong {
-  color: #fff7d6;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-}
-
-.pc-orbit-node {
-  position: absolute;
-  top: 42%;
-  left: 52%;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  transform-origin: 0 0;
-  white-space: nowrap;
-}
-
-.pc-orbit-node__dot {
-  width: 0.62rem;
-  height: 0.62rem;
-  border: 1px solid #fcd34d;
-  border-radius: 50%;
-  background: #f59e0b;
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.8);
-}
-
-.pc-orbit-node span {
-  font-size: 0.58rem;
-  color: rgba(255, 247, 214, 0.86);
-}
-
-.pc-offer-stream {
-  position: absolute;
-  right: 0;
-  bottom: 2%;
-  width: min(27rem, 48%);
-  display: grid;
-  gap: 0.42rem;
-}
-
-.pc-stream-label {
-  margin: 0 0 0.35rem;
-  color: rgba(253, 230, 138, 0.84);
-}
-
-.pc-offer-row {
-  display: grid;
-  grid-template-columns: 1.7rem minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 0.6rem;
-  min-height: 2.5rem;
-  padding: 0.45rem 0.65rem;
-  border: 1px solid rgba(253, 230, 138, 0.2);
-  border-radius: 0.3rem;
-  background: rgba(9, 8, 12, 0.7);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-}
-
-.pc-offer-row b,
-.pc-offer-row em {
-  color: #fcd34d;
-  font:
-    600 0.67rem ui-monospace,
-    monospace;
-  font-style: normal;
-}
-
-.pc-offer-row strong {
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 0.75rem;
-}
-
-.pc-offer-row span {
-  color: rgba(255, 247, 214, 0.55);
-  font:
-    600 0.62rem ui-monospace,
-    monospace;
-}
-
-.pc-offer-row--best {
-  border-color: rgba(245, 158, 11, 0.68);
-  background: rgba(245, 158, 11, 0.12);
-}
-
-.pc-data-flow {
-  position: absolute;
-  left: 3%;
-  bottom: 4%;
-  display: flex;
-  gap: 0.55rem;
-  color: rgba(253, 230, 138, 0.68);
-}
-
-.pc-data-flow span {
-  opacity: calc(0.3 + var(--pc-build, 0) * 0.7);
-  transition: opacity 0.15s linear;
-}
-
-.pc-data-flow span::after {
-  content: '→';
-  margin-left: 0.55rem;
-  color: rgba(253, 230, 138, 0.34);
-}
-
-.pc-data-flow span:last-child::after {
-  content: '';
-}
-
-.pc-generation-field {
-  position: relative;
-  width: min(58rem, 72vw);
-  height: min(39rem, 78vh);
-  isolation: isolate;
-}
-
-.pc-generation-halo {
-  position: absolute;
-  inset: 5%;
-  border: 1px solid rgba(236, 72, 153, 0.2);
-  border-radius: 1.6rem;
-  background:
-    linear-gradient(
-      115deg,
-      transparent 0 38%,
-      rgba(236, 72, 153, 0.2) calc(38% + var(--beam-position, 0) * 0.1%),
-      transparent 42%
-    ),
-    radial-gradient(circle at 48% 48%, rgba(236, 72, 153, 0.1), transparent 38%);
-  box-shadow:
-    inset 0 0 50px rgba(99, 102, 241, 0.08),
-    0 0 70px rgba(236, 72, 153, 0.08);
-}
-
-.pc-generation-grid {
-  position: absolute;
-  top: 7%;
-  left: 0;
-  width: 42%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.6rem;
-  transform: rotate(-4deg);
-}
-
-.pc-generation-tile {
-  position: relative;
-  display: grid;
-  min-height: 5.7rem;
-  align-content: space-between;
-  padding: 0.8rem;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--tile-color) 58%, transparent);
-  border-radius: 0.65rem;
-  background:
-    radial-gradient(
-      circle at 68% 35%,
-      color-mix(in srgb, var(--tile-color) 72%, transparent),
-      transparent 48%
-    ),
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--tile-color) 34%, #110d1d),
-      #08070d
-    );
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
-}
-
-.pc-generation-tile::after {
-  content: '';
-  position: absolute;
-  right: 0.75rem;
-  bottom: 1.25rem;
-  width: 1.8rem;
-  height: 1.8rem;
-  border: 1px solid color-mix(in srgb, var(--tile-color) 70%, white);
-  border-radius: 50%;
-  opacity: 0.6;
-  box-shadow: 0 0 18px color-mix(in srgb, var(--tile-color) 58%, transparent);
-}
-
-.pc-generation-tile strong {
-  color: #fff;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
-}
-
-.pc-generation-tile span {
-  color: color-mix(in srgb, var(--tile-color) 68%, white);
-  font:
-    600 0.58rem ui-monospace,
-    monospace;
-  letter-spacing: 0.13em;
-}
-
-.pc-render-card {
-  position: absolute;
-  top: 12%;
-  right: 0;
-  width: 57%;
-  min-height: 20rem;
-  display: grid;
-  align-content: end;
-  gap: 0.35rem;
-  padding: 1rem;
-  overflow: hidden;
-  border: 1px solid rgba(236, 72, 153, 0.48);
-  border-radius: 1rem;
-  background: linear-gradient(
-    155deg,
-    rgba(63, 24, 70, 0.84),
-    rgba(10, 6, 18, 0.92)
-  );
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.42),
-    0 0 50px rgba(236, 72, 153, 0.12);
-}
-
-.pc-render-art {
-  position: absolute;
-  top: 15%;
-  left: 17%;
-  width: 10rem;
-  height: 10rem;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 30% 24%,
-    #fef3c7 0 6%,
-    #ec4899 19%,
-    #7e22ce 53%,
-    #160b27 75%
-  );
-  box-shadow: 0 0 52px rgba(236, 72, 153, 0.6);
-}
-
-.pc-render-art::before {
-  content: '';
-  position: absolute;
-  inset: 1rem -1rem;
-  border: 1px solid rgba(251, 207, 232, 0.68);
-  border-radius: 50%;
-  transform: rotate(-22deg) scaleY(0.27);
-}
-
-.pc-render-art__sun,
-.pc-render-art__planet,
-.pc-render-art__ring,
-.pc-render-art__grain {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-}
-
-.pc-render-art__sun {
-  top: 1.6rem;
-  left: 1.7rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  background: #fff7c2;
-  box-shadow: 0 0 24px #fbbf24;
-}
-
-.pc-render-art__planet {
-  right: 1.25rem;
-  bottom: 1.6rem;
-  width: 2.8rem;
-  height: 2.8rem;
-  background: radial-gradient(circle at 30% 25%, #bae6fd, #2563eb 56%, #172554);
-}
-
-.pc-render-art__ring {
-  inset: 0.9rem;
-  border: 1px solid rgba(251, 207, 232, 0.5);
-  transform: rotate(-25deg) scaleY(0.28);
-}
-
-.pc-render-art__grain {
-  inset: 0;
-  border-radius: 0;
-  opacity: 0.22;
-  background: radial-gradient(rgba(255, 255, 255, 0.8) 0.6px, transparent 0.8px)
-    0 0 / 5px 5px;
-}
-
-.pc-render-card small,
-.pc-prompt-card small,
-.pc-prompt-card span {
-  color: rgba(251, 207, 232, 0.72);
-  font:
-    600 0.6rem ui-monospace,
-    monospace;
-  letter-spacing: 0.12em;
-}
-
-.pc-render-card strong,
-.pc-prompt-card strong {
-  color: #fff;
-  font-size: 0.82rem;
-}
-
-.pc-prompt-card {
-  position: absolute;
-  right: 4%;
-  bottom: 7%;
-  z-index: 3;
-  display: grid;
-  gap: 0.4rem;
-  width: 42%;
-  padding: 0.85rem;
-  border: 1px solid rgba(236, 72, 153, 0.38);
-  border-radius: 0.45rem;
-  background: rgba(16, 7, 22, 0.86);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-}
-
-.pc-generation-pipeline {
-  position: absolute;
-  right: 2%;
-  bottom: -1%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  justify-content: flex-end;
-}
-
-.pc-generation-pipeline span {
-  padding: 0.38rem 0.58rem;
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  border-radius: 999px;
-  color: #f9a8d4;
-  background: rgba(22, 8, 29, 0.72);
-  font:
-    600 0.6rem ui-monospace,
-    monospace;
-}
-
-.pc-transfer-board {
-  position: relative;
-  width: min(58rem, 72vw);
-  height: min(39rem, 78vh);
-  overflow: hidden;
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 1rem;
-  background:
-    linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px) 0 0 / 32px
-      32px,
-    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px) 0 0 /
-      32px 32px,
-    rgba(8, 10, 19, 0.58);
-  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.44);
-}
-
-.pc-transfer-columns {
-  position: absolute;
-  top: 8%;
-  right: 4%;
-  bottom: auto;
-  left: 31%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-.pc-transfer-column {
-  display: grid;
-  gap: 0.25rem;
-  padding-bottom: 0.7rem;
-  border-bottom: 1px solid rgba(99, 102, 241, 0.45);
-  opacity: calc(0.45 + var(--pc-build, 0) * 0.55);
-}
-
-.pc-transfer-column:nth-child(2) {
-  border-color: rgba(34, 197, 94, 0.54);
-}
-
-.pc-transfer-column:nth-child(3) {
-  border-color: rgba(236, 72, 153, 0.5);
-}
-
-.pc-transfer-column small {
-  color: rgba(148, 163, 184, 0.65);
-  font:
-    600 0.58rem ui-monospace,
-    monospace;
-}
-
-.pc-transfer-column strong {
-  color: #f8fafc;
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
-}
-
-.pc-transfer-links {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.pc-transfer-links line {
-  stroke: #818cf8;
-  stroke-width: 0.4;
-  stroke-dasharray: 1.5 1.5;
-}
-
-.pc-transfer-files {
-  position: absolute;
-  inset: 0;
-}
-
-.pc-transfer-file {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 11.8rem;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.7rem;
-  border: 1px solid rgba(165, 180, 252, 0.42);
-  border-radius: 0.35rem;
-  background: rgba(20, 22, 39, 0.9);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
-}
-
-.pc-transfer-file:nth-child(2) {
-  border-color: rgba(74, 222, 128, 0.46);
-}
-
-.pc-transfer-file:nth-child(3) {
-  border-color: rgba(244, 114, 182, 0.46);
-}
-
-.pc-transfer-file__icon {
-  color: #a5b4fc;
-  font-size: 0.85rem;
-}
-
-.pc-transfer-file strong {
-  min-width: 0;
-  overflow: hidden;
-  color: #f8fafc;
-  font-size: 0.72rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pc-transfer-file small {
-  color: rgba(226, 232, 240, 0.58);
-  font:
-    600 0.58rem ui-monospace,
-    monospace;
-}
-
-.pc-transfer-file__bar {
-  --file-progress: 0;
-  grid-column: 2 / -1;
-  height: 0.22rem;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    #818cf8 0 calc(var(--file-progress) * 100%),
-    rgba(255, 255, 255, 0.1) calc(var(--file-progress) * 100%) 100%
-  );
-}
-
-.pc-transfer-lock {
-  position: absolute;
-  top: 58%;
-  left: 50%;
-  z-index: 4;
-  display: grid;
-  min-width: 6.2rem;
-  place-items: center;
-  gap: 0.15rem;
-  padding: 0.7rem;
-  border: 1px solid rgba(74, 222, 128, 0.65);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(22, 101, 52, 0.84),
-    rgba(8, 14, 13, 0.94) 70%
-  );
-  box-shadow: 0 0 30px rgba(34, 197, 94, 0.22);
-  transform: translateX(-50%);
-}
-
-.pc-transfer-lock span {
-  color: #86efac;
-}
-
-.pc-transfer-lock strong {
-  color: #dcfce7;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-}
-
-.pc-transfer-lock small {
-  color: rgba(187, 247, 208, 0.62);
-  font:
-    600 0.56rem ui-monospace,
-    monospace;
-}
-
-@media (max-width: 860px) {
-  .pc-scene--comparator,
-  .pc-scene--image-generator,
-  .pc-scene--ultimate-transfer {
-    place-items: center;
-    padding-inline: 1rem;
-  }
-
-  .pc-universe,
-  .pc-generation-field,
-  .pc-transfer-board {
-    width: 94vw;
-    height: 58vh;
-  }
-
-  .pc-offer-stream {
-    right: 2%;
-    bottom: 4%;
-    width: 62%;
-  }
-
-  .pc-data-flow {
-    left: 2%;
-    bottom: 1%;
-    display: none;
-  }
-
-  .pc-generation-grid {
-    width: 48%;
-  }
-
-  .pc-generation-tile {
-    min-height: 4.4rem;
-    padding: 0.6rem;
-  }
-
-  .pc-render-card {
-    min-height: 15rem;
-  }
-
-  .pc-prompt-card {
-    width: 48%;
-  }
-
-  .pc-transfer-file {
-    width: 9.4rem;
-  }
-}
-
-@media (max-width: 540px) {
-  .pc-universe,
-  .pc-generation-field,
-  .pc-transfer-board {
-    height: 48vh;
-  }
-
-  .pc-orbit-core {
-    width: 9.2rem;
-    min-height: 5.4rem;
-  }
-
-  .pc-orbit-node span {
-    font-size: 0.48rem;
-  }
-
-  .pc-offer-stream {
-    width: 72%;
-  }
-
-  .pc-offer-row {
-    grid-template-columns: 1.35rem minmax(0, 1fr) auto;
-  }
-
-  .pc-offer-row span {
-    display: none;
-  }
-
-  .pc-generation-grid {
-    top: 3%;
-    width: 53%;
-    gap: 0.35rem;
-  }
-
-  .pc-generation-tile {
-    min-height: 3.4rem;
-  }
-
-  .pc-generation-tile span {
-    font-size: 0.48rem;
-  }
-
-  .pc-render-card {
-    right: -2%;
-    width: 60%;
-    min-height: 13rem;
-  }
-
-  .pc-render-art {
-    width: 7rem;
-    height: 7rem;
-  }
-
-  .pc-prompt-card {
-    right: 2%;
-    bottom: 8%;
-    width: 52%;
-    padding: 0.6rem;
-  }
-
-  .pc-prompt-card strong {
-    font-size: 0.66rem;
-  }
-
-  .pc-transfer-columns {
-    gap: 0.4rem;
-  }
-
-  .pc-transfer-column strong {
-    font-size: 0.62rem;
-  }
-
-  .pc-transfer-file {
-    width: 8.2rem;
-    padding: 0.5rem;
-  }
-
-  .pc-transfer-file strong {
-    font-size: 0.62rem;
-  }
 }
 
 /* =========================================================================
@@ -3602,8 +1811,7 @@ button:focus-visible {
   .section--hero,
   .section--intro,
   .section--stack,
-  .section--offers,
-  .section--lab {
+  .section--offers {
     padding-left: clamp(11.5rem, 15vw, 13rem);
   }
 }
@@ -3754,10 +1962,6 @@ button:focus-visible {
     padding-bottom: 3.5rem;
   }
 }
-
-/* =========================================================================
-   Rééquilibrage FHD : solutions et seuil des produits
-   ========================================================================= */
 
 /* =========================================================================
    Contact final : manifeste centré, formulaire à la demande
@@ -4111,8 +2315,6 @@ button:focus-visible {
   .stack__lead {
     max-width: calc(60vw - var(--copy-left) - 2rem);
   }
-
-  /* Gouttière gauche réduite : seul le rail (≈ 110 px) l'occupe. */
 }
 
 /* Détail technique dépliable : le panneau reste lisible sans défilement. */
@@ -4127,8 +2329,6 @@ button:focus-visible {
     opacity: calc(0.5 + var(--rail-depth) * 0.5 + var(--rail-proximity) * 0.1);
   }
 }
-
-/* Bouton « Partager » : même famille que les liens, en retrait (action secondaire). */
 
 /* =========================================================================
    Audit UX, lot 2 : puces de preuves, statut du hero, textes d'aide
@@ -5216,10 +3416,6 @@ button:focus-visible {
   color: var(--accent-warm);
 }
 
-/* Familles de compétences : décision technique + preuve, au lieu d'un catalogue. */
-
-/* Missions : résultat, livrable, preuves et appel à l'action dans chaque carte. */
-
 /* Contact : l'email reste le chemin principal ; le formulaire prépare le même message. */
 .contact__primary {
   display: flex;
@@ -5262,8 +3458,6 @@ button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-
-/* Les missions se lisent en rangées : le résultat, le livrable, la preuve et l'action. */
 
 /* Mobile : l'action email passe avant les repères et reste au-dessus du rail. */
 @media (max-width: 860px) {

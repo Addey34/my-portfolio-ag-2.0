@@ -434,6 +434,67 @@ test('JSON-LD sous la CSP existante, sans exception de sécurité', async ({
   ).toEqual([]);
 });
 
+test('polices servies par le site, sans requête tierce ni violation CSP', async ({
+  page,
+  baseURL,
+}) => {
+  const policy = readFileSync('public/_headers', 'utf8')
+    .split('\n')
+    .find((line) => line.includes('Content-Security-Policy:'))!
+    .split('Content-Security-Policy:')[1]
+    .trim();
+  expect(policy).not.toMatch(/fonts\.(googleapis|gstatic)\.com/);
+  // Comparaison par hôte : en local, WebKit applique upgrade-insecure-requests
+  // à 127.0.0.1 (même serveur, seul le schéma change).
+  const host = new URL(baseURL!).host;
+  const foreign: string[] = [];
+  page.on('request', (request) => {
+    const url = new URL(request.url());
+    if (url.protocol.startsWith('http') && url.host !== host)
+      foreign.push(url.origin);
+  });
+  await page.route('**/*', async (route) => {
+    if (route.request().resourceType() !== 'document') return route.continue();
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      headers: { ...response.headers(), 'content-security-policy': policy },
+    });
+  });
+  await page.addInitScript(() => {
+    Reflect.set(window, 'fontCspViolations', []);
+    addEventListener('securitypolicyviolation', (event) =>
+      Reflect.get(window, 'fontCspViolations').push(event.effectiveDirective)
+    );
+  });
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  const loaded = await page.evaluate(() => ({
+    display: document.fonts.check('600 32px "Space Grotesk"'),
+    body: document.fonts.check('400 16px "Inter"'),
+  }));
+  expect(loaded).toEqual({ display: true, body: true });
+  // La licence OFL accompagne les polices distribuées (le texte n'est pas
+  // dans leurs métadonnées, retiré par le sous-ensemble d'origine).
+  const license = await page.request.get('/fonts/OFL.txt');
+  expect(license.ok()).toBe(true);
+  const text = await license.text();
+  expect(text).toContain('The Inter Project Authors');
+  expect(text).toContain('The Space Grotesk Project Authors');
+  expect(text).toContain('SIL OPEN FONT LICENSE Version 1.1');
+  // Seule l'API GitHub publique (profil du contact) peut être contactée.
+  expect(foreign.filter((value) => value !== 'https://api.github.com')).toEqual(
+    []
+  );
+  expect(
+    await page.evaluate(() =>
+      Reflect.get(window, 'fontCspViolations').filter((directive: string) =>
+        /^(font|style)-src/.test(directive)
+      )
+    )
+  ).toEqual([]);
+});
+
 uiTest(
   'clic modifié ouvre le document anglais sans changer la scène source',
   async ({ page, context, isMobile }) => {

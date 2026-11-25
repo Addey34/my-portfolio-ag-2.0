@@ -108,11 +108,11 @@ const LINK_PAIRS: [number, number][] = [
 
 /**
  * Signature visuelle du portfolio : un champ de lignes topographiques qui
- * Ã©voque Ã  la fois une carte, un signal et des trajectoires de donnÃ©es.
+ * évoque à la fois une carte, un signal et des trajectoires de données.
  *
  * Le rendu reste volontairement calme : Canvas 2D, 30 fps maximum, aucune
- * allocation importante par frame et une rÃ©action amortie au pointeur. Comme
- * le reste du site, il est pilotÃ© par le ticker GSAP partagÃ© depuis main.ts.
+ * allocation importante par frame et une réaction amortie au pointeur. Comme
+ * le reste du site, il est piloté par le ticker GSAP partagé depuis main.ts.
  */
 export class SignalField {
   private readonly context: CanvasRenderingContext2D | null;
@@ -158,19 +158,19 @@ export class SignalField {
     this.progress = state.progress;
   }
 
-  /** PrÃ©pare le morphing vers le vocabulaire du prochain univers. */
+  /** Prépare le morphing vers le vocabulaire du prochain univers. */
   setScene(scene: VisualScene, accent: string): void {
     this.targetProfile = PROFILES[scene];
     this.targetColor = parseHex(accent);
   }
 
-  /** Fige le champ dans son Ã©tat courant, sans le faire disparaÃ®tre. */
+  /** Fige le champ dans son état courant, sans le faire disparaître. */
   setPaused(paused: boolean): void {
     this.paused = paused;
     if (!paused) this.lastFrame = 0;
   }
 
-  /** Active la dÃ©formation douce des lignes autour du pointeur. */
+  /** Active la déformation douce des lignes autour du pointeur. */
   setLiteMode(on: boolean): void {
     this.liteMode = on;
     this.lastFrame = 0;
@@ -201,7 +201,7 @@ export class SignalField {
     }
   }
 
-  /** AppelÃ© par le ticker partagÃ© ; le rendu est limitÃ© Ã  30 fps. */
+  /** Appelé par le ticker partagé ; le rendu est limité à 30 fps. */
   render(time = 0): void {
     if (!this.context || this.paused || this.reduced) return;
     const frameInterval = this.liteMode ? 1000 / 20 : 1000 / 30;
@@ -209,8 +209,8 @@ export class SignalField {
 
     const delta = this.lastFrame ? Math.min(time - this.lastFrame, 50) : 16;
     this.lastFrame = time;
-    const pointerEase = 1 - Math.pow(0.88, delta / 16); // rÃ©actif
-    const profileEase = 1 - Math.pow(0.86, delta / 16); // dÃ©libÃ©rÃ©
+    const pointerEase = 1 - Math.pow(0.88, delta / 16); // réactif
+    const profileEase = 1 - Math.pow(0.86, delta / 16); // délibéré
     this.pointer.x += (this.target.x - this.pointer.x) * pointerEase;
     this.pointer.y += (this.target.y - this.pointer.y) * pointerEase;
     this.approachProfile(profileEase);
