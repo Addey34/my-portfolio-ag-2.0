@@ -1,9 +1,9 @@
 /* =========================================================================
    Design tokens — source unique des couleurs, rythmes et typographies.
    ========================================================================= */
-/* Polices servies par le site lui-même (OFL, voir assets/fonts/OFL.txt) :
-   aucune requête vers un tiers, donc aucune adresse IP de visiteur transmise,
-   et un fichier versionné mis en cache une fois pour toutes. */
+/* Polices servies par le site lui-même (licence OFL distribuée avec le site :
+   /fonts/OFL.txt, source public/fonts/OFL.txt) : aucune requête de police
+   vers un tiers, et un fichier versionné mis en cache une fois pour toutes. */
 @font-face {
   font-family: 'Inter';
   font-style: normal;

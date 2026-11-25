@@ -474,6 +474,14 @@ test('polices servies par le site, sans requête tierce ni violation CSP', async
     body: document.fonts.check('400 16px "Inter"'),
   }));
   expect(loaded).toEqual({ display: true, body: true });
+  // La licence OFL accompagne les polices distribuées (le texte n'est pas
+  // dans leurs métadonnées, retiré par le sous-ensemble d'origine).
+  const license = await page.request.get('/fonts/OFL.txt');
+  expect(license.ok()).toBe(true);
+  const text = await license.text();
+  expect(text).toContain('The Inter Project Authors');
+  expect(text).toContain('The Space Grotesk Project Authors');
+  expect(text).toContain('SIL OPEN FONT LICENSE Version 1.1');
   // Seule l'API GitHub publique (profil du contact) peut être contactée.
   expect(foreign.filter((value) => value !== 'https://api.github.com')).toEqual(
     []
