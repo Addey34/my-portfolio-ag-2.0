@@ -444,11 +444,13 @@ test('polices servies par le site, sans requête tierce ni violation CSP', async
     .split('Content-Security-Policy:')[1]
     .trim();
   expect(policy).not.toMatch(/fonts\.(googleapis|gstatic)\.com/);
-  const origin = new URL(baseURL!).origin;
+  // Comparaison par hôte : en local, WebKit applique upgrade-insecure-requests
+  // à 127.0.0.1 (même serveur, seul le schéma change).
+  const host = new URL(baseURL!).host;
   const foreign: string[] = [];
   page.on('request', (request) => {
     const url = new URL(request.url());
-    if (url.protocol.startsWith('http') && url.origin !== origin)
+    if (url.protocol.startsWith('http') && url.host !== host)
       foreign.push(url.origin);
   });
   await page.route('**/*', async (route) => {
