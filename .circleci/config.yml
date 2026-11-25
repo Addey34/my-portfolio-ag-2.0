@@ -1,6 +1,8 @@
 version: 2.1
 
 # Validation uniquement : aucun deploiement ni secret CircleCI requis.
+# Le profil Android est qualifie en local avant fusion : les memes specs tournent
+# deja ici en desktop, et le doubler consommait la moitie des credits d'un run.
 jobs:
   verify:
     docker:
@@ -78,23 +80,6 @@ jobs:
       - store_artifacts:
           path: /tmp/portfolio-playwright/desktop
           destination: playwright-desktop
-      - run:
-          name: Playwright Android - SEO et confidentialite - budget 20 min
-          when: always
-          command: |
-            test -d node_modules
-            test -d dist
-            mkdir -p /tmp/portfolio-playwright/android
-            E2E_REPORT_DIR=/tmp/portfolio-playwright/android \
-              timeout --kill-after=30s 20m pnpm exec playwright test \
-              e2e/seo-i18n.spec.ts e2e/contact-security.spec.ts e2e/contact-qualification.spec.ts \
-              --project=android-chromium --workers=1 --global-timeout=1170000 \
-              --output=/tmp/portfolio-playwright/android/failures
-      - store_test_results:
-          path: /tmp/portfolio-playwright/android/junit.xml
-      - store_artifacts:
-          path: /tmp/portfolio-playwright/android
-          destination: playwright-android
 
 workflows:
   portfolio-checks:
