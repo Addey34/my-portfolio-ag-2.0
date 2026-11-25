@@ -565,3 +565,59 @@
     );
   }
 }
+
+/* ==========================================================================
+   Mobile : Solutions en bons de commande à talon vertical
+   Un bon par mission : le numéro vit dans le talon perforé à gauche, le
+   contenu occupe le corps du bon. Composition propre au mobile (la version
+   large garde ses bons 2×2 à talon horizontal).
+   ========================================================================== */
+@media (max-width: 860px) {
+  .section--offers .offer-grid {
+    gap: 0.85rem;
+    border-top: 0;
+  }
+
+  .section--offers .offer-card {
+    position: relative;
+    grid-template-columns: 2.9rem minmax(0, 1fr);
+    column-gap: 0.95rem;
+    padding: 1rem 1rem 1rem 0;
+    background: rgba(10, 16, 25, 0.66);
+    border: 1px solid var(--editorial-rule);
+    border-left: 2px solid var(--brass);
+    border-radius: 0.3rem;
+  }
+
+  /* Talon : numéro centré, séparé du corps par un pointillé de découpe. */
+  .section--offers .offer-card > span:first-child {
+    grid-column: 1;
+    grid-row: 1 / span 6;
+    align-self: stretch;
+    display: grid;
+    place-items: start center;
+    margin: 0;
+    padding: 0.1rem 0 0;
+    font-size: 1.15rem;
+    border-right: 1px dashed var(--brass-line);
+  }
+
+  .section--offers .offer-card > :not(span:first-child) {
+    grid-column: 2;
+  }
+}
+
+/* Mobile : le cartel de l'œuvre se pose juste au-dessus de la fiche produit, qui
+   s'accroche à max(226 px, 42 % de la hauteur) (voir ScrollChoreographer). */
+@media (max-width: 860px) {
+  .exhibit-plaque {
+    top: calc(max(226px, 42svh) - 2.75rem);
+  }
+}
+
+/* Mobile : le cartel ne garde que le numéro et le nom, la note retombe sur la fiche. */
+@media (max-width: 860px) {
+  .exhibit-plaque__note {
+    display: none;
+  }
+}

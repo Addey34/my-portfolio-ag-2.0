@@ -77,23 +77,23 @@ const CUBE_CENTERS: ReadonlyArray<readonly [number, number]> = [
  */
 const SCENE_FRAMING: Record<VisualScene, number> = {
   identity: 1,
-  stack: 1.12,
-  solutions: 1.1,
-  selection: 1.08,
-  galaxy: 1.22,
-  ludora: 1.2,
-  magnotes: 1.2,
-  studies: 1.12,
-  contact: 1.15,
+  stack: 1.04,
+  solutions: 1.04,
+  selection: 1,
+  galaxy: 1.12,
+  ludora: 1.12,
+  magnotes: 1.12,
+  studies: 1.04,
+  contact: 1.06,
 };
 const SCENE_FRAMING_COMPACT: Record<VisualScene, number> = {
   identity: 1,
   stack: 1.14,
   solutions: 1,
   selection: 1.1,
-  galaxy: 1.14,
-  ludora: 1.1,
-  magnotes: 1.1,
+  galaxy: 1.3,
+  ludora: 1.32,
+  magnotes: 1.3,
   studies: 1.1,
   contact: 1,
 };
@@ -184,6 +184,51 @@ type Crossing =
   | 'magnotes-studies'
   | 'studies-contact'
   | null;
+/**
+ * Raccords articulés : les pièces se détachent en vue éclatée, voyagent en arc,
+ * l'une après l'autre, puis se réassemblent en retard sur leur départ. Les
+ * autres raccords gardent la métamorphose directe.
+ */
+type ArticulatedProfile = {
+  /** Hauteur de l'arc de transfert (unités monde). */
+  arc: number;
+  /** Écartement radial au pic de la vue éclatée. */
+  burst: number;
+  /** Décalage total entre la première et la dernière pièce (part de progression). */
+  stagger: number;
+  /** Retard d'arrivée des pièces entrantes sur le départ des sortantes. */
+  handoff: number;
+  /** Bascule maximale autour des axes X et Z (radians). */
+  tumble: number;
+};
+const ARTICULATED: Partial<
+  Record<Exclude<Crossing, null>, ArticulatedProfile>
+> = {
+  // Les anneaux de l'astrolabe s'ouvrent, se couchent et fournissent le dé et ses tuiles.
+  'galaxy-ludora': {
+    arc: 0.9,
+    burst: 1.15,
+    stagger: 0.24,
+    handoff: 0.14,
+    tumble: Math.PI * 0.85,
+  },
+  // Le dé s'ouvre comme une charnière : le livre se forme, les tuiles se relèvent en notes.
+  'ludora-magnotes': {
+    arc: 0.75,
+    burst: 0.85,
+    stagger: 0.28,
+    handoff: 0.12,
+    tumble: Math.PI * 0.7,
+  },
+  // Les quatre blocs se désolidarisent puis se tassent en trois sceaux.
+  'solutions-selection': {
+    arc: 0.6,
+    burst: 0.9,
+    stagger: 0.2,
+    handoff: 0.12,
+    tumble: Math.PI * 0.45,
+  },
+};
 type MorphPair = {
   from: Object3D;
   to: Object3D;
@@ -874,7 +919,7 @@ export class StoryWorld3D {
         : Math.sin(Math.PI * smooth(crossingProgress));
     this.crossingSwell = swell;
     this.world.scale.multiplyScalar(
-      (directOpening || medallionOpening ? 1 : framing) * (1 - 0.1 * swell)
+      (directOpening ? 1 : framing) * (1 - 0.1 * swell)
     );
     this.syncSwellCss(swell);
     // Après le prologue, l'objet garde une seule position à l'écran : il ne monte
@@ -2584,7 +2629,7 @@ export class StoryWorld3D {
     const group = this.features.get('galaxy')?.group;
     if (!group || this.galaxyRingSpins.length === 0) return;
     group.scale.setScalar((this.compact ? 1.45 : 1.2) * (0.6 + 0.4 * appear));
-    group.position.y = this.compact ? -0.3 : 0;
+    group.position.y = this.compact ? 0.3 : 0;
     group.rotation.set(-0.28, 0.5 + Math.sin(time * 0.25) * 0.2, 0);
     // Les anneaux tournent autour de leur axe, plus vite à l'apparition.
     this.galaxyRingSpins.forEach((spin, index) => {
@@ -2695,7 +2740,9 @@ export class StoryWorld3D {
       out = this.features.get(from)?.group;
       incoming = this.features.get(to)?.group;
     }
-    const turns = Math.PI * 6;
+    // Un raccord articulé laisse lire les pièces : la toupie globale est presque éteinte.
+    const turns =
+      crossing && ARTICULATED[crossing] ? Math.PI * 1.2 : Math.PI * 6;
     const rise = smooth(c / 0.55);
     const fall = 1 - smooth((c - 0.45) / 0.55);
     if (out) {
@@ -2725,6 +2772,18 @@ export class StoryWorld3D {
       from.getWorldPosition(new Vector3())
     );
     const toWorld = pairs.map(({ to }) => to.getWorldPosition(new Vector3()));
+    const profile = ARTICULATED[crossing];
+    if (profile) {
+      this.applyArticulatedMorph(
+        pairs,
+        fromWorld,
+        toWorld,
+        crossing,
+        crossingProgress,
+        profile
+      );
+      return;
+    }
     const movedFrom = new Set<Object3D>();
     const movedTo = new Set<Object3D>();
     pairs.forEach(({ from, to, spin, moveFrom, end, begin }, index) => {
@@ -2745,6 +2804,93 @@ export class StoryWorld3D {
         to.position.lerp(start, 1 - travel);
         to.scale.multiplyScalar(begin + (1 - begin) * travel);
         to.rotation.y -= (1 - travel) * spin;
+      }
+    });
+  }
+
+  /**
+   * Raccord articulé : désassemblage en vue éclatée, transfert en arc pièce par
+   * pièce, bascule autour d'axes distincts, puis assemblage à l'arrivée. Les
+   * pièces entrantes arrivent après le départ des sortantes : on lit d'abord
+   * l'objet qui se défait, ensuite celui qui se monte.
+   */
+  private applyArticulatedMorph(
+    pairs: MorphPair[],
+    fromWorld: Vector3[],
+    toWorld: Vector3[],
+    crossing: Exclude<Crossing, null>,
+    p: number,
+    profile: ArticulatedProfile
+  ): void {
+    const [fromScene] = crossing.split('-') as VisualScene[];
+    const centre =
+      this.features.get(fromScene)?.group.getWorldPosition(new Vector3()) ??
+      new Vector3();
+    const window = 0.5;
+    const count = Math.max(1, pairs.length - 1);
+    const movedFrom = new Set<Object3D>();
+    const movedTo = new Set<Object3D>();
+    const unit = (value: number): number => Math.min(1, Math.max(0, value));
+    const offset = (
+      parent: Object3D,
+      local: Vector3,
+      world: Vector3
+    ): Vector3 =>
+      parent.worldToLocal(parent.localToWorld(local.clone()).add(world));
+    pairs.forEach(({ from, to, spin, moveFrom, end, begin }, index) => {
+      const delay = (profile.stagger * index) / count;
+      const tOut = smooth(unit((p - 0.04 - delay) / window));
+      const tIn = smooth(unit((p - 0.04 - delay - profile.handoff) / window));
+      const side = index % 2 === 0 ? 1 : -1;
+      // Direction d'écartement : depuis le centre de la forme sortante.
+      const away = fromWorld[index].clone().sub(centre);
+      away.y *= 0.4;
+      if (away.lengthSq() < 1e-4)
+        away.set(Math.cos(index * 2.4), 0.3, Math.sin(index * 2.4));
+      away.normalize();
+      if (moveFrom && from.parent && !movedFrom.has(from)) {
+        movedFrom.add(from);
+        this.remember(from);
+        const lift = Math.sin(Math.PI * tOut);
+        from.position.lerp(
+          from.parent.worldToLocal(toWorld[index].clone()),
+          tOut
+        );
+        from.position.copy(
+          offset(
+            from.parent,
+            from.position,
+            away
+              .clone()
+              .multiplyScalar(profile.burst * lift)
+              .add(new Vector3(0, profile.arc * lift, 0))
+          )
+        );
+        from.scale.multiplyScalar(1 + (end - 1) * tOut);
+        from.rotation.y += tOut * spin;
+        from.rotation.x += Math.sin(Math.PI * tOut) * profile.tumble * side;
+        from.rotation.z += tOut * profile.tumble * 0.5 * -side;
+      }
+      if (to.parent && !movedTo.has(to)) {
+        movedTo.add(to);
+        this.remember(to);
+        const start = to.parent.worldToLocal(fromWorld[index].clone());
+        to.position.lerp(start, 1 - tIn);
+        const settle = Math.sin(Math.PI * tIn);
+        to.position.copy(
+          offset(
+            to.parent,
+            to.position,
+            away
+              .clone()
+              .multiplyScalar(-profile.burst * 0.7 * settle)
+              .add(new Vector3(0, profile.arc * 0.6 * settle, 0))
+          )
+        );
+        to.scale.multiplyScalar(begin + (1 - begin) * tIn);
+        to.rotation.y -= (1 - tIn) * spin;
+        to.rotation.x -= (1 - tIn) * (1 - tIn) * profile.tumble * side;
+        to.rotation.z += (1 - tIn) * profile.tumble * 0.5 * side;
       }
     });
   }
@@ -2782,7 +2928,7 @@ export class StoryWorld3D {
     const board = this.craftedNodes.get('DICE__board_pivot');
     if (!group || !die || !board) return;
     group.scale.setScalar((this.compact ? 1.25 : 1.12) * (0.7 + 0.3 * appear));
-    group.position.y = this.compact ? -0.3 : 0;
+    group.position.y = this.compact ? 0.3 : 0;
     group.rotation.set(0.42, -0.35, 0);
     // Le dé ancien roule en arrivant, puis se pose sur une lente rotation.
     const tumble = (1 - appear) * Math.PI * 2.5;
@@ -2821,7 +2967,7 @@ export class StoryWorld3D {
     const book = this.craftedNodes.get('BOOK__book_pivot');
     if (!group || !book) return;
     group.scale.setScalar((this.compact ? 1.2 : 1.04) * (0.75 + 0.25 * appear));
-    group.position.y = this.compact ? -0.3 : 0;
+    group.position.y = this.compact ? 0.3 : 0;
     group.rotation.set(0.42, 0.28, 0);
     book.position.y =
       (this.craftedBase.get('BOOK__book_pivot')?.y ?? 0) +
@@ -2904,7 +3050,9 @@ export class StoryWorld3D {
     const group = this.features.get('contact')?.group;
     const letter = this.craftedNodes.get('LETTER__letter_pivot');
     if (!group || !letter) return;
-    group.scale.setScalar((this.compact ? 0.85 : 1.1) * (0.75 + 0.25 * appear));
+    group.scale.setScalar(1.1 * (0.75 + 0.25 * appear));
+    // Sur mobile la lettre monte : elle laisse le surtitre dégagé.
+    group.position.y = this.compact ? 0.45 : 0;
     group.rotation.set(-0.08, 0.3, 0);
     // La lettre se retourne en arrivant puis flotte, sceau tourné vers le visiteur.
     letter.rotation.set(
@@ -2921,7 +3069,7 @@ export class StoryWorld3D {
     // Sur téléphone, la tour tient en entier entre la lampe et le titre.
     const phone = innerWidth <= 600;
     group.scale.setScalar(
-      (this.compact ? (phone ? 0.62 : 0.84) : 1.05) * (0.8 + 0.2 * visibility)
+      (this.compact ? (phone ? 0.95 : 0.84) : 1.05) * (0.8 + 0.2 * visibility)
     );
     // Dégager la pièce du texte sur téléphone et sous le texte sur tablette.
     group.position.y = this.compact ? (phone ? 0.5 : -0.45) : 0;

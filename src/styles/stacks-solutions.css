@@ -373,26 +373,11 @@
     z-index: 3;
     margin-top: 1.4rem;
   }
-
-  .section--offers .offer-card {
-    padding-right: 2.4rem;
-    background: linear-gradient(
-      90deg,
-      rgba(3, 5, 11, 0.98) 0 86%,
-      rgba(3, 5, 11, 0.42) 96%,
-      transparent
-    );
-  }
 }
 
 @media (max-width: 600px) {
   .stack-families {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .section--offers .offer-card {
-    grid-template-columns: 2.1rem minmax(0, 1fr);
-    padding-block: 0.9rem;
   }
 
   .section--offers .offer-card .offer-card__foot {
