@@ -404,6 +404,9 @@ try {
   boot();
 } catch (error) {
   document.body.innerHTML = staticMarkup;
+  // Le balisage restauré contient l'écran d'attente : sans démarrage, plus
+  // rien ne le retirerait. Le contenu statique doit rester seul à l'écran.
+  document.getElementById('boot-loader')?.remove();
   document.documentElement.classList.remove('compact-mobile');
   document.documentElement.classList.replace('js', 'no-js');
   console.error('Échec du démarrage du portfolio :', error);
