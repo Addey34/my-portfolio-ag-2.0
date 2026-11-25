@@ -81,7 +81,8 @@ export class SectionRail {
       { id: 'freelance', label: () => t('nav.freelance') },
       { id: 'projects-intro', label: () => t('nav.projects') },
       ...PROJECTS.map((p) => ({ id: p.id, label: () => p.name })),
-      { id: 'studies', label: () => t('studies.kicker') },
+      // Libellé court : le nom complet de la section tronquait le rail.
+      { id: 'studies', label: () => t('rail.studies') },
       { id: 'contact', label: () => t('nav.contact') },
     ];
     this.nav = this.build();

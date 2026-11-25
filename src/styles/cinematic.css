@@ -621,3 +621,142 @@
     display: none;
   }
 }
+
+/* ==========================================================================
+   Contact : coordonnées en carte de visite (PORT-EXCELLENCE-001)
+   L'adresse, sa copie et les profils s'alignent sur une même ligne médiane au
+   lieu de flotter ; sur mobile, le chapitre reprend le bord gauche commun.
+   ========================================================================== */
+#contact .contact__links {
+  align-items: center;
+}
+
+/* Mobile : un léger bandeau sous le HUD, le texte ne passe plus sous le
+   monogramme et les boutons pendant la lecture. */
+@media (max-width: 860px) {
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 15;
+    height: calc(4.6rem + env(safe-area-inset-top));
+    background: linear-gradient(
+      to bottom,
+      rgba(3, 5, 10, 0.96) 0%,
+      rgba(3, 5, 10, 0.9) 58%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  #contact.section--contact {
+    align-items: stretch;
+    text-align: left;
+  }
+
+  #contact .contact__kicker,
+  #contact .contact__title,
+  #contact .contact__lead,
+  #contact .contact__signals,
+  #contact .contact__disclosure,
+  #contact .contact__links {
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  #contact .contact__primary {
+    justify-content: stretch;
+  }
+
+  /* L'action principale occupe toute la largeur du pouce. */
+  #contact .contact__cta--email {
+    width: 100%;
+    min-height: 3.25rem;
+    justify-content: center;
+  }
+
+  /* Repères : trois mentions en ligne, comme sur grand écran. */
+  #contact .contact__signals {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.4rem 1.1rem;
+    margin-top: 0.4rem !important;
+    padding: 0.85rem 0 0;
+    border-top: 1px solid var(--brass-line);
+  }
+
+  #contact .contact__signals li,
+  #contact .contact__signals li:last-child {
+    position: relative;
+    justify-content: flex-start;
+    padding: 0 0 0 1rem;
+    border: 0;
+  }
+
+  #contact .contact__signals li::before {
+    content: '';
+    position: absolute;
+    top: 0.62em;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--brass);
+    transform: rotate(45deg);
+  }
+
+  #contact .contact__form-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Carte opaque : la lettre et la lampe ne traversent plus les coordonnées. */
+  #contact .contact__links:not([data-github-profile]) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    padding: 1rem;
+    background: var(--plate-solid);
+    border: 1px solid var(--editorial-rule);
+    border-left: 2px solid var(--brass);
+    border-radius: 0.3rem;
+  }
+
+  #contact .contact__links .contact__availability,
+  #contact .contact__links [data-contact-email] {
+    flex-basis: 100%;
+  }
+
+  #contact .contact__links [data-contact-email] {
+    margin-bottom: 0.2rem;
+    font-size: 1.05rem;
+    overflow-wrap: anywhere;
+  }
+
+  /* Copie et profils : trois boutons de même hauteur, cible tactile ≥ 44 px. */
+  #contact
+    .contact__links:not([data-github-profile])
+    > a:not([data-contact-email]),
+  #contact .contact__copy {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: var(--label-size);
+  }
+
+  /* Activité GitHub : une note discrète sous la carte. */
+  #contact .contact__links[data-github-profile] {
+    display: grid;
+    justify-content: start;
+    justify-items: start;
+    gap: 0.35rem;
+  }
+
+  #contact .contact__links[data-github-profile] a {
+    font-size: 0.92rem;
+  }
+}
