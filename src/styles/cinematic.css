@@ -1,0 +1,540 @@
+/* ==========================================================================
+   Direction artistique finale — compositions propres à chaque section.
+   Chargée après editorial.css : héros signature, Approche en « repères
+   d'horloge », Stacks en chaîne de modules, Solutions en bons de commande,
+   Contact en lettre, puis finition commune (boutons, HUD, rail, focus).
+   Les sections n'adoptent plus toutes « texte à gauche, objet à droite » :
+   chaque composition dialogue avec la sculpture qui l'accompagne.
+   ========================================================================== */
+
+:root {
+  --press: 1px;
+  --brass-line: color-mix(in srgb, var(--brass) 55%, transparent);
+}
+
+/* ---- Finition commune : un geste mécanique, partout --------------------- */
+.hero__cta,
+.chapter__links .chapter__link--primary,
+.study__links a:first-child,
+.offer-card__cta,
+.contact__cta,
+.hud__btn,
+.contact__intent {
+  transition:
+    transform 0.16s var(--ease-out),
+    background 0.2s var(--ease-out),
+    border-color 0.2s var(--ease-out),
+    color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+}
+
+.hero__cta:active,
+.chapter__links .chapter__link--primary:active,
+.study__links a:first-child:active,
+.offer-card__cta:active,
+.contact__cta:active,
+.hud__btn:active,
+.contact__intent:active {
+  transform: translateY(var(--press)) scale(0.985);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+:is(a, button, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+  border-radius: 0.3rem;
+}
+
+/* ==========================================================================
+   Héros signature
+   ========================================================================== */
+.section--hero {
+  position: relative;
+}
+
+/* Halo de lampe : suit le pointeur (transform seul, cf. heroLight.ts). */
+@media (min-width: 981px) {
+  .section--hero::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    width: min(46vw, 40rem);
+    aspect-ratio: 1;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(232, 190, 110, 0.16),
+      rgba(232, 190, 110, 0.05) 42%,
+      transparent 68%
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate3d(var(--hx, 0px), var(--hy, 0px), 0);
+    will-change: transform;
+  }
+}
+
+.hero__tags {
+  flex-wrap: wrap;
+}
+
+.hero__tag {
+  font-size: 0.74rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero__cta--primary::after {
+  content: '→';
+  margin-left: 0.55rem;
+  transition: transform 0.25s var(--ease-out);
+}
+
+.hero__cta--primary:hover::after,
+.hero__cta--primary:focus-visible::after {
+  transform: translateX(0.3rem);
+}
+
+/* Accès direct : index numéroté, comme les repères d'un cadran. */
+.hero__projects ul {
+  counter-reset: hero-index;
+}
+
+.hero__projects a {
+  counter-increment: hero-index;
+  gap: 0.5rem;
+}
+
+.hero__projects a::before {
+  content: counter(hero-index, decimal-leading-zero);
+  color: var(--brass);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+/* Indicateur : un trait qui se remplit, relié à l'horloge qui suit. */
+.hero__cue {
+  position: absolute;
+  bottom: clamp(1.4rem, 4svh, 2.6rem);
+  left: var(--pad);
+  display: none;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--fg-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.hero__cue-line {
+  position: relative;
+  width: 3.2rem;
+  height: 1px;
+  overflow: hidden;
+  background: var(--editorial-rule);
+}
+
+.hero__cue-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--brass);
+  transform-origin: left;
+  animation: cue-fill 2.6s var(--ease-out) infinite;
+}
+
+.hero__cue:hover,
+.hero__cue:focus-visible {
+  color: var(--fg);
+}
+
+@keyframes cue-fill {
+  0% {
+    transform: scaleX(0);
+  }
+  55% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 981px) {
+  .hero__cue {
+    display: inline-flex;
+    left: var(--edge);
+  }
+
+  #top .hero__inner {
+    width: min(54%, 46rem);
+    max-width: 46rem;
+  }
+
+  #top .hero__title {
+    font-size: clamp(4.4rem, 8vw, 7.8rem);
+    line-height: 0.88;
+    letter-spacing: -0.055em;
+  }
+
+  #top .hero__lead {
+    max-width: 31rem;
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  }
+
+  #top .hero__projects {
+    margin-top: 1.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--editorial-rule);
+  }
+}
+
+/* ==========================================================================
+   Approche : trois repères d'horloge sous une grande phrase
+   ========================================================================== */
+#intro .intro__facts {
+  counter-reset: mark;
+}
+
+#intro .intro__facts li {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+  padding: 1.25rem 0 0.9rem;
+  border: 0;
+  border-top: 1px solid var(--brass-line);
+  background: none;
+  counter-increment: mark;
+}
+
+#intro .intro__facts li::before {
+  content: counter(mark, upper-roman);
+  color: var(--brass);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.24em;
+}
+
+/* Graduation : un losange laiton marque chaque heure sur le trait. */
+#intro .intro__facts li::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  background: var(--brass);
+  transform: rotate(45deg);
+}
+
+#intro .intro__facts strong {
+  color: var(--fg);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+#intro .intro__facts span {
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 981px) {
+  #intro .intro__title {
+    max-width: calc(62vw - var(--edge));
+    font-size: clamp(2.7rem, 4.6vw, 4.4rem);
+    line-height: 1.02;
+  }
+
+  #intro .intro__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 clamp(1.2rem, 2.4vw, 2.2rem);
+    width: min(100%, calc(62vw - var(--edge)));
+    margin-top: clamp(2rem, 6svh, 3.4rem);
+    padding: 0;
+  }
+}
+
+/* ==========================================================================
+   Stacks : chaîne de quatre modules, du navigateur au déploiement
+   ========================================================================== */
+@media (min-width: 981px) {
+  #stack .stack-viz,
+  #stack .stack-families {
+    width: min(100%, calc(58vw - var(--edge)));
+  }
+
+  #stack .stack-families {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    position: relative;
+  }
+
+  /* Filet vertical : la chaîne qui relie les modules entre eux. */
+  #stack .stack-families::before {
+    content: '';
+    position: absolute;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    left: 0;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      #8fc3e8,
+      #6fe0ea 34%,
+      #e8a3d6 67%,
+      #e7b95c
+    );
+    opacity: 0.7;
+  }
+
+  #stack .stack-family {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    grid-template-areas:
+      'name decision'
+      'name chips'
+      'name proof';
+    column-gap: 1.4rem;
+    row-gap: 0.4rem;
+    padding: 0.8rem 0 0.8rem 1.4rem;
+    border: 0;
+    border-bottom: 1px solid var(--editorial-rule);
+    background: none;
+    clip-path: none;
+    position: relative;
+  }
+
+  #stack .stack-family::before {
+    content: '';
+    position: absolute;
+    top: 1.35rem;
+    left: -3px;
+    width: 7px;
+    height: 7px;
+    background: var(--node-color);
+    transform: rotate(45deg);
+  }
+
+  #stack .stack-family:hover,
+  #stack .stack-family:focus-within {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--node-color) 8%, transparent),
+      transparent 85%
+    );
+  }
+
+  #stack .stack-family .stack-family__name {
+    grid-area: name;
+    align-self: start;
+    font-size: 0.74rem;
+  }
+
+  #stack .stack-family__decision {
+    grid-area: decision;
+    font-size: 0.92rem;
+  }
+
+  #stack .stack-family__chips {
+    grid-area: chips;
+  }
+
+  #stack
+    .stack-family
+    > :not(.stack-family__name, .stack-family__decision, .stack-family__chips) {
+    grid-area: proof;
+    margin: 0;
+  }
+}
+
+/* Séquence : le module au centre de l'écran s'allume, les autres s'estompent. */
+@media (min-width: 981px) {
+  #stack .stack-family {
+    transition: opacity 0.35s var(--ease-out);
+  }
+
+  #stack .stack-families:has(.is-lit) .stack-family:not(.is-lit) {
+    opacity: 0.7;
+  }
+}
+
+/* ==========================================================================
+   Solutions : quatre bons de commande, du besoin à la preuve
+   ========================================================================== */
+@media (min-width: 981px) {
+  .section--offers {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .section--offers .section-copy,
+  .section--offers .offer-grid {
+    grid-column: 1;
+  }
+
+  .section--offers .offer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.2rem;
+    width: min(100%, calc(60vw - var(--edge)));
+    border-top: 0;
+  }
+
+  .section--offers .offer-card {
+    position: relative;
+    grid-template-columns: 1fr;
+    align-content: start;
+    padding: 1.1rem 1.2rem 1rem;
+    background: rgba(10, 16, 25, 0.62);
+    border: 1px solid var(--editorial-rule);
+    border-top: 2px solid var(--brass);
+    border-radius: 0.3rem;
+  }
+
+  /* Talon perforé : pointillé de découpe sous le numéro du bon. */
+  .section--offers .offer-card > span {
+    grid-row: auto;
+    margin: 0 0 0.6rem;
+    padding-bottom: 0.6rem;
+    font-size: 1.2rem;
+    border-bottom: 1px dashed var(--brass-line);
+  }
+
+  .section--offers .offer-card p {
+    grid-column: 1;
+  }
+
+  .section--offers .offer-card:hover,
+  .section--offers .offer-card:focus-within {
+    background: rgba(24, 28, 30, 0.8);
+    border-color: var(--brass-line);
+  }
+
+  .section--offers .offer-aside {
+    width: min(100%, calc(60vw - var(--edge)));
+  }
+}
+
+/* ==========================================================================
+   Contact : la lettre
+   ========================================================================== */
+.section--contact .contact__title {
+  line-height: 0.92;
+}
+
+.contact__cta {
+  gap: 0.6rem;
+}
+
+.contact__cta--email::after {
+  content: '→';
+  transition: transform 0.25s var(--ease-out);
+}
+
+.contact__cta--email:hover::after,
+.contact__cta--email:focus-visible::after {
+  transform: translateX(0.3rem);
+}
+
+@media (min-width: 981px) {
+  #contact .contact__title {
+    font-size: clamp(3.4rem, 7.4vw, 7rem);
+  }
+
+  #contact .contact__primary {
+    margin-top: 1.6rem;
+  }
+
+  #contact .contact__cta--email {
+    padding: 1.05rem 2.1rem;
+    font-size: 1.08rem;
+  }
+
+  /* Repères : trois mentions séparées par des losanges, comme un cachet. */
+  #contact .contact__signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    margin-top: 1.8rem;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--brass-line);
+  }
+
+  #contact .contact__signals li {
+    position: relative;
+    padding: 0 0 0 1.1rem;
+    border: 0;
+    background: none;
+    font-size: 0.86rem;
+  }
+
+  #contact .contact__signals li::before {
+    content: '';
+    position: absolute;
+    top: 0.55em;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--brass);
+    transform: rotate(45deg);
+  }
+}
+
+/* ==========================================================================
+   HUD et rail : un seul langage de contrôles
+   ========================================================================== */
+@media (min-width: 981px) {
+  .hud__btn {
+    border-color: var(--brass-line);
+  }
+}
+
+.hud__btn:hover,
+.hud__btn:focus-visible {
+  border-color: var(--brass);
+  background: color-mix(in srgb, var(--brass) 10%, var(--bg-soft));
+}
+
+@media (max-height: 760px) {
+  .hero__cue {
+    display: none;
+  }
+}
+
+/* Petits téléphones : le héros tient au-dessus du rail, boutons compris. */
+@media (max-width: 860px) and (max-height: 700px) {
+  #top .hero__lead {
+    font-size: 0.98rem;
+    line-height: 1.45;
+  }
+
+  #top .hero__ctas {
+    margin-top: 0.8rem;
+  }
+
+  #top .hero__cta {
+    padding-block: 0.62rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__cue-line::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+
+  .section--hero::before {
+    transform: none;
+  }
+
+  .hero__cta--primary::after,
+  .contact__cta--email::after {
+    transition: none;
+  }
+}
