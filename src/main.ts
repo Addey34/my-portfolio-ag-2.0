@@ -3,6 +3,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SmoothScroll } from '@/core/SmoothScroll';
 import { ScrollChoreographer } from '@/core/ScrollChoreographer';
 import { initHero } from '@/core/heroAnim';
+import { initHeroLight } from '@/core/heroLight';
+import { initSequenceFocus } from '@/core/sequenceFocus';
 import { initReveals } from '@/core/reveals';
 import { initScrollScenes } from '@/core/scrollScenes';
 import { SectionTransitions } from '@/core/sectionTransitions';
@@ -256,6 +258,8 @@ function boot(): void {
 
   // 3b. Animation inaugurale du héros (split-text + badges + CTAs).
   initHero(scroll);
+  initHeroLight();
+  initSequenceFocus();
 
   // 4. Monde 3D continu, piloté par l'état visuel du récit.
   const canvas = document.getElementById(

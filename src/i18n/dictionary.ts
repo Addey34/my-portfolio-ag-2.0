@@ -48,6 +48,8 @@ const fr: Dict = {
   'hero.tag.2': 'Autodidacte · Three.js & WebGL',
   'hero.cta.projects': 'Explorer les produits',
   'hero.projects': 'Accès direct aux projets',
+  'hero.cue': 'Approche',
+  'hero.cue.aria': 'Défiler vers l’approche',
   'hero.cta.contact': 'Parler d’un projet',
   'hero.lead':
     'Je construis des applications web, des systèmes backend et des expériences 3D temps réel, de l’interface au déploiement.',
@@ -239,6 +241,8 @@ const en: Dict = {
   'hero.tag.2': 'Self-taught · Three.js & WebGL',
   'hero.cta.projects': 'Explore the products',
   'hero.projects': 'Jump to a project',
+  'hero.cue': 'Approach',
+  'hero.cue.aria': 'Scroll to the approach',
   'hero.cta.contact': 'Discuss a project',
   'hero.lead':
     'I build web applications, backend systems and real-time 3D experiences, from interface to deployment.',
