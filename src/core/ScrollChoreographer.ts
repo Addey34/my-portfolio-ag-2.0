@@ -144,7 +144,9 @@ export class ScrollChoreographer {
           const panel = section.querySelector<HTMLElement>('.chapter__panel');
           if (panel) {
             const panelTop = panel.getBoundingClientRect().top + scrollY;
-            target = panelTop - Math.max(72, viewport * 0.08);
+            // La fiche démarre sous une fenêtre dégagée : la sculpture du chapitre
+            // reste visible à l'arrivée au lieu de passer derrière la carte.
+            target = panelTop - Math.max(226, viewport * 0.42);
           }
         }
 

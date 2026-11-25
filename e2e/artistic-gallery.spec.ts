@@ -42,10 +42,12 @@ uiTest(
   async ({ page }) => {
     await openPortfolioUI(page);
     for (const piece of PIECES) {
-      await page.evaluate(
-        (id) => document.getElementById(id)?.scrollIntoView(),
-        piece.id
-      );
+      // Accès direct comme un visiteur : le lien d'ancre passe par le défilement
+      // lissé (un saut natif synthétique est ramené en arrière par Lenis, y compris
+      // sur la baseline).
+      await page.evaluate((id) => {
+        document.querySelector<HTMLElement>(`a[href="#${id}"]`)?.click();
+      }, piece.id);
       await expect(page.locator('.exhibit-plaque')).toHaveAttribute(
         'data-scene',
         piece.id
