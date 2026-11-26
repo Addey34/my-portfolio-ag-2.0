@@ -21,6 +21,9 @@ describe('project catalogue', () => {
       const localized = [
         project.tagline,
         project.thesis,
+        project.technical.focus,
+        project.technical.skill,
+        ...project.technical.stages,
         ...Object.values(project.proof),
         ...project.highlights,
       ];
@@ -38,6 +41,8 @@ describe('project catalogue', () => {
       [
         study.status,
         study.summary,
+        study.technical.focus,
+        study.technical.skill,
         study.highlight,
         study.problem,
         study.role,

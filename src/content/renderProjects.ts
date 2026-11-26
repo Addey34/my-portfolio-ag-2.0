@@ -185,7 +185,10 @@ function buildChapter(project: Project, index: number): HTMLElement {
   });
   links.appendChild(share);
 
-  context.appendChild(head);
+  context.append(
+    head,
+    buildTechnical(project.technical, project.technical.stages, project.id)
+  );
   const demoLink = project.links.find((link) => link.kind === 'demo');
   // Le véritable produit (capture réelle) mène directement à sa démonstration :
   // il suit l'en-tête, dans le premier temps de lecture.
@@ -228,6 +231,35 @@ function buildChapter(project: Project, index: number): HTMLElement {
 
 type LedgerKey =
   'problem' | 'role' | 'challenge' | 'result' | 'decision' | 'evidence';
+
+/** Schéma sémantique : les relations restent lisibles sans canvas ni mouvement. */
+function buildTechnical(
+  technical: Project['technical'] | (typeof CASE_STUDIES)[number]['technical'],
+  stages: Localized[],
+  id: string,
+  study = false
+): HTMLElement {
+  const figure = el(
+    'figure',
+    `technical technical--${id}${study ? ' study__flow' : ''}`,
+    ''
+  );
+  const caption = el('figcaption', 'technical__title', '');
+  caption.id = `${id}-technical`;
+  figure.setAttribute('aria-labelledby', caption.id);
+  registerDynamic(caption, () => tl(technical.focus));
+  const list = document.createElement('ol');
+  list.className = 'technical__stages';
+  stages.forEach((stage) => {
+    const item = el('li', '', '');
+    registerDynamic(item, () => tl(stage));
+    list.appendChild(item);
+  });
+  const skill = el('p', 'technical__skill', '');
+  registerDynamic(skill, () => tl(technical.skill));
+  figure.append(caption, list, skill);
+  return figure;
+}
 
 /** Fiche à lignes numérotées, commune aux dossiers produit et aux études. */
 function buildLedger(
@@ -287,17 +319,7 @@ export function renderStudies(mount: HTMLElement): void {
     const highlight = el('p', 'study__highlight', '');
     registerDynamic(highlight, () => tl(study.highlight));
 
-    const flow = document.createElement('figure');
-    flow.className = 'study__flow';
-    const caption = el('figcaption', 'study__label', t('studies.architecture'));
-    caption.dataset.i18n = 'studies.architecture';
-    const steps = document.createElement('ol');
-    study.flow.forEach((step) => {
-      const item = el('li', '', '');
-      registerDynamic(item, () => tl(step));
-      steps.append(item);
-    });
-    flow.append(caption, steps);
+    const flow = buildTechnical(study.technical, study.flow, study.id, true);
 
     // Même fiche que les produits : problème, rôle, décision, preuve ; la limite
     // reste énoncée à part, jamais repliée.

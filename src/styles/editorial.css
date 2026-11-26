@@ -881,6 +881,177 @@
 }
 
 /* ==========================================================================
+   Ingénierie visible : relevé orbital, moteur partagé, modèle et projections.
+   Schémas statiques, sans nouvelle horloge ni coût de rendu WebGL.
+   ========================================================================== */
+.technical {
+  margin: 0;
+  padding: 1.1rem 0;
+  border-block: 1px solid var(--hair);
+}
+
+.technical__title {
+  color: var(--chapter-accent, var(--brass));
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.technical .technical__stages {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 1.1rem 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+
+.technical .technical__stages li {
+  position: relative;
+  min-width: 0;
+  padding: 1.8rem 0.65rem 0.7rem;
+  color: var(--fg);
+  background: var(--graphite);
+  border: 1px solid var(--hair);
+  border-radius: 0;
+  font-size: var(--label-size);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  counter-increment: stage;
+}
+
+.technical .technical__stages li::before {
+  content: counter(stage, decimal-leading-zero);
+  position: absolute;
+  top: 0.45rem;
+  left: 0.65rem;
+  color: var(--chapter-accent, var(--brass));
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.7rem;
+}
+
+.technical__skill {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: var(--label-size);
+  line-height: 1.65;
+}
+
+/* Galaxy : trajectoire en trois relevés, repères circulaires. */
+.technical--galaxy .technical__stages {
+  border-bottom: 1px solid var(--hair);
+  padding-bottom: 0.8rem;
+}
+
+.technical--galaxy .technical__stages li {
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--hair);
+  border-radius: 50% 50% 0 0;
+  padding-top: 2rem;
+}
+
+.technical--galaxy .technical__stages li::before {
+  border: 1px solid var(--hair);
+  border-radius: 50%;
+  padding: 0.05rem 0.3rem;
+}
+
+/* Ludora : la couche commune relie jeux et salons, sans suggérer leur ordre d'exécution. */
+.technical--ludora .technical__stages {
+  gap: 0;
+  border: 1px solid var(--hair);
+}
+
+.technical--ludora .technical__stages li {
+  border: 0;
+  background: none;
+}
+
+.technical--ludora .technical__stages li + li {
+  border-left: 1px solid var(--hair);
+}
+
+.technical--ludora .technical__stages li:nth-child(2) {
+  background: var(--graphite);
+  border-bottom: 2px solid var(--chapter-accent);
+}
+
+/* MagNotes : une source au-dessus de ses deux familles de vues. */
+.technical--magnotes .technical__stages {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.technical--magnotes .technical__stages li:first-child {
+  grid-column: 1 / -1;
+  padding: 0.65rem 0.65rem 0.65rem 2.5rem;
+  border-left: 3px solid var(--chapter-accent);
+}
+
+.technical--magnotes .technical__stages li:first-child::before {
+  top: 0.85rem;
+}
+
+/* SiteGuardian : la vérification se poursuit jusqu'à une issue explicite. */
+.technical--siteguardian .technical__stages li {
+  border-top: 2px solid var(--chapter-accent);
+}
+
+.technical--siteguardian .technical__stages li:last-child {
+  border-bottom: 2px solid var(--chapter-accent);
+}
+
+/* AIGen : frontière entre orchestration web et exécution locale. */
+.technical--imagegeneratorlocal .technical__stages {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem 1.25rem;
+}
+
+.technical--imagegeneratorlocal .technical__stages li:nth-child(n + 3) {
+  border-style: dashed;
+}
+
+.study .ledger__row--decision {
+  border-left: 2px solid var(--chapter-accent);
+  padding-left: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .technical .technical__stages {
+    gap: 0.4rem;
+  }
+
+  /* Les termes techniques restent entiers sur les petits écrans. */
+  .technical--galaxy .technical__stages,
+  .technical--ludora .technical__stages {
+    grid-template-columns: 1fr;
+  }
+
+  .technical--galaxy .technical__stages li,
+  .technical--ludora .technical__stages li {
+    padding: 0.65rem 0.65rem 0.65rem 2.6rem;
+    border-radius: 0;
+  }
+
+  .technical--galaxy .technical__stages li::before,
+  .technical--ludora .technical__stages li::before {
+    top: 0.75rem;
+  }
+
+  .technical--ludora .technical__stages li + li {
+    border-left: 0;
+    border-top: 1px solid var(--hair);
+  }
+
+  .technical--siteguardian .technical__stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
    Mouvement réduit : pas de glissement sur les surfaces interactives
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {

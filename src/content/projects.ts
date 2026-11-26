@@ -7,6 +7,12 @@ import type { Localized } from '@/i18n/dictionary';
  * animes se derivent de ce tableau. Chaque entree contient aussi une mini etude
  * de cas factuelle : probleme, role, defi et resultat.
  */
+interface TechnicalFocus {
+  /** Angle de lecture et compétence, dérivés des preuves du dossier. */
+  focus: Localized;
+  skill: Localized;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -15,6 +21,7 @@ export interface Project {
   tagline: Localized;
   /** Idee directrice du chapitre dans la progression globale. */
   thesis: Localized;
+  technical: TechnicalFocus & { stages: Localized[] };
   proof: {
     problem: Localized;
     role: Localized;
@@ -48,6 +55,21 @@ export const PROJECTS: Project[] = [
   {
     id: 'galaxy',
     name: 'Galaxy',
+    technical: {
+      focus: {
+        fr: 'De la donnée astronomique au rendu 3D',
+        en: 'From astronomical data to 3D rendering',
+      },
+      skill: {
+        fr: 'Ingénierie 3D · données scientifiques · stratégie de rendu',
+        en: '3D engineering · scientific data · rendering strategy',
+      },
+      stages: [
+        { fr: 'Éphémérides', en: 'Ephemerides' },
+        { fr: 'Échelle réelle / pédagogique', en: 'True / educational scale' },
+        { fr: 'Niveaux de détail', en: 'Levels of detail' },
+      ],
+    },
     status: live,
     visual: 'immersive',
     thesis: {
@@ -115,6 +137,24 @@ export const PROJECTS: Project[] = [
   {
     id: 'ludora',
     name: 'Ludora',
+    technical: {
+      focus: {
+        fr: 'Des jeux isolés, des services partagés',
+        en: 'Isolated games, shared services',
+      },
+      skill: {
+        fr: 'Architecture modulaire · temps réel · intégration multijoueur',
+        en: 'Modular architecture · real time · multiplayer integration',
+      },
+      stages: [
+        { fr: 'Une page par jeu', en: 'One page per game' },
+        {
+          fr: 'Profil, scores, progression',
+          en: 'Profile, scores, progression',
+        },
+        { fr: 'Salons Nakama', en: 'Nakama rooms' },
+      ],
+    },
     status: live,
     visual: 'immersive',
     thesis: {
@@ -179,6 +219,21 @@ export const PROJECTS: Project[] = [
   {
     id: 'magnotes',
     name: 'MagNotes',
+    technical: {
+      focus: {
+        fr: 'Un modèle de notes, plusieurs lectures',
+        en: 'One note model, multiple perspectives',
+      },
+      skill: {
+        fr: 'Modélisation des données · interactions spatiales · full-stack',
+        en: 'Data modelling · spatial interactions · full-stack',
+      },
+      stages: [
+        { fr: 'Notes + liens', en: 'Notes + links' },
+        { fr: 'Canvas libre', en: 'Freeform canvas' },
+        { fr: 'Kanban, agenda, timeline', en: 'Kanban, calendar, timeline' },
+      ],
+    },
     status: live,
     visual: 'immersive',
     thesis: {
@@ -263,6 +318,7 @@ export interface CaseStudy {
   status: Localized;
   accent: string;
   summary: Localized;
+  technical: TechnicalFocus;
   highlight: Localized;
   problem: Localized;
   role: Localized;
@@ -279,6 +335,16 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'siteguardian',
     name: 'SiteGuardian',
+    technical: {
+      focus: {
+        fr: 'Un cycle d’incident, pas une simple alerte',
+        en: 'An incident lifecycle, beyond an alert',
+      },
+      skill: {
+        fr: 'Modélisation des états · persistance · vérification des régressions',
+        en: 'State modelling · persistence · regression verification',
+      },
+    },
     status: { fr: 'Pilote contrôlé', en: 'Controlled pilot' },
     accent: '#ffb35f',
     summary: {
@@ -335,6 +401,16 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'imagegeneratorlocal',
     name: 'AIGen',
+    technical: {
+      focus: {
+        fr: 'Du navigateur au calcul sur la machine',
+        en: 'From the browser to on-device compute',
+      },
+      skill: {
+        fr: 'Orchestration de tâches · distribution de runtimes · intégrité des fichiers',
+        en: 'Job orchestration · runtime distribution · file integrity',
+      },
+    },
     status: { fr: 'Produit en développement', en: 'Product in development' },
     accent: '#a78bfa',
     summary: {
