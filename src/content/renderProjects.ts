@@ -185,10 +185,7 @@ function buildChapter(project: Project, index: number): HTMLElement {
   });
   links.appendChild(share);
 
-  context.append(
-    head,
-    buildTechnical(project.technical, project.technical.stages, project.id)
-  );
+  context.appendChild(head);
   const demoLink = project.links.find((link) => link.kind === 'demo');
   // Le véritable produit (capture réelle) mène directement à sa démonstration :
   // il suit l'en-tête, dans le premier temps de lecture.
@@ -221,6 +218,9 @@ function buildChapter(project: Project, index: number): HTMLElement {
     anchor.append(bar, image, caption);
     context.appendChild(anchor);
   }
+  context.appendChild(
+    buildTechnical(project.technical, project.technical.stages, project.id)
+  );
   outcome.append(ledger, highlights, stack, links);
   panel.append(context, outcome);
   shell.appendChild(panel);

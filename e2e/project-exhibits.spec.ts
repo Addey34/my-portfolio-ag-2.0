@@ -41,18 +41,33 @@ for (const fallback of [false, true]) {
         );
         await waitForScrollEnd(page);
         const figure = page.locator(`#${id} .technical`);
+        if (['galaxy', 'ludora', 'magnotes'].includes(id)) {
+          expect(
+            await page
+              .locator(`#${id} .chapter__beat--context`)
+              .evaluate((node) =>
+                [...node.children].map((child) => child.tagName)
+              )
+          ).toEqual(['HEADER', 'A', 'FIGURE']);
+        }
         await expect(figure).toHaveAccessibleName(/.+/);
         await expect(figure.locator('li')).toHaveCount(count);
         await expect(figure).toContainText(locale === 'fr' ? fr : en);
         await expect(figure.locator('.technical__skill')).not.toBeEmpty();
-        // Lecture sous le HUD : le centrage de MagNotes tombe dans la zone
-        // d'aimantation du titre sur Android et ramène la fiche en arrière.
-        await figure.evaluate((node) =>
-          window.scrollTo({
-            top: node.getBoundingClientRect().top + scrollY - 88,
-            behavior: 'instant',
-          })
-        );
+        // Lecture sous le HUD via l'entrée de Lenis : un saut natif peut être
+        // annulé par sa cible interne, notamment après le changement de langue.
+        await figure.evaluate((node, reduced) => {
+          const delta = node.getBoundingClientRect().top - 88;
+          if (reduced) window.scrollBy({ top: delta, behavior: 'instant' });
+          else
+            window.dispatchEvent(
+              new WheelEvent('wheel', {
+                deltaY: delta,
+                bubbles: true,
+                cancelable: true,
+              })
+            );
+        }, fallback);
         await waitForScrollEnd(page);
         await expect(figure).toBeInViewport({ ratio: 0.98 });
         expect(
