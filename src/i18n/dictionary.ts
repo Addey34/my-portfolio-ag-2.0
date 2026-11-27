@@ -16,6 +16,10 @@ export type Localized = Record<Locale, string>;
 type Dict = Record<string, string>;
 
 const fr: Dict = {
+  'execution.open': 'Piloter la chaîne d’exécution',
+  'execution.loading': 'Mise en place de l’instrument…',
+  'execution.error':
+    'Instrument indisponible. Le schéma et les preuves restent accessibles.',
   'knowledge.open': 'Relier les idées, changer de regard',
   'knowledge.loading': 'Ouverture de l’atelier…',
   'knowledge.error':
@@ -241,6 +245,10 @@ const fr: Dict = {
 };
 
 const en: Dict = {
+  'execution.open': 'Operate the execution chain',
+  'execution.loading': 'Setting up the instrument…',
+  'execution.error':
+    'Instrument unavailable. The diagram and evidence remain accessible.',
   'knowledge.open': 'Connect ideas, change perspective',
   'knowledge.loading': 'Opening the workshop…',
   'knowledge.error':
