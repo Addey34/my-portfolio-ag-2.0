@@ -1,0 +1,182 @@
+/* Cabinet AG : des cartels gravés, des pupitres ouverts, aucune couche de verre. */
+.hero__edition {
+  margin: 0 0 1.1rem;
+  color: var(--brass);
+  font: 500 0.8rem var(--font-display);
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+#top .hero__title {
+  letter-spacing: -0.06em;
+}
+#top .hero__word--gradient {
+  background: none;
+  color: #d8c39a;
+  -webkit-text-fill-color: currentColor;
+}
+.instrument-exhibit {
+  --instrument-index: '01';
+  --instrument-ink: var(--chapter-accent, var(--brass));
+  margin-top: 1.6rem;
+  border: 1px solid var(--editorial-rule);
+  border-top: 2px solid var(--instrument-ink);
+  border-radius: 0;
+  background: #0a0e15;
+}
+.instrument-exhibit.sync-lab {
+  --instrument-index: '02';
+}
+.instrument-exhibit.knowledge {
+  --instrument-index: '03';
+}
+.instrument-exhibit.execution {
+  --instrument-index: '04';
+}
+.instrument-exhibit.resilience {
+  --instrument-index: '05';
+}
+.instrument-exhibit > summary {
+  position: relative;
+  min-height: 5rem;
+  display: flex;
+  align-items: center;
+  padding: 1.1rem 3.3rem 1.1rem 4.2rem;
+  color: var(--fg);
+  font: 500 clamp(1rem, 1.5vw, 1.16rem)/1.4 var(--font-display);
+  list-style: none;
+  cursor: pointer;
+}
+.instrument-exhibit > summary::-webkit-details-marker {
+  display: none;
+}
+.instrument-exhibit > summary::before {
+  content: var(--instrument-index);
+  position: absolute;
+  left: 1.1rem;
+  color: var(--instrument-ink);
+  font: 500 0.85rem var(--font-display);
+  border-right: 1px solid var(--editorial-rule);
+  padding-right: 0.8rem;
+}
+.instrument-exhibit > summary::after {
+  content: '↗';
+  position: absolute;
+  right: 1.1rem;
+  color: var(--instrument-ink);
+  font-size: 1.5rem;
+}
+.instrument-exhibit[open] > summary {
+  border-bottom: 1px solid var(--editorial-rule);
+}
+.instrument-exhibit[open] > summary::after {
+  content: '−';
+}
+.instrument-exhibit > summary:hover {
+  background: #141a22;
+}
+.instrument-exhibit :is(summary, button, input, select):focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+.instrument-exhibit
+  :is(
+    .observatory__instrument,
+    .sync-lab__instrument,
+    .knowledge__instrument,
+    .execution__instrument,
+    .resilience__instrument
+  ) {
+  padding: clamp(1rem, 2vw, 1.6rem);
+  border-left: 0;
+  background: #0a1017;
+}
+.instrument-exhibit :is(button, select) {
+  min-height: 44px;
+  border-radius: 2px;
+  box-shadow: none;
+  font-family: var(--font-display);
+}
+.instrument-exhibit select {
+  appearance: none;
+  color: var(--fg);
+  background-color: #111923;
+  padding-right: 2rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #f6f3ed 50%),
+    linear-gradient(135deg, #f6f3ed 50%, transparent 50%);
+  background-position:
+    calc(100% - 16px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+}
+.instrument-exhibit :is(.sync-lab__tray, .execution__ticket) {
+  border-radius: 0;
+  border-top: 2px solid var(--instrument-ink);
+  background: #111923;
+}
+.instrument-exhibit :is(.execution__chain, .sync-lab__network) {
+  border-radius: 0;
+}
+.instrument-exhibit :is(.execution__log, .resilience__strip) {
+  border-left: 1px solid var(--editorial-rule);
+}
+.instrument-exhibit :is(.execution__log, .resilience__strip) > li {
+  padding-left: 1rem;
+}
+@media (min-width: 861px) {
+  .hero__edition {
+    padding-left: 3rem;
+    position: relative;
+  }
+  .hero__edition::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 2rem;
+    height: 1px;
+    background: var(--brass);
+  }
+}
+@media (max-width: 860px) {
+  .hero__edition {
+    order: -1;
+    margin: 0 0 0.65rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.15em;
+  }
+  #top .hero__lead {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+  #top .hero__ctas {
+    gap: 0.5rem;
+  }
+  #top .hero__cta--ghost {
+    min-height: 44px;
+    padding-block: 0.5rem;
+    background: none;
+    border-color: transparent;
+    text-decoration: underline;
+    text-underline-offset: 0.35em;
+  }
+  .instrument-exhibit > summary {
+    padding-left: 3.5rem;
+    min-height: 4.6rem;
+  }
+  .instrument-exhibit > summary::before {
+    left: 0.8rem;
+    padding-right: 0.6rem;
+  }
+  .instrument-exhibit
+    :is(
+      .observatory__instrument,
+      .sync-lab__instrument,
+      .knowledge__instrument,
+      .execution__instrument,
+      .resilience__instrument
+    ) {
+    padding: 1rem 0.8rem;
+  }
+}

@@ -16,6 +16,7 @@ export type Localized = Record<Locale, string>;
 type Dict = Record<string, string>;
 
 const fr: Dict = {
+  'hero.edition': 'AG — Le musée des systèmes',
   'resilience.open': 'Éprouver le diagnostic de résilience',
   'resilience.loading': 'Ouverture de l’instrument…',
   'resilience.error':
@@ -249,6 +250,7 @@ const fr: Dict = {
 };
 
 const en: Dict = {
+  'hero.edition': 'AG — The museum of systems',
   'resilience.open': 'Experiment with resilience diagnosis',
   'resilience.loading': 'Opening the instrument…',
   'resilience.error':

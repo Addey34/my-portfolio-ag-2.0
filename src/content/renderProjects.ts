@@ -270,7 +270,7 @@ function buildTechnical(
 function buildObservatory(): HTMLDetailsElement {
   const details = document.createElement('details');
   details.id = 'galaxy-observatory';
-  details.className = 'observatory';
+  details.className = 'observatory instrument-exhibit';
   const summary = el('summary', 'observatory__summary', '');
   registerDynamic(summary, () => t('observatory.open'));
   const mount = el('div', 'observatory__mount', '');
@@ -300,7 +300,7 @@ function buildObservatory(): HTMLDetailsElement {
 function buildSyncLab(): HTMLDetailsElement {
   const details = document.createElement('details');
   details.id = 'ludora-sync-lab';
-  details.className = 'sync-lab';
+  details.className = 'sync-lab instrument-exhibit';
   const summary = el('summary', 'sync-lab__summary', '');
   registerDynamic(summary, () => t('syncLab.open'));
   const mount = el('div', 'sync-lab__mount', '');
@@ -339,7 +339,7 @@ function buildSyncLab(): HTMLDetailsElement {
 function buildKnowledgeLab(): HTMLDetailsElement {
   const details = document.createElement('details');
   details.id = 'magnotes-knowledge-lab';
-  details.className = 'knowledge';
+  details.className = 'knowledge instrument-exhibit';
   const summary = el('summary', 'knowledge__summary', '');
   registerDynamic(summary, () => t('knowledge.open'));
   const mount = el('div', 'knowledge__mount', '');
@@ -377,7 +377,7 @@ function buildKnowledgeLab(): HTMLDetailsElement {
 function buildExecutionLab(): HTMLDetailsElement {
   const details = document.createElement('details');
   details.id = 'aigen-execution-lab';
-  details.className = 'execution';
+  details.className = 'execution instrument-exhibit';
   const summary = el('summary', 'execution__summary', '');
   registerDynamic(summary, () => t('execution.open'));
   const mount = el('div', 'execution__mount', '');
@@ -416,7 +416,7 @@ function buildExecutionLab(): HTMLDetailsElement {
 function buildResilienceLab(): HTMLDetailsElement {
   const details = document.createElement('details');
   details.id = 'siteguardian-resilience-lab';
-  details.className = 'resilience';
+  details.className = 'resilience instrument-exhibit';
   const summary = el('summary', 'resilience__summary', '');
   registerDynamic(summary, () => t('resilience.open'));
   const mount = el('div', 'resilience__mount', '');
