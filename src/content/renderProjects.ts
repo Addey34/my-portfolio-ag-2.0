@@ -262,6 +262,7 @@ function buildTechnical(
   if (id === 'ludora') figure.appendChild(buildSyncLab());
   if (id === 'magnotes') figure.appendChild(buildKnowledgeLab());
   if (id === 'imagegeneratorlocal') figure.appendChild(buildExecutionLab());
+  if (id === 'siteguardian') figure.appendChild(buildResilienceLab());
   return figure;
 }
 
@@ -406,6 +407,45 @@ function buildExecutionLab(): HTMLDetailsElement {
         loading = false;
         failed = true;
         status.textContent = t('execution.error');
+      });
+  });
+  return details;
+}
+
+/** Diagnostic local chargé uniquement après ouverture volontaire. */
+function buildResilienceLab(): HTMLDetailsElement {
+  const details = document.createElement('details');
+  details.id = 'siteguardian-resilience-lab';
+  details.className = 'resilience';
+  const summary = el('summary', 'resilience__summary', '');
+  registerDynamic(summary, () => t('resilience.open'));
+  const mount = el('div', 'resilience__mount', '');
+  const status = el('p', '', '');
+  status.setAttribute('role', 'status');
+  let failed = false;
+  registerDynamic(status, () =>
+    t(failed ? 'resilience.error' : 'resilience.loading')
+  );
+  mount.append(status);
+  details.append(summary, mount);
+  let loading = false;
+  let controller: { reset(): void } | undefined;
+  details.addEventListener('toggle', () => {
+    if (!details.open) {
+      controller?.reset();
+      return;
+    }
+    if (loading || controller) return;
+    loading = true;
+    void import('@/visual/SiteguardianResilienceLab')
+      .then(({ mountSiteguardianResilienceLab }) => {
+        loading = false;
+        if (details.open) controller = mountSiteguardianResilienceLab(mount);
+      })
+      .catch(() => {
+        loading = false;
+        failed = true;
+        status.textContent = t('resilience.error');
       });
   });
   return details;

@@ -1,0 +1,152 @@
+/* Bande de diagnostic : la typographie, les symboles et les seuils portent le sens. */
+.resilience {
+  margin-top: 1.6rem;
+  border-block: 1px solid #5b6475;
+}
+.resilience__summary {
+  padding: 1.2rem 0;
+  color: #d5f8ec;
+  font:
+    600 1rem 'Space Grotesk',
+    sans-serif;
+  cursor: pointer;
+}
+.resilience__instrument {
+  padding: 1rem clamp(0.8rem, 3vw, 2rem) 1.5rem;
+  background: #0d1920;
+  color: #e2eeeb;
+  border-left: 3px solid #9de7cb;
+}
+.resilience__instrument p {
+  line-height: 1.65;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+.resilience__instrument h5 {
+  font:
+    600 1rem 'Space Grotesk',
+    sans-serif;
+  margin: 1.5rem 0 0.8rem;
+}
+.resilience__dial {
+  border: 1px solid #7ea494;
+  border-radius: 50% 50% 0 0 / 30px 30px 0 0;
+  text-align: center;
+  padding: 1rem;
+  margin-block: 1.2rem;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 29px,
+    #9de7cb10 30px 31px
+  );
+}
+.resilience__dial .resilience__state {
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  margin: 0.5rem 0;
+}
+.resilience__incident {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.resilience__windows,
+.resilience__settings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-block: 1.2rem;
+}
+.resilience__instrument label {
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+.resilience__instrument meter {
+  width: 100%;
+  height: 1.2rem;
+  accent-color: #9de7cb;
+}
+.resilience__controls,
+.resilience__scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.resilience__instrument button,
+.resilience__instrument select {
+  font: inherit;
+  font-size: 0.9rem;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #7ea494;
+  background: #142c31;
+  color: #e2eeeb;
+  border-radius: 2px;
+  cursor: pointer;
+  max-width: 100%;
+}
+.resilience__instrument button[aria-pressed='true'] {
+  background: #c3f4df;
+  color: #0d1920;
+  border-color: #c3f4df;
+}
+.resilience__instrument select {
+  appearance: none;
+  padding-right: 2rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #e2eeeb 50%),
+    linear-gradient(135deg, #e2eeeb 50%, transparent 50%);
+  background-position:
+    calc(100% - 16px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+}
+.resilience__instrument button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.resilience :is(button, select, summary):focus-visible {
+  outline: 2px solid #f5d6a5;
+  outline-offset: 4px;
+}
+.resilience__instrument .resilience__note {
+  font-size: 0.85rem;
+  color: #b4c8c2;
+}
+.resilience__score {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.resilience__strip {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  margin-block: 1rem;
+}
+.resilience__strip > li {
+  font:
+    0.85rem/1.6 'Space Grotesk',
+    sans-serif;
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px dashed #607b72;
+  overflow-wrap: anywhere;
+}
+.resilience__strip > li[data-event='opened'],
+.resilience__strip > li[data-event='relapse'] {
+  border-left: 3px solid #f3c48d;
+}
+.resilience__strip > li[data-event='resolved'] {
+  border-left: 3px double #b8f4da;
+}
+.resilience__instrument .resilience__status {
+  padding: 0.8rem;
+  border: 1px solid #7ea494;
+}
+@media (max-width: 480px) {
+  .resilience__windows,
+  .resilience__settings {
+    grid-template-columns: 1fr;
+  }
+  .resilience__controls > button {
+    flex: 1;
+  }
+}
