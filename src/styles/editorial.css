@@ -729,7 +729,7 @@
   text-transform: uppercase;
 }
 
-.study__flow ol {
+.study__flow > ol {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
   gap: 0.4rem;
@@ -739,7 +739,7 @@
   counter-reset: flow;
 }
 
-.study__flow li {
+.study__flow > ol > li {
   position: relative;
   padding: 0.55rem 0.7rem 0.55rem 2.1rem;
   color: var(--fg);
@@ -749,7 +749,7 @@
   counter-increment: flow;
 }
 
-.study__flow li::before {
+.study__flow > ol > li::before {
   content: counter(flow, decimal-leading-zero);
   position: absolute;
   top: 0.6rem;
@@ -1672,6 +1672,219 @@
   }
   .knowledge__views button {
     font-size: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   AIGen — pupitre violet, chaîne et bons numérotés. Aucun mouvement au repos.
+   ========================================================================== */
+.execution {
+  margin-top: 1.2rem;
+  color: var(--fg);
+  background: #12101c;
+  border: 1px solid var(--chapter-accent);
+}
+.execution__summary {
+  position: relative;
+  min-height: 3.5rem;
+  padding: 1rem 2.6rem 1rem 1rem;
+  color: var(--chapter-accent);
+  font: 600 1.1rem var(--font-display);
+  cursor: pointer;
+  list-style: none;
+}
+.execution__summary::-webkit-details-marker {
+  display: none;
+}
+.execution__summary::after {
+  content: '+';
+  position: absolute;
+  right: 1rem;
+}
+.execution[open] > summary::after {
+  content: '−';
+}
+.execution[open] > summary {
+  border-bottom: 1px solid var(--hair);
+}
+.execution__instrument {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+}
+.execution__instrument p {
+  margin: 0;
+  font-size: var(--label-size);
+  line-height: 1.6;
+}
+.execution__instrument button {
+  min-height: 2.75rem;
+  min-width: 0;
+  padding: 0.55rem 0.4rem;
+  color: var(--fg);
+  border: 1px solid var(--hair);
+  background: #231d34;
+  font: inherit;
+  font-size: var(--label-size);
+  cursor: pointer;
+}
+.execution__instrument button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.execution :is(summary, button, input):focus-visible {
+  outline: 2px solid var(--chapter-accent);
+  outline-offset: 3px;
+}
+.execution__chain {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.execution__chain li {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.6rem 0.4rem;
+  border-block: 3px double var(--chapter-accent);
+  background: #1c172a;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.execution__chain strong {
+  font-family: var(--font-display);
+}
+.execution__chain span {
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.execution__failure {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: var(--label-size);
+  line-height: 1.5;
+}
+.execution__failure input {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--chapter-accent);
+}
+.execution__instrument :is(.execution__submit, .execution__reset) {
+  border-color: var(--chapter-accent);
+}
+.execution__tasks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.execution__ticket {
+  min-width: 0;
+  min-height: 18rem;
+  padding: 0.65rem;
+  border: 1px solid var(--hair);
+  border-top: 3px double var(--chapter-accent);
+  border-radius: 0.65rem 0.1rem 0.1rem 0.1rem;
+  background: #1b1727;
+}
+.execution__ticket[data-state='running'] {
+  border-color: var(--chapter-accent);
+}
+.execution__job {
+  display: grid;
+  gap: 0.65rem;
+}
+.execution__job[hidden],
+.execution__empty[hidden] {
+  display: none;
+}
+.execution__job h5 {
+  margin: 0;
+  font: 600 0.9rem var(--font-display);
+}
+.execution__instrument .execution__state {
+  min-height: 2.5rem;
+  color: var(--chapter-accent);
+}
+.execution__job progress {
+  width: 100%;
+  height: 0.6rem;
+  accent-color: var(--chapter-accent);
+}
+.execution__instrument .execution__percent {
+  font-size: 0.7rem;
+  min-height: 2.2rem;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.execution__actions {
+  display: grid;
+  gap: 0.35rem;
+}
+.execution__instrument .execution__proof {
+  min-height: 3.3rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--hair);
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+  overflow-wrap: anywhere;
+}
+.execution__proof:not([data-result=''])::before {
+  content: '';
+  display: block;
+  height: 1.3rem;
+  margin-bottom: 0.4rem;
+  background: repeating-linear-gradient(135deg, #a78bfa 0 3px, #34284b 3px 9px);
+}
+.execution__instrument .execution__empty {
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
+.execution__instrument .execution__status {
+  color: var(--chapter-accent);
+  min-height: 4.5rem;
+}
+.execution__instrument > h5 {
+  margin: 0.2rem 0 0;
+  font-size: var(--label-size);
+}
+.execution__log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-rows: repeat(6, minmax(2.8rem, auto));
+}
+.execution__log li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--hair);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.execution__instrument .execution__note {
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
+@media (max-width: 480px) {
+  .execution__chain {
+    grid-template-columns: 1fr;
+  }
+  .execution__chain li {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  }
+  .execution__chain span {
+    text-align: right;
   }
 }
 

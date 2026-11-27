@@ -51,7 +51,10 @@ for (const fallback of [false, true]) {
           ).toEqual(['HEADER', 'A', 'FIGURE']);
         }
         await expect(figure).toHaveAccessibleName(/.+/);
-        await expect(figure.locator('li')).toHaveCount(count);
+        // Les listes des instruments imbriqués ne sont pas des étapes du schéma.
+        await expect(figure.locator('.technical__stages > li')).toHaveCount(
+          count
+        );
         await expect(figure).toContainText(locale === 'fr' ? fr : en);
         await expect(figure.locator('.technical__skill')).not.toBeEmpty();
         // Lecture sous le HUD via l'entrée de Lenis : un saut natif peut être
@@ -77,14 +80,16 @@ for (const fallback of [false, true]) {
         ).toBeLessThanOrEqual(1);
         const geometry = await figure.evaluate((node) => {
           const box = node.getBoundingClientRect();
-          return [...node.querySelectorAll('li')].every((item) => {
-            const r = item.getBoundingClientRect();
-            return (
-              r.left >= box.left - 1 &&
-              r.right <= box.right + 1 &&
-              item.scrollWidth <= item.clientWidth + 1
-            );
-          });
+          return [...node.querySelectorAll('.technical__stages > li')].every(
+            (item) => {
+              const r = item.getBoundingClientRect();
+              return (
+                r.left >= box.left - 1 &&
+                r.right <= box.right + 1 &&
+                item.scrollWidth <= item.clientWidth + 1
+              );
+            }
+          );
         });
         expect(geometry).toBe(true);
         await page.screenshot({

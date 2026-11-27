@@ -261,6 +261,7 @@ function buildTechnical(
   if (id === 'galaxy') figure.appendChild(buildObservatory());
   if (id === 'ludora') figure.appendChild(buildSyncLab());
   if (id === 'magnotes') figure.appendChild(buildKnowledgeLab());
+  if (id === 'imagegeneratorlocal') figure.appendChild(buildExecutionLab());
   return figure;
 }
 
@@ -366,6 +367,45 @@ function buildKnowledgeLab(): HTMLDetailsElement {
         loading = false;
         failed = true;
         status.textContent = t('knowledge.error');
+      });
+  });
+  return details;
+}
+
+/** AIGen reste dans l'étude complémentaire ; fermer arrête toute simulation. */
+function buildExecutionLab(): HTMLDetailsElement {
+  const details = document.createElement('details');
+  details.id = 'aigen-execution-lab';
+  details.className = 'execution';
+  const summary = el('summary', 'execution__summary', '');
+  registerDynamic(summary, () => t('execution.open'));
+  const mount = el('div', 'execution__mount', '');
+  const status = el('p', 'execution__loading', '');
+  status.setAttribute('role', 'status');
+  let failed = false;
+  registerDynamic(status, () =>
+    t(failed ? 'execution.error' : 'execution.loading')
+  );
+  mount.append(status);
+  details.append(summary, mount);
+  let loading = false;
+  let controller: { reset(): void } | undefined;
+  details.addEventListener('toggle', () => {
+    if (!details.open) {
+      controller?.reset();
+      return;
+    }
+    if (loading || controller) return;
+    loading = true;
+    void import('@/visual/AigenExecutionLab')
+      .then(({ mountAigenExecutionLab }) => {
+        loading = false;
+        if (details.open) controller = mountAigenExecutionLab(mount);
+      })
+      .catch(() => {
+        loading = false;
+        failed = true;
+        status.textContent = t('execution.error');
       });
   });
   return details;
