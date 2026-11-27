@@ -258,7 +258,38 @@ function buildTechnical(
   const skill = el('p', 'technical__skill', '');
   registerDynamic(skill, () => tl(technical.skill));
   figure.append(caption, list, skill);
+  if (id === 'galaxy') figure.appendChild(buildObservatory());
   return figure;
+}
+
+/** Le module et ses données ne sont demandés qu'à l'ouverture volontaire. */
+function buildObservatory(): HTMLDetailsElement {
+  const details = document.createElement('details');
+  details.id = 'galaxy-observatory';
+  details.className = 'observatory';
+  const summary = el('summary', 'observatory__summary', '');
+  registerDynamic(summary, () => t('observatory.open'));
+  const mount = el('div', 'observatory__mount', '');
+  const status = el('p', 'observatory__status', '');
+  status.setAttribute('role', 'status');
+  let failed = false;
+  registerDynamic(status, () =>
+    t(failed ? 'observatory.error' : 'observatory.loading')
+  );
+  mount.append(status);
+  details.append(summary, mount);
+  let requested = false;
+  details.addEventListener('toggle', () => {
+    if (!details.open || requested) return;
+    requested = true;
+    void import('@/visual/GalaxyObservatory')
+      .then(({ mountGalaxyObservatory }) => mountGalaxyObservatory(mount))
+      .catch(() => {
+        failed = true;
+        status.textContent = t('observatory.error');
+      });
+  });
+  return details;
 }
 
 /** Fiche à lignes numérotées, commune aux dossiers produit et aux études. */

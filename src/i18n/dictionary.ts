@@ -16,6 +16,29 @@ export type Localized = Record<Locale, string>;
 type Dict = Record<string, string>;
 
 const fr: Dict = {
+  'observatory.open': 'Expérimenter les échelles',
+  'observatory.loading': 'Ouverture de l’instrument…',
+  'observatory.error':
+    'Instrument indisponible. Le schéma et les preuves restent accessibles.',
+  'observatory.intro':
+    'Neptune reste fixe. Dépliez les distances : la Terre se rapproche du Soleil. Le trait pointillé marque sa position proportionnelle.',
+  'observatory.formula': 'Rayon affiché ∝ distance à la puissance',
+  'observatory.exponent': 'exposant',
+  'observatory.control': 'Déplier les distances',
+  'observatory.compressed': 'Échelle comprimée',
+  'observatory.proportional': 'Échelle proportionnelle',
+  'observatory.table': 'Les mêmes données, deux façons de voir',
+  'observatory.body': 'Repère',
+  'observatory.distance': 'a (ua)',
+  'observatory.display': 'Rayon affiché',
+  'observatory.earth': 'Terre',
+  'observatory.jupiter': 'Jupiter',
+  'observatory.neptune': 'Neptune',
+  'observatory.reading': 'Terre · rayon affiché',
+  'observatory.reference': 'proportionnel',
+  'observatory.note':
+    'Demi-grands axes J2000 arrondis ; Terre ≈ barycentre Terre–Lune. Alignement et tailles symboliques, pas des positions actuelles. Cette loi de compression illustre le compromis ; elle ne reproduit pas le moteur Galaxy.',
+  'observatory.source': 'Données : NASA / JPL, table 1',
   'contact.subject': 'Projet',
   'plaque.identity.name': 'Médaillon AG',
   'plaque.identity.note': 'Une horloge qui devient signature.',
@@ -210,6 +233,29 @@ const fr: Dict = {
 };
 
 const en: Dict = {
+  'observatory.open': 'Experiment with scale',
+  'observatory.loading': 'Opening the instrument…',
+  'observatory.error':
+    'Instrument unavailable. The diagram and evidence remain accessible.',
+  'observatory.intro':
+    'Neptune stays fixed. Unfold the distances: Earth moves closer to the Sun. The dashed line marks its proportional position.',
+  'observatory.formula': 'Displayed radius ∝ distance raised to',
+  'observatory.exponent': 'exponent',
+  'observatory.control': 'Unfold the distances',
+  'observatory.compressed': 'Compressed scale',
+  'observatory.proportional': 'Proportional scale',
+  'observatory.table': 'The same data, two ways of seeing',
+  'observatory.body': 'Reference',
+  'observatory.distance': 'a (AU)',
+  'observatory.display': 'Displayed radius',
+  'observatory.earth': 'Earth',
+  'observatory.jupiter': 'Jupiter',
+  'observatory.neptune': 'Neptune',
+  'observatory.reading': 'Earth · displayed radius',
+  'observatory.reference': 'proportional',
+  'observatory.note':
+    'Rounded J2000 semi-major axes; Earth ≈ Earth–Moon barycentre. Alignment and sizes are symbolic, not current positions. This compression law illustrates the trade-off; it does not reproduce the Galaxy engine.',
+  'observatory.source': 'Data: NASA / JPL, table 1',
   'contact.subject': 'Project',
   'plaque.identity.name': 'AG medallion',
   'plaque.identity.note': 'A clock that becomes a signature.',
