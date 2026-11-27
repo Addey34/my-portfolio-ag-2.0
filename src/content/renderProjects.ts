@@ -259,6 +259,7 @@ function buildTechnical(
   registerDynamic(skill, () => tl(technical.skill));
   figure.append(caption, list, skill);
   if (id === 'galaxy') figure.appendChild(buildObservatory());
+  if (id === 'ludora') figure.appendChild(buildSyncLab());
   return figure;
 }
 
@@ -287,6 +288,45 @@ function buildObservatory(): HTMLDetailsElement {
       .catch(() => {
         failed = true;
         status.textContent = t('observatory.error');
+      });
+  });
+  return details;
+}
+
+/** Cycle propre à Ludora : fermer annule aussi les messages déjà en transit. */
+function buildSyncLab(): HTMLDetailsElement {
+  const details = document.createElement('details');
+  details.id = 'ludora-sync-lab';
+  details.className = 'sync-lab';
+  const summary = el('summary', 'sync-lab__summary', '');
+  registerDynamic(summary, () => t('syncLab.open'));
+  const mount = el('div', 'sync-lab__mount', '');
+  const status = el('p', 'sync-lab__loading', '');
+  status.setAttribute('role', 'status');
+  let failed = false;
+  registerDynamic(status, () =>
+    t(failed ? 'syncLab.error' : 'syncLab.loading')
+  );
+  mount.append(status);
+  details.append(summary, mount);
+  let loading = false;
+  let controller: { reset(): void } | undefined;
+  details.addEventListener('toggle', () => {
+    if (!details.open) {
+      controller?.reset();
+      return;
+    }
+    if (controller || loading) return;
+    loading = true;
+    void import('@/visual/LudoraSyncLab')
+      .then(({ mountLudoraSyncLab }) => {
+        loading = false;
+        if (details.open) controller = mountLudoraSyncLab(mount);
+      })
+      .catch(() => {
+        loading = false;
+        failed = true;
+        status.textContent = t('syncLab.error');
       });
   });
   return details;

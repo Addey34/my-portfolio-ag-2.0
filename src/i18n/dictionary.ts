@@ -16,6 +16,10 @@ export type Localized = Record<Locale, string>;
 type Dict = Record<string, string>;
 
 const fr: Dict = {
+  'syncLab.open': 'Éprouver le multijoueur',
+  'syncLab.loading': 'Mise en place du plateau…',
+  'syncLab.error':
+    'Simulation indisponible. Le schéma et les preuves restent accessibles.',
   'observatory.open': 'Expérimenter les échelles',
   'observatory.loading': 'Ouverture de l’instrument…',
   'observatory.error':
@@ -233,6 +237,10 @@ const fr: Dict = {
 };
 
 const en: Dict = {
+  'syncLab.open': 'Experiment with multiplayer',
+  'syncLab.loading': 'Setting up the board…',
+  'syncLab.error':
+    'Simulation unavailable. The diagram and evidence remain accessible.',
   'observatory.open': 'Experiment with scale',
   'observatory.loading': 'Opening the instrument…',
   'observatory.error':
