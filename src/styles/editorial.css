@@ -1052,6 +1052,204 @@
 }
 
 /* ==========================================================================
+   Observatoire Galaxy — instrument de mesure volontaire, sans boucle animée.
+   ========================================================================== */
+.observatory {
+  margin-top: 1.2rem;
+  color: var(--fg);
+  background: #0b1018;
+  border: 1px solid var(--hair);
+}
+
+.observatory__summary {
+  position: relative;
+  min-height: 3.5rem;
+  padding: 1rem 3rem 1rem 1rem;
+  color: var(--chapter-accent);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.observatory__summary::-webkit-details-marker {
+  display: none;
+}
+
+.observatory__summary::after {
+  content: '+';
+  position: absolute;
+  right: 1rem;
+  top: 0.75rem;
+  font-size: 1.5rem;
+}
+
+.observatory[open] > .observatory__summary {
+  border-bottom: 1px solid var(--hair);
+}
+
+.observatory[open] > .observatory__summary::after {
+  content: '−';
+}
+
+.observatory__instrument {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.observatory__intro,
+.observatory__reading,
+.observatory__note,
+.observatory__status {
+  margin: 0;
+  font-size: var(--label-size);
+  line-height: 1.65;
+}
+
+.observatory__status {
+  padding: 1rem;
+}
+
+.observatory__sky {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 7rem;
+  background: #080d14;
+  border-block: 1px solid var(--hair);
+}
+
+.observatory__grid {
+  stroke: #b4bec6;
+  stroke-opacity: 0.12;
+  stroke-width: 1;
+}
+
+.observatory__axis,
+.observatory__sun-ring {
+  fill: none;
+  stroke: var(--chapter-accent);
+  stroke-width: 1;
+}
+
+.observatory__sun {
+  fill: var(--chapter-accent);
+}
+
+.observatory__reference {
+  stroke: #b4bec6;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.observatory__equation {
+  color: var(--chapter-accent);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.observatory__label {
+  font-size: var(--reading-size);
+  font-weight: 600;
+}
+
+.observatory input[type='range'] {
+  width: 100%;
+  height: 2.75rem;
+  margin: 0;
+  accent-color: var(--chapter-accent);
+  touch-action: pan-y;
+  cursor: ew-resize;
+}
+
+.observatory__presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.observatory__presets button {
+  min-height: 2.75rem;
+  padding: 0.45rem;
+  color: var(--fg);
+  font: inherit;
+  font-size: var(--label-size);
+  background: #141a22;
+  border: 1px solid var(--hair);
+  cursor: pointer;
+}
+
+.observatory__presets button[data-active='true'] {
+  color: var(--chapter-accent);
+  border-color: currentColor;
+}
+
+.observatory__reading {
+  color: var(--chapter-accent);
+}
+
+.observatory__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--label-size);
+  font-variant-numeric: tabular-nums;
+}
+
+.observatory__table caption {
+  padding-bottom: 0.6rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.observatory__table th,
+.observatory__table td {
+  padding: 0.55rem 0.15rem;
+  text-align: right;
+  border-bottom: 1px solid var(--editorial-rule);
+}
+
+.observatory__table th:first-child {
+  text-align: left;
+}
+
+.observatory__table thead th {
+  color: var(--fg-muted);
+  font-weight: 400;
+}
+
+.observatory__body::before {
+  content: '';
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.45rem;
+  background: var(--body-color);
+  border-radius: 50%;
+}
+
+.observatory__note {
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+}
+
+.observatory .observatory__source {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--chapter-accent);
+  font-size: var(--label-size);
+  text-underline-offset: 0.2em;
+}
+
+.observatory :is(summary, input, button, a):focus-visible {
+  outline: 2px solid var(--chapter-accent);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
    Mouvement réduit : pas de glissement sur les surfaces interactives
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
