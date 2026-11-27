@@ -260,6 +260,7 @@ function buildTechnical(
   figure.append(caption, list, skill);
   if (id === 'galaxy') figure.appendChild(buildObservatory());
   if (id === 'ludora') figure.appendChild(buildSyncLab());
+  if (id === 'magnotes') figure.appendChild(buildKnowledgeLab());
   return figure;
 }
 
@@ -327,6 +328,44 @@ function buildSyncLab(): HTMLDetailsElement {
         loading = false;
         failed = true;
         status.textContent = t('syncLab.error');
+      });
+  });
+  return details;
+}
+
+/** Atelier sans horloge : fermer conserve les données, l'import reste volontaire. */
+function buildKnowledgeLab(): HTMLDetailsElement {
+  const details = document.createElement('details');
+  details.id = 'magnotes-knowledge-lab';
+  details.className = 'knowledge';
+  const summary = el('summary', 'knowledge__summary', '');
+  registerDynamic(summary, () => t('knowledge.open'));
+  const mount = el('div', 'knowledge__mount', '');
+  const status = el('p', 'knowledge__loading', '');
+  status.setAttribute('role', 'status');
+  let failed = false;
+  registerDynamic(status, () =>
+    t(failed ? 'knowledge.error' : 'knowledge.loading')
+  );
+  mount.append(status);
+  details.append(summary, mount);
+  let loading = false;
+  let mounted = false;
+  details.addEventListener('toggle', () => {
+    if (!details.open || loading || mounted) return;
+    loading = true;
+    void import('@/visual/MagnotesKnowledgeLab')
+      .then(({ mountMagnotesKnowledgeLab }) => {
+        loading = false;
+        if (details.open) {
+          mountMagnotesKnowledgeLab(mount);
+          mounted = true;
+        }
+      })
+      .catch(() => {
+        loading = false;
+        failed = true;
+        status.textContent = t('knowledge.error');
       });
   });
   return details;
