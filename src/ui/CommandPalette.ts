@@ -228,7 +228,8 @@ export class CommandPalette {
     if (!this.open) return;
     this.open = false;
     this.root.hidden = true;
-    this.lastFocused?.focus();
+    // Un saut natif désynchroniserait l'origine de Lenis avant la commande.
+    this.lastFocused?.focus({ preventScroll: true });
   }
 
   private syncLocale(): void {

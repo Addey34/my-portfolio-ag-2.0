@@ -497,12 +497,14 @@ export class StoryWorld3D {
     // Les calques 1 et 2 isolent la lampe et l'horloge des éclairages généraux.
     this.camera.layers.enable(1);
     this.camera.layers.enable(2);
-    this.scene.add(new AmbientLight('#8ba9dd', 0.7));
-    const key = new PointLight('#a9c9ff', 26, 22);
-    key.position.set(-3, 5, 7);
+    // Modelé neutre et contre-jour froid : la lampe garde la chaleur de la scène.
+    this.scene.add(new AmbientLight('#aab8ca', 0.42));
+    const key = new PointLight('#f0e5d4', 32, 22);
+    key.position.set(-4, 4.5, 6);
+    key.layers.enable(2);
     this.scene.add(key);
-    const rim = new PointLight('#b49cb8', 12, 18);
-    rim.position.set(4, -2, -2);
+    const rim = new PointLight('#b7d1e8', 19, 18);
+    rim.position.set(4, 1, -3);
     this.scene.add(rim);
 
     this.scene.add(this.world);
@@ -1175,7 +1177,7 @@ export class StoryWorld3D {
     } else {
       this.world.rotation.z = 0;
     }
-    // Le boîtier reste frontal au repos et pivote à chaque frontière du récit.
+    // Le trois-quarts du pendentif dévoile sa tranche ; il s'efface vers l'horloge.
     if (medallionOpening) {
       const turn = (progress: number) => {
         const t = clamp01(progress);
@@ -1190,6 +1192,8 @@ export class StoryWorld3D {
         0
       );
       this.medallion.quaternion.copy(this.world.quaternion).invert();
+      this.medallion.rotateY(-0.16 * heroPresence);
+      this.medallion.rotateX(0.06 * heroPresence);
       if (!this.reduced && this.animated)
         this.medallion.rotateY(spins * TAU * 5);
       this.clock.quaternion.identity();
@@ -1315,11 +1319,11 @@ export class StoryWorld3D {
   private createMetalReflection(renderer: WebGLRenderer): WebGLRenderTarget {
     // Reflets de studio fixes sur le métal uniquement ; la lampe visible garde son éclairage.
     const room = new Scene();
-    room.background = new Color('#19212a');
+    room.background = new Color('#060a10');
     const panels = [
-      { color: '#ddd6c8', position: [-2.5, 3.5, 2.5], size: [2.2, 3.8] },
-      { color: '#8191a0', position: [3.8, 1.4, 1.5], size: [1.2, 4.8] },
-      { color: '#526171', position: [-3, -2.8, -1.5], size: [3.5, 1.4] },
+      { color: '#fff0d8', position: [-2.5, 3.5, 2.5], size: [1.1, 5.2] },
+      { color: '#c4d9ec', position: [3.8, 1.4, 1.5], size: [0.6, 5.6] },
+      { color: '#66788b', position: [-3, -2.8, -1.5], size: [3.5, 0.7] },
     ] as const;
     for (const panel of panels) {
       const mesh = new Mesh(
@@ -3198,7 +3202,7 @@ export class StoryWorld3D {
     cube.rotation.set(
       -0.24,
       0.52 + (this.reduced ? 0 : Math.sin(time * 0.5) * 0.12) + (1 - presence),
-      0
+      -0.08 * presence
     );
     const clockScale = clockGroup?.scale.x ?? 0.78;
     this.stackCubePivots.forEach((pivot, index) => {
@@ -3210,7 +3214,7 @@ export class StoryWorld3D {
       pivot.position.set(
         startX + (cx * open - startX) * change,
         startY + (cz * open - startY) * change,
-        0
+        (index === 0 || index === 3 ? 0.18 : -0.18) * change * presence
       );
       pivot.scale.setScalar(change * presence);
     });
@@ -3591,7 +3595,8 @@ export class StoryWorld3D {
     this.bulbLight.position.copy(source);
     this.bulbLight.layers.set(1);
     this.bulbLight.layers.enable(0);
-    this.bulbLight.layers.enable(2);
+    // L'ampoule garde le calque de la lampe ; le modelé latéral partage celui
+    // des sculptures. L'inventaire des lumières ne change pas.
     this.bulbLight.castShadow = true;
     this.bulbLight.shadow.camera.near = 0.08;
     this.bulbLight.shadow.camera.far = 9;
