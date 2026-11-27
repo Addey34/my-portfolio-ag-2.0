@@ -1678,6 +1678,20 @@
 /* ==========================================================================
    AIGen — pupitre violet, chaîne et bons numérotés. Aucun mouvement au repos.
    ========================================================================== */
+.resilience {
+  margin-top: 1.6rem;
+  border-block: 1px solid #5b6475;
+}
+.resilience__summary {
+  padding: 1.2rem 0;
+  color: #d5f8ec;
+  font: 600 1rem var(--font-display);
+  cursor: pointer;
+}
+.resilience__summary:focus-visible {
+  outline: 2px solid #f5d6a5;
+  outline-offset: 4px;
+}
 .execution {
   margin-top: 1.2rem;
   color: var(--fg);

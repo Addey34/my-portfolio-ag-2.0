@@ -16,6 +16,10 @@ export type Localized = Record<Locale, string>;
 type Dict = Record<string, string>;
 
 const fr: Dict = {
+  'resilience.open': 'Éprouver le diagnostic de résilience',
+  'resilience.loading': 'Ouverture de l’instrument…',
+  'resilience.error':
+    'Instrument indisponible. Le schéma et les preuves restent accessibles.',
   'execution.open': 'Piloter la chaîne d’exécution',
   'execution.loading': 'Mise en place de l’instrument…',
   'execution.error':
@@ -245,6 +249,10 @@ const fr: Dict = {
 };
 
 const en: Dict = {
+  'resilience.open': 'Experiment with resilience diagnosis',
+  'resilience.loading': 'Opening the instrument…',
+  'resilience.error':
+    'Instrument unavailable. The diagram and evidence remain accessible.',
   'execution.open': 'Operate the execution chain',
   'execution.loading': 'Setting up the instrument…',
   'execution.error':
