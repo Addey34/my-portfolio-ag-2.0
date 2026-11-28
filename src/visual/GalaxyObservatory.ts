@@ -1,5 +1,6 @@
 import { getLocale, onLocaleChange, t } from '@/i18n';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { publishSculpture } from './sculptureProjection';
 import {
   displayedRadius,
   SCALE_BODIES,
@@ -192,7 +193,11 @@ export function mountGalaxyObservatory(mount: HTMLElement): void {
       'aria-valuetext',
       `${mode} · ${t('observatory.exponent')} ${exponent} · ${t('observatory.earth')} ${percent.format(earth)}`
     );
-    reading.textContent = `${t('observatory.reading')} ${percent.format(earth)} · ${t('observatory.reference')} ${percent.format(displayedRadius(1, 100))}`;
+    reading.textContent =
+      `${t('observatory.reading')} ${percent.format(earth)} · ${t('observatory.reference')} ${percent.format(displayedRadius(1, 100))}` +
+      (locale === 'fr'
+        ? ' · Astrolabe : anneaux Terre, Jupiter, Neptune. Armature, inclinaisons et tailles symboliques.'
+        : ' · Astrolabe: Earth, Jupiter, Neptune rings. Symbolic frame, tilts and body sizes.');
     SCALE_BODIES.forEach((body, index) => {
       const radius = displayedRadius(body.distanceAU, value);
       markers[index].setAttribute(
@@ -205,6 +210,12 @@ export function mountGalaxyObservatory(mount: HTMLElement): void {
     for (const button of presets.querySelectorAll<HTMLButtonElement>('button'))
       button.dataset.active = String(Number(button.dataset.scale) === value);
     root.dataset.scale = String(value);
+    publishSculpture(mount, {
+      scene: 'galaxy',
+      radii: SCALE_BODIES.map((body) =>
+        displayedRadius(body.distanceAU, value)
+      ),
+    });
   }
 
   const translate = (): void => {

@@ -9,6 +9,7 @@ import { initReveals } from '@/core/reveals';
 import { initScrollScenes } from '@/core/scrollScenes';
 import { SectionTransitions } from '@/core/sectionTransitions';
 import { VisualDirector } from '@/visual/VisualDirector';
+import { bindLivingSculptures } from '@/visual/livingSculptures';
 import type { SceneLab } from '@/visual/SceneLab';
 import { FPSCounter } from '@/utils/FPSCounter';
 import {
@@ -266,6 +267,7 @@ function boot(): void {
     'world-3d'
   ) as HTMLCanvasElement | null;
   const visual = new VisualDirector();
+  const stopLivingSculptures = bindLivingSculptures(visual);
   // Sur petit écran, les dossiers opaques passent devant le décor pendant la lecture.
   const storyRoot = document.getElementById('scroll-root');
   const stopStudyComposition = visual.onSceneChange((scene) => {
@@ -384,6 +386,7 @@ function boot(): void {
     choreographer.destroy();
     stopStudyComposition();
     stopPlaque();
+    stopLivingSculptures();
     visual.destroy();
     sceneLab?.destroy();
     rail?.destroy();

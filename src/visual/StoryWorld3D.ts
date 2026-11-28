@@ -968,6 +968,18 @@ export class StoryWorld3D {
         3.3 - 0.8 * smooth((openingProgress - 0.58) / 0.36) + 0.38 * gather;
     }
 
+    // Sur mobile, un espace de lecture fixe réserve le haut aux objets vivants.
+    // La caméra et le canvas restent uniques ; seul le cadrage du monde change.
+    if (this.compact && state?.sculpture?.scene === scene) {
+      this.world.position.set(
+        0,
+        11.516 * (0.5 - 176 / this.canvas.clientHeight),
+        0
+      );
+      this.world.scale.setScalar(
+        state.sculpture.scene === 'galaxy' ? 0.46 : 0.72
+      );
+    }
     for (let index = 0; index < NODE_COUNT; index += 1) {
       if (crossing === 'identity-stack') {
         const letter = this.pointFor('identity', index, 0, motionTime);
@@ -1206,6 +1218,46 @@ export class StoryWorld3D {
     // d'un programme non compilé bloque la page jusqu'à la fin de la compilation.
     if (!this.programsReady) return;
     this.renderer.render(this.scene, this.camera);
+    const projection = this.state?.sculpture;
+    const diagnostic =
+      projection?.scene === scene ? JSON.stringify(projection) : '';
+    if (
+      this.canvas.dataset.sculpture !== diagnostic ||
+      (projection &&
+        /null|^\[\]$/.test(this.canvas.dataset.sculpturePose ?? '[]'))
+    ) {
+      this.canvas.dataset.sculpture = diagnostic;
+      const parts = !projection
+        ? []
+        : projection.scene === 'galaxy'
+          ? this.galaxyRingSpins
+          : projection.scene === 'ludora'
+            ? [
+                'DICE__die_pivot',
+                'DICE__tile_1_pivot',
+                'DICE__tile_4_pivot',
+              ].map((name) => this.craftedNodes.get(name))
+            : ['NOTE__01_pivot', 'NOTE__02_pivot', 'NOTE__03_pivot'].map(
+                (name) => this.craftedNodes.get(name)
+              );
+      this.canvas.dataset.sculpturePose = JSON.stringify(
+        parts.map((part) =>
+          part
+            ? {
+                name: part.name,
+                position: part.position.toArray(),
+                scale: part.scale.toArray(),
+                rotation: [part.rotation.x, part.rotation.y, part.rotation.z],
+              }
+            : null
+        )
+      );
+    }
+  }
+
+  /** Invalider une seule image, même quand le mouvement est réduit. */
+  invalidateSculpture(): void {
+    this.lastFrame = -Infinity;
   }
 
   /** Publie le gonflement de lumière aux éléments éditoriaux (rail, repères). */
@@ -2637,9 +2689,17 @@ export class StoryWorld3D {
     group.rotation.set(-0.28, 0.5 + Math.sin(time * 0.25) * 0.2, 0);
     // Les anneaux tournent autour de leur axe, plus vite à l'apparition.
     this.galaxyRingSpins.forEach((spin, index) => {
+      const projection = this.state?.sculpture;
+      const live =
+        projection?.scene === 'galaxy' && this.state?.scene === 'galaxy';
+      // Terre/Jupiter/Neptune : rayons normalisés calculés dans l'observatoire.
+      // L'armature et les tailles d'astres restent une interprétation d'atelier.
+      spin.scale.setScalar(
+        live ? (projection.radii[index] * 0.98) / [0.98, 0.8, 0.62][index] : 1
+      );
       const speed = 0.35 + index * 0.22;
       spin.rotation.y =
-        time * speed * (index % 2 === 0 ? 1 : -1) +
+        (live ? 0.5 * index : time * speed * (index % 2 === 0 ? 1 : -1)) +
         (1 - appear) * 4 * (index + 1);
     });
   }
@@ -2954,6 +3014,30 @@ export class StoryWorld3D {
         base.y + Math.sin(time * 0.65 + k) * 0.008,
         base.z * spread
       );
+      const projection = this.state?.sculpture;
+      if (projection?.scene === 'ludora' && this.state?.scene === 'ludora') {
+        const version = projection.versions[1];
+        die.rotation.set(
+          0.12,
+          0.25 + (version * Math.PI) / 3,
+          projection.rejected ? -0.32 : 0.08
+        );
+        die.position.y = projection.phase === 'accepted' ? 0.22 : 0;
+        board.rotation.y = 0;
+        // Modules à un et quatre points : copies A/B. Le dé représente l'autorité.
+        if (k === 1 || k === 4) {
+          const peer = k === 1 ? 0 : 2;
+          const busy = projection.busy[k === 1 ? 0 : 1];
+          const behind = projection.versions[peer] !== version;
+          const radial = busy ? 0.72 : behind ? 1.18 : 1;
+          tile.position.set(
+            base.x * radial,
+            base.y + (busy ? 0.45 : behind ? 0.24 : 0),
+            base.z * radial
+          );
+          tile.rotation.y = projection.rejected && busy ? -0.28 : 0;
+        }
+      } else tile.rotation.y = 0;
     }
   }
 
@@ -3005,6 +3089,26 @@ export class StoryWorld3D {
         (column - 1) * -0.12 * settle * (1 - order)
       );
       note.scale.setScalar(0.4 + 0.6 * settle);
+      const projection = this.state?.sculpture;
+      if (
+        projection?.scene === 'magnotes' &&
+        this.state?.scene === 'magnotes'
+      ) {
+        if (k < 3) {
+          const data = projection.notes[k];
+          note.position.set(data.x, data.y, 0.2 + data.z);
+          note.rotation.set(
+            projection.view === 'timeline' ? -0.35 : 0,
+            projection.view === 'kanban' ? -0.2 : 0,
+            0
+          );
+          note.scale.setScalar(1);
+        } else {
+          // Trois fiches seulement sont des notes ; les autres restent décoratives.
+          note.position.set((k - 4) * 0.4, -0.42, -0.08);
+          note.scale.setScalar(0.4);
+        }
+      }
     }
   }
 

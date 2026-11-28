@@ -2,6 +2,7 @@
 import { PROJECTS } from '@/content/projects';
 import type { StoryWorld3D } from '@/visual/StoryWorld3D';
 import type { VisualScene, VisualState } from '@/visual/types';
+import type { SculptureProjection } from './sculptureProjection';
 
 /** Durée d'un passage d'une forme à l'autre (ms), avec départ et arrivée adoucis. */
 const TRANSITION_MS = 2600;
@@ -79,6 +80,11 @@ export class VisualDirector {
 
   getState(): VisualState {
     return this.state;
+  }
+
+  setSculpture(projection: SculptureProjection | undefined): void {
+    this.state.sculpture = projection;
+    this.field?.invalidateSculpture();
   }
 
   isLiteMode(): boolean {
