@@ -16,6 +16,8 @@ rows = [
 ]
 for profile, width in [('desktop-chromium', 640), ('android-chromium', 412), ('iphone-webkit', 390)]:
     source = root / ('living-sculptures-sculptures-vivantes-' + profile)
+    if profile == 'iphone-webkit':
+        source = Path('test-results/living-iphone-final/artifacts') / ('living-sculptures-sculptures-vivantes-' + profile)
     sample = Image.open(source / 'galaxy-avant.png')
     height = round(sample.height * width / sample.width)
     board = Image.new('RGB', (width * 2 + 48, 108 + (height + 48) * len(rows)), '#10151c')
@@ -29,5 +31,6 @@ for profile, width in [('desktop-chromium', 640), ('android-chromium', 412), ('i
             draw.text((x, y), label, font=font, fill='#d8c39a')
             image = Image.open(source / (name + '.png')).convert('RGB')
             board.paste(image.resize((width, height), Image.Resampling.LANCZOS), (x, y + 32))
-    board.save(output / (profile + '.png'))
+    filename = 'iphone-webkit-final.png' if profile == 'iphone-webkit' else profile + '.png'
+    board.save(output / filename)
 print('Trois planches de captures réelles assemblées.')

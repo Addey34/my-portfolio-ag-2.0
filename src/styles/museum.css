@@ -212,6 +212,11 @@ body[data-living]:has(#world-3d:not([hidden])) .living-caption {
     text-align: center;
     font-size: 0.58rem;
   }
+  @media (max-height: 740px) {
+    body[data-living]:has(#world-3d:not([hidden])) .exhibit-plaque {
+      visibility: hidden;
+    }
+  }
   body[data-living] .instrument-exhibit button,
   body[data-living] .instrument-exhibit select,
   body[data-living] .instrument-exhibit input {
