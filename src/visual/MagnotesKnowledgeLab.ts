@@ -1,5 +1,6 @@
 import { getLocale, onLocaleChange } from '@/i18n';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { publishSculpture, knowledgeProjection } from './sculptureProjection';
 import {
   MagnotesKnowledgeModel,
   NOTE_STATUSES,
@@ -227,10 +228,15 @@ export function mountMagnotesKnowledgeLab(mount: HTMLElement): void {
     const locale = getLocale();
     const words = COPY[locale];
     const snapshot = model.snapshot();
+    publishSculpture(mount, knowledgeProjection(snapshot, view));
     const current = snapshot.notes.find((note) => note.id === selected)!;
     root.dataset.revision = String(snapshot.revision);
     root.dataset.view = view;
-    intro.textContent = words.intro;
+    intro.textContent =
+      words.intro +
+      (locale === 'fr'
+        ? ' Sculpture : les trois grandes fiches correspondent à N01–N03 de gauche à droite au départ. Les petites fiches sont décoratives ; les relations restent représentées dans le graphe HTML.'
+        : ' Sculpture: the three large cards map to N01–N03, initially left to right. Small cards are decorative; relations remain represented in the HTML graph.');
     revision.textContent = `${words.source} · ${words.revision} ${snapshot.revision} · 3 notes`;
     views.setAttribute('aria-label', words.projection);
     for (const button of viewButtons) {

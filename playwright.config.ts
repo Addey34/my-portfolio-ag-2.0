@@ -28,8 +28,24 @@ export default defineConfig({
     video: 'off',
   },
   projects: [
-    { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'android-chromium', use: { ...devices['Pixel 7'] } },
+    {
+      name: 'desktop-chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: process.env.E2E_HARDWARE
+          ? { args: ['--use-angle=d3d11'] }
+          : {},
+      },
+    },
+    {
+      name: 'android-chromium',
+      use: {
+        ...devices['Pixel 7'],
+        launchOptions: process.env.E2E_HARDWARE
+          ? { args: ['--use-angle=d3d11'] }
+          : {},
+      },
+    },
     { name: 'iphone-webkit', use: { ...devices['iPhone 13'] } },
   ],
   webServer: previewURL

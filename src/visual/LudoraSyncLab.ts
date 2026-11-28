@@ -1,5 +1,6 @@
 import { getLocale, onLocaleChange } from '@/i18n';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { publishSculpture, syncProjection } from './sculptureProjection';
 import {
   LudoraSyncModel,
   type GameState,
@@ -169,8 +170,13 @@ export function mountLudoraSyncLab(mount: HTMLElement): { reset(): void } {
   function render(): void {
     const words = COPY[getLocale()];
     const snapshot = model.snapshot();
+    publishSculpture(mount, syncProjection(snapshot));
     root.dataset.pending = String(snapshot.pending);
-    intro.textContent = words.intro;
+    intro.textContent =
+      words.intro +
+      (getLocale() === 'fr'
+        ? ' Sculpture : le dé est le serveur ; les modules à 1 et 4 points sont A et B. Ils avancent en transit, se reposent à convergence ; un refus incline le dé sans changer sa version.'
+        : ' Sculpture: the die is the server; modules with 1 and 4 dots are A and B. They advance in transit and settle on convergence; rejection tilts the die without advancing its version.');
     latencyLabel.textContent = words.latency;
     timing.textContent = words.timing;
     help.textContent = words.staleHelp;

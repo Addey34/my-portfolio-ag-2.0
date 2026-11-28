@@ -1,3 +1,5 @@
+import type { SculptureProjection } from './sculptureProjection';
+
 export type VisualScene =
   | 'identity'
   | 'stack'
@@ -10,6 +12,7 @@ export type VisualScene =
   | 'contact';
 
 export interface VisualState {
+  sculpture?: SculptureProjection;
   scene: VisualScene;
   /** Progression globale de la page. */
   progress: number;
